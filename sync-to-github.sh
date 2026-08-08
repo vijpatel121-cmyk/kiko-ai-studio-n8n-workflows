@@ -1,9 +1,16 @@
 #!/bin/bash
 # Exports all n8n workflows and pushes any changes to GitHub.
-# Run manually whenever you want to snapshot the current n8n state.
+# Runs both manually and via the daily Windows Scheduled Task
+# ("Kiko AI Studio - n8n GitHub Sync"), which invokes this with a
+# minimal environment, so PATH is set explicitly below.
 set -e
 
+export PATH="/c/Program Files/Git/cmd:/c/Program Files/GitHub CLI:/c/Program Files/nodejs:$HOME/AppData/Roaming/npm:$PATH"
+
 cd "$(dirname "$0")"
+LOGFILE="$(pwd)/sync.log"
+exec >> "$LOGFILE" 2>&1
+echo "=== Sync started at $(date -u +%Y-%m-%dT%H:%M:%SZ) ==="
 
 echo "Exporting workflows from n8n..."
 n8n export:workflow --all --output="$(pwd)" --separate
