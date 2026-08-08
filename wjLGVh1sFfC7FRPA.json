@@ -1,0 +1,112 @@
+{
+  "updatedAt": "2026-07-31T19:10:59.125Z",
+  "createdAt": "2026-07-29T14:48:28.075Z",
+  "id": "wjLGVh1sFfC7FRPA",
+  "name": "02_Scene_Splitter",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "title"
+            },
+            {
+              "name": "language"
+            },
+            {
+              "name": "theme"
+            },
+            {
+              "name": "target_age",
+              "type": "number"
+            },
+            {
+              "name": "scenes",
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -144,
+        -112
+      ],
+      "id": "822918b2-9634-4a74-b07d-a3dc48ec4c55",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nif (!Array.isArray(input.scenes) || input.scenes.length === 0) throw new Error('scenes must be a non-empty array');\nreturn input.scenes.map((scene,index)=>({json:{episode_id:input.episode_id,title:input.title,language:input.language ?? 'id',theme:input.theme,target_age:Number(input.target_age),scene:Number(scene.scene_number ?? index+1),location_id:scene.location_id,image_prompt:scene.image_prompt,narration:scene.narration,narration_en:scene.narration_en,sfx_cue:scene.sfx_cue,characters:scene.characters}}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        64,
+        -112
+      ],
+      "id": "3e78a65e-bb5d-4689-9062-35bad79bfdef",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "969e5b61-4c87-4a06-b78d-5f1ba791071d",
+  "activeVersionId": null,
+  "versionCounter": 30,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-29T14:48:28.078Z",
+      "createdAt": "2026-07-29T14:48:28.078Z",
+      "role": "workflow:owner",
+      "workflowId": "wjLGVh1sFfC7FRPA",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

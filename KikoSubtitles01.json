@@ -1,0 +1,180 @@
+{
+  "updatedAt": "2026-07-31T19:58:08.604Z",
+  "createdAt": "2026-07-31T19:58:08.604Z",
+  "id": "KikoSubtitles01",
+  "name": "12_Subtitle_Generator",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "f4de33a1-14bf-49af-b9ff-6e6a6de1f50a",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        0
+      ],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "video_file"
+            },
+            {
+              "name": "subtitle_scenes",
+              "type": "array"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f79b704a-24ac-4455-b769-88bb276bfad7",
+      "name": "Generate Indonesian and English SRT",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/generate-subtitles",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}"
+            },
+            {
+              "name": "scenes",
+              "value": "={{$json.subtitle_scenes}}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "05b4264b-aea8-4bc7-a949-85bd083ebdda",
+      "name": "Subtitle Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2e1d79f2-683f-4aed-bc6e-1884a57e8d00",
+              "name": "episode_id",
+              "value": "={{$('When Executed by Another Workflow').first().json.episode_id}}",
+              "type": "string"
+            },
+            {
+              "id": "f5e5ffcd-465c-4a18-a141-3cd7e5242f3a",
+              "name": "video_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.video_file}}",
+              "type": "string"
+            },
+            {
+              "id": "6c5b8dfe-bd20-4444-9832-b1f3764867c1",
+              "name": "subtitle_id_file",
+              "value": "={{$json.subtitle_id_file}}",
+              "type": "string"
+            },
+            {
+              "id": "84b24c9d-2f92-4292-aa01-938d225d53e9",
+              "name": "subtitle_en_file",
+              "value": "={{$json.subtitle_en_file}}",
+              "type": "string"
+            },
+            {
+              "id": "e423977a-5c85-497b-bf32-04cf4601f4aa",
+              "name": "subtitle_success",
+              "value": "={{$json.success}}",
+              "type": "boolean"
+            },
+            {
+              "id": "2e485e55-23ee-4d19-a9bc-558d8cbc6877",
+              "name": "duration",
+              "value": "={{Number($json.duration)}}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Generate Indonesian and English SRT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Indonesian and English SRT": {
+      "main": [
+        [
+          {
+            "node": "Subtitle Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": null,
+  "versionId": "93b4f8f0-73f6-4c9e-981c-efdb6da8c03e",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-31T19:58:08.608Z",
+      "createdAt": "2026-07-31T19:58:08.608Z",
+      "role": "workflow:owner",
+      "workflowId": "KikoSubtitles01",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

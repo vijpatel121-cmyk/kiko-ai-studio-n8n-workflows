@@ -1,0 +1,255 @@
+{
+  "updatedAt": "2026-07-31T20:44:16.600Z",
+  "createdAt": "2026-07-31T20:44:16.600Z",
+  "id": "KikoMetadata01",
+  "name": "13_YouTube_Metadata",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "fb4b9193-df5e-47fd-a223-1fbf8281ffa8",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        0
+      ],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "title"
+            },
+            {
+              "name": "theme"
+            },
+            {
+              "name": "target_age",
+              "type": "number"
+            },
+            {
+              "name": "video_file"
+            },
+            {
+              "name": "thumbnail_file"
+            },
+            {
+              "name": "subtitle_id_file"
+            },
+            {
+              "name": "subtitle_en_file"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "89ab8251-cfa9-477c-b473-71fc24a81d7a",
+      "name": "Create YouTube Metadata",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/create-youtube-metadata",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}"
+            },
+            {
+              "name": "title",
+              "value": "={{$json.title}}"
+            },
+            {
+              "name": "theme",
+              "value": "={{$json.theme}}"
+            },
+            {
+              "name": "target_age",
+              "value": "={{$json.target_age}}"
+            },
+            {
+              "name": "video_file",
+              "value": "={{$json.video_file}}"
+            },
+            {
+              "name": "thumbnail_file",
+              "value": "={{$json.thumbnail_file}}"
+            },
+            {
+              "name": "subtitle_id_file",
+              "value": "={{$json.subtitle_id_file}}"
+            },
+            {
+              "name": "subtitle_en_file",
+              "value": "={{$json.subtitle_en_file}}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "57ed9d7b-1762-4844-9c5e-da578e8e849d",
+      "name": "Metadata Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "48ec045f-2a9b-4d53-b6d6-7c0b18866577",
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}",
+              "type": "string"
+            },
+            {
+              "id": "2672533a-7338-4780-95b3-6d94e71c8700",
+              "name": "video_file",
+              "value": "={{$json.video_file}}",
+              "type": "string"
+            },
+            {
+              "id": "2f2a7252-1b1d-42ce-bff6-4ac8b81748fd",
+              "name": "thumbnail_file",
+              "value": "={{$json.thumbnail_file}}",
+              "type": "string"
+            },
+            {
+              "id": "b26ba328-bcbe-430c-8ba1-24aa14a76cab",
+              "name": "subtitle_id_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.subtitle_id_file}}",
+              "type": "string"
+            },
+            {
+              "id": "d09cb87f-bc0c-4ed7-a6b4-a13fc95515b9",
+              "name": "subtitle_en_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.subtitle_en_file}}",
+              "type": "string"
+            },
+            {
+              "id": "0c92f79c-42f6-4c0a-803a-bab40226f3a6",
+              "name": "metadata_file",
+              "value": "={{$json.metadata_file}}",
+              "type": "string"
+            },
+            {
+              "id": "97f861cc-2a15-4619-8ffa-04d9ba449598",
+              "name": "youtube_title",
+              "value": "={{$json.title}}",
+              "type": "string"
+            },
+            {
+              "id": "e84993f3-7406-4e54-9856-21bd8a40279b",
+              "name": "youtube_description",
+              "value": "={{$json.description}}",
+              "type": "string"
+            },
+            {
+              "id": "c50b72a1-d855-4c1e-92bb-597f39ebf52b",
+              "name": "youtube_tags",
+              "value": "={{$json.tags}}",
+              "type": "array"
+            },
+            {
+              "id": "1fe1749f-5445-456d-81fe-92fb96b7ea3d",
+              "name": "made_for_kids",
+              "value": "={{$json.made_for_kids}}",
+              "type": "boolean"
+            },
+            {
+              "id": "988819fe-923b-4b56-a453-38212d91d2e8",
+              "name": "privacy_status",
+              "value": "={{$json.privacy_status}}",
+              "type": "string"
+            },
+            {
+              "id": "d7c6832b-17a3-45e5-be70-c890a5a3d934",
+              "name": "metadata_success",
+              "value": "={{$json.success}}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Create YouTube Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create YouTube Metadata": {
+      "main": [
+        [
+          {
+            "node": "Metadata Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": null,
+  "versionId": "6bf20a49-6ae1-4973-bd48-12721b9d7022",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-31T20:44:16.600Z",
+      "createdAt": "2026-07-31T20:44:16.600Z",
+      "role": "workflow:owner",
+      "workflowId": "KikoMetadata01",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

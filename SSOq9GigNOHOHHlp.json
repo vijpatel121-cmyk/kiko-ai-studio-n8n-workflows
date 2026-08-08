@@ -1,0 +1,255 @@
+{
+  "updatedAt": "2026-08-03T15:31:03.000Z",
+  "createdAt": "2026-08-02T13:29:34.206Z",
+  "id": "SSOq9GigNOHOHHlp",
+  "name": "08_HuggingFace_Image_Generator",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "scene",
+              "type": "number"
+            },
+            {
+              "name": "image_prompt"
+            },
+            {
+              "name": "narration"
+            },
+            {
+              "name": "narration_en"
+            },
+            {
+              "name": "sfx_cue"
+            },
+            {
+              "name": "characters",
+              "type": "array"
+            },
+            {
+              "name": "title"
+            },
+            {
+              "name": "language"
+            },
+            {
+              "name": "theme"
+            },
+            {
+              "name": "target_age",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "id": "985abce5-ecd0-4e35-8fc8-5d8552f403a4",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://router.huggingface.co/fal-ai/fal-ai/flux/schnell",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { prompt: $json.image_prompt, image_size: { width: 1024, height: 1024 }, num_inference_steps: 4 } }}",
+        "options": {}
+      },
+      "id": "37e04d68-33ea-4742-8f1b-ae98a74a57ad",
+      "name": "Generate Image (Hugging Face)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        272,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "taKEdvWwcznRhvrf",
+          "name": "Hugging Face Inference API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const imageUrl = $json.images?.[0]?.url;\nif (!imageUrl) throw new Error('Hugging Face Fal response did not include an image URL');\nreturn [{ json: { ...$('When Executed by Another Workflow').first().json, image_url: imageUrl } }];"
+      },
+      "id": "e982a695-977b-4096-a986-70ca5bf4cfe6",
+      "name": "Get Generated Image URL",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{$json.image_url}}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "6aa4b33a-6388-4db7-88b5-bf5b4041ad5c",
+      "name": "Download Generated Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        768,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=  'C:\\\\Users\\\\pc-11\\\\Desktop\\\\Kiko AI Studio\\\\Assets\\\\images\\\\' + $('When Executed by Another Workflow').first().json.episode_id + '_scene_' + String($('When Executed by Another Workflow').first().json.scene).padStart(2, '0') + '.png'",
+        "options": {}
+      },
+      "id": "54afc4ef-36b7-40c3-a024-4792dd5106cf",
+      "name": "Save Generated Image",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $('When Executed by Another Workflow').first().json;\nconst scene = String(d.scene).padStart(2, '0');\nreturn [{ json: { ...d, image_success: true, image_mock: false, image_file: 'C:\\\\Users\\\\pc-11\\\\Desktop\\\\Kiko AI Studio\\\\Assets\\\\images\\\\' + d.episode_id + '_scene_' + scene + '.png' } }];"
+      },
+      "id": "98b9ebd2-c444-43ac-9bdc-61c9b409763b",
+      "name": "Image Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1264,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Generate Image (Hugging Face)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image (Hugging Face)": {
+      "main": [
+        [
+          {
+            "node": "Get Generated Image URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Generated Image URL": {
+      "main": [
+        [
+          {
+            "node": "Download Generated Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Generated Image": {
+      "main": [
+        [
+          {
+            "node": "Save Generated Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Generated Image": {
+      "main": [
+        [
+          {
+            "node": "Image Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "6ec9cb5b-2bdb-4e58-8b18-52d0f1d90cfd",
+  "activeVersionId": null,
+  "versionCounter": 4,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-02T13:29:34.209Z",
+      "createdAt": "2026-08-02T13:29:34.209Z",
+      "role": "workflow:owner",
+      "workflowId": "SSOq9GigNOHOHHlp",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

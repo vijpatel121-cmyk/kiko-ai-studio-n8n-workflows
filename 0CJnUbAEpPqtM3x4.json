@@ -1,0 +1,171 @@
+{
+  "updatedAt": "2026-07-31T19:51:39.174Z",
+  "createdAt": "2026-07-26T03:57:20.818Z",
+  "id": "0CJnUbAEpPqtM3x4",
+  "name": "11_Final_Render",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "59bc2bbe-289b-4660-bab9-903a90cd1c08",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        0
+      ],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "scene_videos",
+              "type": "array"
+            },
+            {
+              "name": "subtitle_scenes",
+              "type": "array"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/merge-videos",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}"
+            },
+            {
+              "name": "scene_videos",
+              "value": "={{$json.scene_videos}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2e1ccb4e-654b-4ba1-9238-d30a1624543c",
+      "name": "Merge Scene Videos"
+    },
+    {
+      "id": "81fac66f-19c0-455d-a75a-b7399b7f429a",
+      "name": "Merge Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3e8f0de6-98a6-4558-b1bf-9b0d4665c654",
+              "name": "episode_id",
+              "value": "={{$('When Executed by Another Workflow').first().json.episode_id}}",
+              "type": "string"
+            },
+            {
+              "id": "1c1072cf-3ace-49d9-bf3e-4c1e32ee4daa",
+              "name": "video_file",
+              "value": "={{$json.video_file}}",
+              "type": "string"
+            },
+            {
+              "id": "6402ddfe-1dc2-49f0-bd71-98e02ca4340d",
+              "name": "merge_success",
+              "value": "={{$json.success}}",
+              "type": "boolean"
+            },
+            {
+              "id": "c62fd10f-fdd1-4e54-9841-6c31ab990cc8",
+              "name": "subtitle_scenes",
+              "value": "={{$('When Executed by Another Workflow').first().json.subtitle_scenes}}",
+              "type": "array"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Merge Scene Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Scene Videos": {
+      "main": [
+        [
+          {
+            "node": "Merge Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "30355913-40c7-4684-a431-edd8a6d7e2f3",
+  "activeVersionId": null,
+  "versionCounter": 103,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-26T03:57:20.820Z",
+      "createdAt": "2026-07-26T03:57:20.820Z",
+      "role": "workflow:owner",
+      "workflowId": "0CJnUbAEpPqtM3x4",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

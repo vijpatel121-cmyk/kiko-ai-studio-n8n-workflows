@@ -1,0 +1,195 @@
+{
+  "updatedAt": "2026-07-31T19:52:02.499Z",
+  "createdAt": "2026-07-26T03:51:48.634Z",
+  "id": "RSDNXPKrbTUWunpY",
+  "name": "10_Music_Generator",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "bb59c74c-50b8-44ed-acf0-2385e0c4a908",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        0
+      ],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "video_file"
+            },
+            {
+              "name": "music_file"
+            },
+            {
+              "name": "music_volume",
+              "type": "number"
+            },
+            {
+              "name": "subtitle_scenes",
+              "type": "array"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "c3f942c6-325d-4128-a092-4588f8f761a2",
+      "name": "Mix Background Music",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/mix-music",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}"
+            },
+            {
+              "name": "video_file",
+              "value": "={{$json.video_file}}"
+            },
+            {
+              "name": "music_file",
+              "value": "={{$json.music_file}}"
+            },
+            {
+              "name": "music_volume",
+              "value": "={{$json.music_volume}}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "6f59ab6e-a3ce-4417-97c7-54a4b97fd690",
+      "name": "Music Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bde3d552-2dc2-4e61-97d5-43fe10d1f4fc",
+              "name": "episode_id",
+              "value": "={{$('When Executed by Another Workflow').first().json.episode_id}}",
+              "type": "string"
+            },
+            {
+              "id": "ae06b15e-5a71-46ac-be5e-eb0524678258",
+              "name": "video_file",
+              "value": "={{$json.video_file}}",
+              "type": "string"
+            },
+            {
+              "id": "3b5df914-d4ed-4542-8c3d-9b113a18b411",
+              "name": "music_file",
+              "value": "={{$json.music_file}}",
+              "type": "string"
+            },
+            {
+              "id": "5d821c0f-55b5-4832-a776-e0ab1bc059f7",
+              "name": "music_volume",
+              "value": "={{Number($json.music_volume)}}",
+              "type": "number"
+            },
+            {
+              "id": "c11cca9d-546c-45e0-98bc-01ecc6457553",
+              "name": "success",
+              "value": "={{$json.success}}",
+              "type": "boolean"
+            },
+            {
+              "id": "ea9104ff-2f42-4c7c-867f-6b018edf9cbf",
+              "name": "subtitle_scenes",
+              "value": "={{$('When Executed by Another Workflow').first().json.subtitle_scenes}}",
+              "type": "array"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Mix Background Music",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mix Background Music": {
+      "main": [
+        [
+          {
+            "node": "Music Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "d54bcd6c-8739-4627-97bd-e285fbdd8fb1",
+  "activeVersionId": null,
+  "versionCounter": 23,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-26T03:51:48.636Z",
+      "createdAt": "2026-07-26T03:51:48.636Z",
+      "role": "workflow:owner",
+      "workflowId": "RSDNXPKrbTUWunpY",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

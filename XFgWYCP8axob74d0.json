@@ -1,0 +1,268 @@
+{
+  "updatedAt": "2026-07-31T19:24:15.216Z",
+  "createdAt": "2026-07-27T19:48:35.173Z",
+  "id": "XFgWYCP8axob74d0",
+  "name": "10 - FFmpeg Renderer",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "scene",
+              "type": "number"
+            },
+            {
+              "name": "animation_preset_id"
+            },
+            {
+              "name": "narration"
+            },
+            {
+              "name": "narration_en"
+            },
+            {
+              "name": "sfx_cue"
+            },
+            {
+              "name": "sfx_file"
+            },
+            {
+              "name": "sfx_volume",
+              "type": "number"
+            },
+            {
+              "name": "image_file"
+            },
+            {
+              "name": "voice_file"
+            },
+            {
+              "name": "duration",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -272,
+        -384
+      ],
+      "id": "aef5154c-9b2a-4455-aef6-43a1eed659a9",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/render-video",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}"
+            },
+            {
+              "name": "scene",
+              "value": "={{$json.scene}}"
+            },
+            {
+              "name": "image_file",
+              "value": "={{$json.image_file}}"
+            },
+            {
+              "name": "voice_file",
+              "value": "={{$json.voice_file}}"
+            },
+            {
+              "name": "duration",
+              "value": "={{$json.duration}}"
+            },
+            {
+              "name": "animation_preset_id",
+              "value": "={{$json.animation_preset_id}}"
+            },
+            {
+              "name": "sfx_file",
+              "value": "={{$json.sfx_file}}"
+            },
+            {
+              "name": "sfx_volume",
+              "value": "={{$json.sfx_volume}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        -176
+      ],
+      "id": "dc13d9ac-7b31-4fe7-99f7-b76f8cf43f1b",
+      "name": "HTTP Request"
+    },
+    {
+      "id": "eb06bfe1-3366-42df-8768-30848d1d8951",
+      "name": "Render Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        420,
+        -176
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "67c10d86-9b20-4368-81e7-6cc0830f9d79",
+              "name": "episode_id",
+              "value": "={{$('When Executed by Another Workflow').first().json.episode_id}}",
+              "type": "string"
+            },
+            {
+              "id": "aa82d4a4-9e72-4ca6-840c-f6416abf1689",
+              "name": "scene",
+              "value": "={{Number($('When Executed by Another Workflow').first().json.scene)}}",
+              "type": "number"
+            },
+            {
+              "id": "2f8e312c-1821-4174-8e9a-6d9b69ceebab",
+              "name": "narration",
+              "value": "={{$('When Executed by Another Workflow').first().json.narration}}",
+              "type": "string"
+            },
+            {
+              "id": "93b93c2e-ac2d-4a87-86c1-b779bcae8252",
+              "name": "narration_en",
+              "value": "={{$('When Executed by Another Workflow').first().json.narration_en}}",
+              "type": "string"
+            },
+            {
+              "id": "1a3dc00b-00f6-4db6-b857-ad3019ebff82",
+              "name": "sfx_cue",
+              "value": "={{$('When Executed by Another Workflow').first().json.sfx_cue}}",
+              "type": "string"
+            },
+            {
+              "id": "533ef99f-b7ce-40e5-b8fd-151d2853b669",
+              "name": "sfx_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.sfx_file}}",
+              "type": "string"
+            },
+            {
+              "id": "3a92fe28-4a26-4c2a-8484-1c18c4a7acc8",
+              "name": "sfx_volume",
+              "value": "={{Number($('When Executed by Another Workflow').first().json.sfx_volume)}}",
+              "type": "number"
+            },
+            {
+              "id": "1861a944-14bb-4c7a-b2e7-3dc918551411",
+              "name": "image_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.image_file}}",
+              "type": "string"
+            },
+            {
+              "id": "5fb84cbc-82c1-48c2-bb41-65a0a76484f5",
+              "name": "voice_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.voice_file}}",
+              "type": "string"
+            },
+            {
+              "id": "4faaed8d-51b3-4188-87e9-e48e1aa62de5",
+              "name": "duration",
+              "value": "={{Number($('When Executed by Another Workflow').first().json.duration)}}",
+              "type": "number"
+            },
+            {
+              "id": "b3d35f38-6f32-4278-8198-533f23649664",
+              "name": "video_file",
+              "value": "={{$json.video_file}}",
+              "type": "string"
+            },
+            {
+              "id": "95cba287-78a7-42a4-b43b-641e568a4c95",
+              "name": "render_success",
+              "value": "={{$json.success}}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Render Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "911d968a-e226-48ac-8e7a-523234d387b6",
+  "activeVersionId": null,
+  "versionCounter": 113,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-27T19:48:35.176Z",
+      "createdAt": "2026-07-27T19:48:35.176Z",
+      "role": "workflow:owner",
+      "workflowId": "XFgWYCP8axob74d0",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

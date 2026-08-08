@@ -1,0 +1,206 @@
+{
+  "updatedAt": "2026-08-03T15:31:06.000Z",
+  "createdAt": "2026-08-02T11:53:22.588Z",
+  "id": "eEs5E3zRylJIOqVS",
+  "name": "08_HuggingFace_Image_Generator",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "scene",
+              "type": "number"
+            },
+            {
+              "name": "image_prompt"
+            },
+            {
+              "name": "narration"
+            },
+            {
+              "name": "narration_en"
+            },
+            {
+              "name": "sfx_cue"
+            },
+            {
+              "name": "characters",
+              "type": "array"
+            },
+            {
+              "name": "title"
+            },
+            {
+              "name": "language"
+            },
+            {
+              "name": "theme"
+            },
+            {
+              "name": "target_age",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "id": "7f7f648c-369a-45a1-83dc-bd66edf36016",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { inputs: $json.image_prompt, parameters: { width: 1024, height: 1024, num_inference_steps: 4 } } }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "3fb87851-b2d8-4d85-af2b-1aa6288736b8",
+      "name": "Generate Image (Hugging Face)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        272,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "taKEdvWwcznRhvrf",
+          "name": "Hugging Face Inference API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=C:\\Users\\pc-11\\Desktop\\Kiko AI Studio\\Assets\\images\\{{$('When Executed by Another Workflow').first().json.episode_id}}_scene_{{$('When Executed by Another Workflow').first().json.scene.toString().padStart(2,'0')}}.png",
+        "options": {}
+      },
+      "id": "9cac7f49-8fa0-4783-a060-28918db6d222",
+      "name": "Save Generated Image",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        512,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $('When Executed by Another Workflow').first().json;\nconst scene = String(d.scene).padStart(2, '0');\nreturn [{ json: { ...d, image_success: true, image_mock: false, image_file: 'C:\\\\Users\\\\pc-11\\\\Desktop\\\\Kiko AI Studio\\\\Assets\\\\images\\\\' + d.episode_id + '_scene_' + scene + '.png' } }];"
+      },
+      "id": "1b958d41-61a9-431e-9b15-437e805a86ab",
+      "name": "Image Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Generate Image (Hugging Face)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image (Hugging Face)": {
+      "main": [
+        [
+          {
+            "node": "Save Generated Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Generated Image": {
+      "main": [
+        [
+          {
+            "node": "Image Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "ac71e936-624d-4d56-a535-09c3e11f1359",
+  "activeVersionId": null,
+  "versionCounter": 2,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-02T11:53:22.592Z",
+      "createdAt": "2026-08-02T11:53:22.592Z",
+      "role": "workflow:owner",
+      "workflowId": "eEs5E3zRylJIOqVS",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

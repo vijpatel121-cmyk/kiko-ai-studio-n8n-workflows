@@ -1,0 +1,561 @@
+{
+  "updatedAt": "2026-08-08T14:43:40.946Z",
+  "createdAt": "2026-07-31T21:16:46.345Z",
+  "id": "KikoImagesProd01",
+  "name": "08_Gemini_Image_Generator_PRODUCTION",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "50bfc07e-1604-480e-9bb3-038f42ecfb88",
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}",
+              "type": "string"
+            },
+            {
+              "id": "2e163a5b-526a-4074-8c03-41123117f3fd",
+              "name": "scene",
+              "value": "={{Number($json.scene)}}",
+              "type": "number"
+            },
+            {
+              "id": "24cb372e-9059-45b3-86e4-5754ba226627",
+              "name": "location_id",
+              "value": "={{$json.location_id}}",
+              "type": "string"
+            },
+            {
+              "id": "52192f02-d032-43cb-8031-c192ee35115a",
+              "name": "image_prompt",
+              "value": "={{$json.image_prompt}}",
+              "type": "string"
+            },
+            {
+              "id": "8a3d6cba-ce3e-45f0-b75a-d42befe6c519",
+              "name": "narration",
+              "value": "={{$json.narration}}",
+              "type": "string"
+            },
+            {
+              "id": "42544e3d-414b-4003-aa35-0d7073e52876",
+              "name": "narration_en",
+              "value": "={{$json.narration_en}}",
+              "type": "string"
+            },
+            {
+              "id": "d629a2a3-eff9-4ee3-8bf9-765da977e2c3",
+              "name": "sfx_cue",
+              "value": "={{$json.sfx_cue}}",
+              "type": "string"
+            },
+            {
+              "id": "6f0db767-4e46-4761-9c1e-1e415fe0da04",
+              "name": "characters",
+              "value": "={{$json.characters}}",
+              "type": "array"
+            },
+            {
+              "id": "0933b439-18d5-4410-b78a-208bc73f491b",
+              "name": "character_reference_file",
+              "value": "={{$json.character_reference_file}}",
+              "type": "string"
+            },
+            {
+              "id": "f82e54c8-6197-4aba-8693-72993375a2b3",
+              "name": "expression_reference_files",
+              "value": "={{$json.expression_reference_files}}",
+              "type": "array"
+            },
+            {
+              "id": "94e27045-5184-43e5-a65c-037abd780e45",
+              "name": "title",
+              "value": "={{$json.title}}",
+              "type": "string"
+            },
+            {
+              "id": "d737d0a3-0b82-45bc-b17a-666c88872762",
+              "name": "language",
+              "value": "={{$json.language}}",
+              "type": "string"
+            },
+            {
+              "id": "eca4b328-479a-418c-a7ae-3133eca97fd2",
+              "name": "theme",
+              "value": "={{$json.theme}}",
+              "type": "string"
+            },
+            {
+              "id": "20d47ed5-9d31-46e6-9d93-a794154ade9b",
+              "name": "target_age",
+              "value": "={{Number($json.target_age)}}",
+              "type": "number"
+            },
+            {
+              "id": "prompt-sync-original_prompt",
+              "name": "original_prompt",
+              "value": "={{$json.original_prompt || $json.base_image_prompt || $json.image_prompt}}",
+              "type": "string"
+            },
+            {
+              "id": "prompt-sync-base_image_prompt",
+              "name": "base_image_prompt",
+              "value": "={{$json.base_image_prompt || $json.original_prompt || $json.image_prompt}}",
+              "type": "string"
+            },
+            {
+              "id": "prompt-sync-optimized_image_prompt",
+              "name": "optimized_image_prompt",
+              "value": "={{$json.optimized_image_prompt || $json.image_prompt}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        16,
+        -64
+      ],
+      "id": "b627525e-180c-45b6-9d20-4d0e0d3a462b",
+      "name": "Image Input"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "edit",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-image",
+          "mode": "id"
+        },
+        "prompt": "={{$('Image Input').first().json.image_prompt + ' Match every visible character to the corresponding expression-sheet reference in cast order. If a reference is repeated because the scene has fewer than three characters, do not duplicate that character in the scene.'}}",
+        "images": {
+          "values": [
+            {
+              "binaryPropertyName": "character_lineup"
+            },
+            {
+              "binaryPropertyName": "primary_expression_sheet"
+            },
+            {
+              "binaryPropertyName": "secondary_expression_sheet"
+            },
+            {
+              "binaryPropertyName": "tertiary_expression_sheet"
+            }
+          ]
+        },
+        "options": {
+          "binaryPropertyOutput": "data"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        -336
+      ],
+      "id": "ddbfbcc8-d3a8-480d-9d42-648ee4dc190b",
+      "name": "Generate an image",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "31BAMtqCrg6tfTbf",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "=C:\\Users\\pc-11\\Desktop\\Kiko AI Studio\\Assets\\images\\{{$('Image Input').first().json.episode_id}}_scene_{{$('Image Input').first().json.scene.toString().padStart(2,'0')}}.png",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        -256
+      ],
+      "id": "fd3cee83-608d-4acc-9ddc-cec908a5d8a5",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "scene",
+              "type": "number"
+            },
+            {
+              "name": "location_id"
+            },
+            {
+              "name": "image_prompt"
+            },
+            {
+              "name": "narration"
+            },
+            {
+              "name": "narration_en"
+            },
+            {
+              "name": "sfx_cue"
+            },
+            {
+              "name": "characters",
+              "type": "array"
+            },
+            {
+              "name": "character_reference_file"
+            },
+            {
+              "name": "expression_reference_files",
+              "type": "array"
+            },
+            {
+              "name": "title"
+            },
+            {
+              "name": "language"
+            },
+            {
+              "name": "theme"
+            },
+            {
+              "name": "target_age",
+              "type": "number"
+            },
+            {
+              "name": "original_prompt"
+            },
+            {
+              "name": "base_image_prompt"
+            },
+            {
+              "name": "optimized_image_prompt"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -336,
+        -80
+      ],
+      "id": "35923d91-087d-41a0-85b3-d06f8d1db837",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "const d=$('Image Input').first().json; const s=String(d.scene).padStart(2,'0');\nreturn [{json:{...d,image_success:true,image_file:'C:\\\\Users\\\\pc-11\\\\Desktop\\\\Kiko AI Studio\\\\Assets\\\\images\\\\'+d.episode_id+'_scene_'+s+'.png'}}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -240
+      ],
+      "id": "fc6ede20-d5cc-4489-967e-3bb66451a1d4",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "fileSelector": "C:/Users/pc-11/.n8n-files/Kiko/kiko-five-character-lineup-v1.png",
+        "options": {
+          "dataPropertyName": "character_lineup"
+        }
+      },
+      "id": "2a0836cb-94f7-421d-9ba4-9a370ef27c2c",
+      "name": "Read Character Lineup",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -128,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{$json.expression_reference_files[0]}}",
+        "options": {
+          "dataPropertyName": "primary_expression_sheet"
+        }
+      },
+      "id": "4936d9eb-5601-4716-92c7-3ab41ca21946",
+      "name": "Read Primary Expression Sheet",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{$json.expression_reference_files[1] || $json.expression_reference_files[0]}}",
+        "options": {
+          "dataPropertyName": "secondary_expression_sheet"
+        }
+      },
+      "id": "fb7a417b-de10-42e3-9417-f549ed544b28",
+      "name": "Read Secondary Expression Sheet",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -16,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{$json.expression_reference_files[2] || $json.expression_reference_files[0]}}",
+        "options": {
+          "dataPropertyName": "tertiary_expression_sheet"
+        }
+      },
+      "id": "f7bc1227-2d4d-4a24-9ac7-55923c9005ed",
+      "name": "Read Tertiary Expression Sheet",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        176,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "00f666f5-5b50-4200-a696-0467c24bb389",
+      "name": "Merge Lineup and Primary",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        192,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "96924922-3b83-4856-8b03-ce1c2ee29d4f",
+      "name": "Merge Secondary Reference",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        384,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "662fba84-df35-43d3-81c2-e1fdbb80850b",
+      "name": "Merge Tertiary Reference",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        560,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Image Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Input": {
+      "main": [
+        [
+          {
+            "node": "Read Character Lineup",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Read Primary Expression Sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Read Secondary Expression Sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Read Tertiary Expression Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Character Lineup": {
+      "main": [
+        [
+          {
+            "node": "Merge Lineup and Primary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Primary Expression Sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge Lineup and Primary",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Lineup and Primary": {
+      "main": [
+        [
+          {
+            "node": "Merge Secondary Reference",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Secondary Expression Sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge Secondary Reference",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Secondary Reference": {
+      "main": [
+        [
+          {
+            "node": "Merge Tertiary Reference",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Tertiary Expression Sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge Tertiary Reference",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Tertiary Reference": {
+      "main": [
+        [
+          {
+            "node": "Generate an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "0be6a529-d356-437e-84bd-c3cac04bb1e2",
+  "activeVersionId": null,
+  "versionCounter": 16,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-31T21:16:46.345Z",
+      "createdAt": "2026-07-31T21:16:46.345Z",
+      "role": "workflow:owner",
+      "workflowId": "KikoImagesProd01",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": null
+}

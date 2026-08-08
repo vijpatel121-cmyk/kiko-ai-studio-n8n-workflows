@@ -1,0 +1,209 @@
+{
+  "updatedAt": "2026-08-03T08:58:54.693Z",
+  "createdAt": "2026-07-27T17:54:01.719Z",
+  "id": "w8l6pzpUDURTyy9L",
+  "name": "05_Voice_Generator",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "scene",
+              "type": "number"
+            },
+            {
+              "name": "narration"
+            },
+            {
+              "name": "narration_en"
+            },
+            {
+              "name": "sfx_cue"
+            },
+            {
+              "name": "image_file"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -768,
+        -432
+      ],
+      "id": "63bbf919-1409-45ef-aa64-246f6de3f6af",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/tts",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}"
+            },
+            {
+              "name": "scene",
+              "value": "={{$json.scene}}"
+            },
+            {
+              "name": "narration",
+              "value": "={{$json.narration}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -512,
+        -576
+      ],
+      "id": "b4ffa909-2cfd-4d30-8811-4a7f997eca35",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a289359-31ba-4e03-9542-f0d578a34928",
+              "name": "episode_id",
+              "value": "={{$('When Executed by Another Workflow').first().json.episode_id}}",
+              "type": "string"
+            },
+            {
+              "id": "cba18105-1fa6-478d-8430-f83886395af3",
+              "name": "scene",
+              "value": "={{Number($('When Executed by Another Workflow').first().json.scene)}}",
+              "type": "number"
+            },
+            {
+              "id": "d8db045a-bd34-4042-a3a5-72560adc7351",
+              "name": "narration",
+              "value": "={{$('When Executed by Another Workflow').first().json.narration}}",
+              "type": "string"
+            },
+            {
+              "id": "8716537a-dd67-45e1-a182-529a39f7e475",
+              "name": "narration_en",
+              "value": "={{$('When Executed by Another Workflow').first().json.narration_en}}",
+              "type": "string"
+            },
+            {
+              "id": "8caa7eff-bbec-4824-aa85-081e63c3d786",
+              "name": "sfx_cue",
+              "value": "={{$('When Executed by Another Workflow').first().json.sfx_cue}}",
+              "type": "string"
+            },
+            {
+              "id": "4440ec54-2680-427d-af43-ea2c82710c98",
+              "name": "image_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.image_file}}",
+              "type": "string"
+            },
+            {
+              "id": "200e9055-4970-45aa-a960-4f011ec4cd5b",
+              "name": "voice_success",
+              "value": "={{$json.success}}",
+              "type": "boolean"
+            },
+            {
+              "id": "dd47bf49-3db3-4f78-9ced-dfcd1254cee5",
+              "name": "voice_file",
+              "value": "={{$json.file}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -272,
+        -512
+      ],
+      "id": "7f449651-ffee-4817-996d-9e8cfe9e0881",
+      "name": "Voice Output"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Voice Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "ba740395-04ee-4317-9d76-f3a2cdabcd04",
+  "activeVersionId": null,
+  "versionCounter": 247,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-27T17:54:01.721Z",
+      "createdAt": "2026-07-27T17:54:01.721Z",
+      "role": "workflow:owner",
+      "workflowId": "w8l6pzpUDURTyy9L",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

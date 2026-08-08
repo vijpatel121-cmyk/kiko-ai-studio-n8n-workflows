@@ -1,0 +1,199 @@
+{
+  "updatedAt": "2026-07-27T18:46:27.797Z",
+  "createdAt": "2026-07-27T18:39:44.115Z",
+  "id": "A2oeIglkXbOt42qK",
+  "name": "07_Thumbnail_Generator",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "f731c370-5398-44b6-93ce-260ad463cbe6",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        0
+      ],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "video_file"
+            },
+            {
+              "name": "subtitle_id_file"
+            },
+            {
+              "name": "subtitle_en_file"
+            },
+            {
+              "name": "thumbnail_template_id"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "9a0b4e6c-9832-413a-be3a-62cb0446c735",
+      "name": "Create Local Thumbnail",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/create-thumbnail",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}"
+            },
+            {
+              "name": "video_file",
+              "value": "={{$json.video_file}}"
+            },
+            {
+              "name": "thumbnail_template_id",
+              "value": "={{$json.thumbnail_template_id}}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a8544b3c-8c97-45c0-8dce-651f1c1a4085",
+      "name": "Thumbnail Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "073bf83a-6c52-43fe-ab05-f0f19f386403",
+              "name": "episode_id",
+              "value": "={{$('When Executed by Another Workflow').first().json.episode_id}}",
+              "type": "string"
+            },
+            {
+              "id": "88456350-c4c8-4fdd-9efd-b70175e44d75",
+              "name": "video_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.video_file}}",
+              "type": "string"
+            },
+            {
+              "id": "53383be5-48b6-491a-be6f-539934422a59",
+              "name": "subtitle_id_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.subtitle_id_file}}",
+              "type": "string"
+            },
+            {
+              "id": "d7731b48-d19d-41f1-acd6-5e8ce39e9462",
+              "name": "subtitle_en_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.subtitle_en_file}}",
+              "type": "string"
+            },
+            {
+              "id": "2fdc1fec-3c5d-48a3-82fc-f0afaf5e5fe1",
+              "name": "thumbnail_file",
+              "value": "={{$json.thumbnail_file}}",
+              "type": "string"
+            },
+            {
+              "id": "4667d0c1-1a0c-4df7-89de-03c8486d0b70",
+              "name": "thumbnail_success",
+              "value": "={{$json.success}}",
+              "type": "boolean"
+            },
+            {
+              "id": "ca8be843-8c44-4e75-b566-7ef2a78309e5",
+              "name": "thumbnail_mock",
+              "value": "={{$json.mock}}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Create Local Thumbnail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Local Thumbnail": {
+      "main": [
+        [
+          {
+            "node": "Thumbnail Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "d2fb4a32-dad1-4db1-832f-a0871cde94af",
+  "activeVersionId": null,
+  "versionCounter": 30,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-27T18:39:44.115Z",
+      "createdAt": "2026-07-27T18:39:44.115Z",
+      "role": "workflow:owner",
+      "workflowId": "A2oeIglkXbOt42qK",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

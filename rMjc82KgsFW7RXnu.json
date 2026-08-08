@@ -1,0 +1,233 @@
+{
+  "updatedAt": "2026-07-31T19:12:41.876Z",
+  "createdAt": "2026-07-28T16:39:00.421Z",
+  "id": "rMjc82KgsFW7RXnu",
+  "name": "09_Timeline_Generator",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item=>({json:{...item.json}}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        -240
+      ],
+      "id": "e8292b5a-b7a7-4d5a-b300-30fd0bfbfe89",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/audio-duration",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "voice_file",
+              "value": "={{$json.voice_file}}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        16,
+        -224
+      ],
+      "id": "572792d6-ef2c-46be-a43f-a2fe4d9e6fce",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "scene",
+              "type": "number"
+            },
+            {
+              "name": "narration"
+            },
+            {
+              "name": "narration_en"
+            },
+            {
+              "name": "sfx_cue"
+            },
+            {
+              "name": "image_file"
+            },
+            {
+              "name": "voice_file"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        -240
+      ],
+      "id": "a1bd4a97-b5f5-49fe-a374-ef07e912849c",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "id": "b711080f-f55d-4777-a60f-72ec8dfd263b",
+      "name": "Duration Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        -224
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7b68df57-f470-4e06-9925-26d5883a753f",
+              "name": "episode_id",
+              "value": "={{$('Code in JavaScript').first().json.episode_id}}",
+              "type": "string"
+            },
+            {
+              "id": "7d994d5d-5052-4e4e-8390-03c57e216059",
+              "name": "scene",
+              "value": "={{Number($('Code in JavaScript').first().json.scene)}}",
+              "type": "number"
+            },
+            {
+              "id": "8e48d64e-5e3c-4a50-aa81-6a0b49f67bb9",
+              "name": "narration",
+              "value": "={{$('Code in JavaScript').first().json.narration}}",
+              "type": "string"
+            },
+            {
+              "id": "c0d5c3ae-64b4-4cf9-b521-04526e5f4a84",
+              "name": "narration_en",
+              "value": "={{$('Code in JavaScript').first().json.narration_en}}",
+              "type": "string"
+            },
+            {
+              "id": "907ed6da-b7b1-49bb-bec3-40e8844c2e9d",
+              "name": "sfx_cue",
+              "value": "={{$('Code in JavaScript').first().json.sfx_cue}}",
+              "type": "string"
+            },
+            {
+              "id": "c7f3ff81-fcb6-4af2-90f6-4ad12841fef4",
+              "name": "image_file",
+              "value": "={{$('Code in JavaScript').first().json.image_file}}",
+              "type": "string"
+            },
+            {
+              "id": "7ecb62ea-8eca-4fc7-8122-5420b0329c4e",
+              "name": "voice_file",
+              "value": "={{$('Code in JavaScript').first().json.voice_file}}",
+              "type": "string"
+            },
+            {
+              "id": "5e254cad-c22e-41fe-adaa-108e4b8f74a2",
+              "name": "duration",
+              "value": "={{Number($json.duration)}}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Duration Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "1f2ba615-b492-47ad-a10a-267537b5920f",
+  "activeVersionId": null,
+  "versionCounter": 63,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-28T16:39:00.421Z",
+      "createdAt": "2026-07-28T16:39:00.421Z",
+      "role": "workflow:owner",
+      "workflowId": "rMjc82KgsFW7RXnu",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

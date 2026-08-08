@@ -1,0 +1,230 @@
+{
+  "updatedAt": "2026-07-31T22:07:31.744Z",
+  "createdAt": "2026-07-31T22:07:31.744Z",
+  "id": "KikoSfxSelect01",
+  "name": "09A_Scene_SFX_Selector",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "ac1406a3-9896-4a01-8c6f-b8b418c98498",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        0
+      ],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "scene",
+              "type": "number"
+            },
+            {
+              "name": "narration"
+            },
+            {
+              "name": "narration_en"
+            },
+            {
+              "name": "sfx_cue"
+            },
+            {
+              "name": "image_file"
+            },
+            {
+              "name": "voice_file"
+            },
+            {
+              "name": "duration",
+              "type": "number"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "4c45c9d9-5a56-42a5-a5b5-d0c1e8624558",
+      "name": "Select Licensed SFX",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/select-sfx",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}"
+            },
+            {
+              "name": "scene",
+              "value": "={{$json.scene}}"
+            },
+            {
+              "name": "sfx_cue",
+              "value": "={{$json.sfx_cue}}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "bb691905-ba64-45ea-93c2-5973804fb941",
+      "name": "SFX Selection Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7edbca75-6340-4245-b235-5be12f7166a4",
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}",
+              "type": "string"
+            },
+            {
+              "id": "b3fb5312-621a-4999-ace4-317b22b57f2e",
+              "name": "scene",
+              "value": "={{Number($json.scene)}}",
+              "type": "number"
+            },
+            {
+              "id": "3ce1f552-ba4f-4312-a774-af3cf372aa6d",
+              "name": "sfx_cue",
+              "value": "={{$json.sfx_cue}}",
+              "type": "string"
+            },
+            {
+              "id": "fd3178ef-229c-4571-8a26-063a17433181",
+              "name": "sfx_file",
+              "value": "={{$json.sfx_file}}",
+              "type": "string"
+            },
+            {
+              "id": "c3344c72-1f52-4899-bc72-1f2842ba22c8",
+              "name": "sfx_volume",
+              "value": "={{Number($json.sfx_volume)}}",
+              "type": "number"
+            },
+            {
+              "id": "7493e611-0340-457e-82b1-ea509b1993e1",
+              "name": "sfx_license",
+              "value": "={{$json.license}}",
+              "type": "string"
+            },
+            {
+              "id": "97df48ec-363d-42bd-9afa-f47939b2e3e2",
+              "name": "narration",
+              "value": "={{$('When Executed by Another Workflow').first().json.narration}}",
+              "type": "string"
+            },
+            {
+              "id": "374fc22f-16d2-445d-9471-fb90521de87f",
+              "name": "narration_en",
+              "value": "={{$('When Executed by Another Workflow').first().json.narration_en}}",
+              "type": "string"
+            },
+            {
+              "id": "994448a4-a6db-419f-aab2-d47f5b63bfd2",
+              "name": "image_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.image_file}}",
+              "type": "string"
+            },
+            {
+              "id": "4cc9b0b1-2d81-4cf7-af08-6ccddc55d7bc",
+              "name": "voice_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.voice_file}}",
+              "type": "string"
+            },
+            {
+              "id": "e0000e04-eb30-4777-bf30-eaf3301a6588",
+              "name": "duration",
+              "value": "={{Number($('When Executed by Another Workflow').first().json.duration)}}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Select Licensed SFX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Licensed SFX": {
+      "main": [
+        [
+          {
+            "node": "SFX Selection Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": null,
+  "versionId": "45b92f2f-bbe6-4921-995e-7cdc61f695fb",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-31T22:07:31.744Z",
+      "createdAt": "2026-07-31T22:07:31.744Z",
+      "role": "workflow:owner",
+      "workflowId": "KikoSfxSelect01",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

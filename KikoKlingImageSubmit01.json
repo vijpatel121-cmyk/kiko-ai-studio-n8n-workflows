@@ -1,0 +1,309 @@
+{
+  "updatedAt": "2026-08-08T14:43:40.946Z",
+  "createdAt": "2026-08-03T14:48:25.285Z",
+  "id": "KikoKlingImageSubmit01",
+  "name": "08_Kling_MCP_Image_Submit",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "scene",
+              "type": "number"
+            },
+            {
+              "name": "prompt"
+            },
+            {
+              "name": "reference_urls",
+              "type": "array"
+            },
+            {
+              "name": "model"
+            },
+            {
+              "name": "img_resolution"
+            },
+            {
+              "name": "aspect_ratio"
+            },
+            {
+              "name": "image_count",
+              "type": "number"
+            },
+            {
+              "name": "task_trace_id"
+            },
+            {
+              "name": "narration"
+            },
+            {
+              "name": "narration_en"
+            },
+            {
+              "name": "sfx_cue"
+            },
+            {
+              "name": "original_prompt"
+            },
+            {
+              "name": "base_image_prompt"
+            },
+            {
+              "name": "optimized_image_prompt"
+            }
+          ]
+        }
+      },
+      "id": "f0395dda-63aa-4a48-a87a-505dfd69e23b",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -608,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $input.first().json;\n\nif (!d.episode_id) {\n  throw new Error('episode_id is required');\n}\n\nif (!Number.isInteger(Number(d.scene)) || Number(d.scene) < 1) {\n  throw new Error('scene must be a positive integer');\n}\n\nif (typeof d.prompt !== 'string' || !d.prompt.trim()) {\n  throw new Error('prompt is required');\n}\n\nconst prompt = d.prompt.trim();\nconst originalPrompt =\n  typeof d.original_prompt === 'string' && d.original_prompt.trim()\n    ? d.original_prompt.trim()\n    : typeof d.base_image_prompt === 'string' && d.base_image_prompt.trim()\n      ? d.base_image_prompt.trim()\n      : prompt;\nconst optimizedPrompt =\n  typeof d.optimized_image_prompt === 'string' && d.optimized_image_prompt.trim()\n    ? d.optimized_image_prompt.trim()\n    : prompt;\n\nconst refs = Array.isArray(d.reference_urls)\n  ? d.reference_urls.filter(Boolean)\n  : [];\n\nif (refs.length > 10) {\n  throw new Error('reference_urls supports at most 10 images');\n}\n\nfor (const url of refs) {\n  if (!/^https:\\/\\//i.test(url)) {\n    throw new Error('Every reference_urls item must be an HTTPS Kling/upload URL');\n  }\n}\n\nconst trace =\n  d.task_trace_id ||\n  (() => {\n    const ts = Date.now().toString(16).padStart(12, '0');\n    const r = (n) => Array.from({ length: n }, () => Math.floor(Math.random() * 16).toString(16)).join('');\n    return `${ts.slice(0, 8)}-${ts.slice(8)}-7${r(3)}-${['8', '9', 'a', 'b'][Math.floor(Math.random() * 4)]}${r(3)}-${r(12)}`;\n  })();\n\nconst model = d.model || 'kling-image-v3_0_omni';\nconst aspectRatio = d.aspect_ratio || '16:9';\nconst resolution = d.img_resolution || '1k';\nconst imageCount = Number(d.image_count || 1);\nconst klingTool = refs.length ? 'image_to_image' : 'text_to_image';\n\nconst mcpRequest = {\n  prompt,\n  model,\n  aspect_ratio: aspectRatio,\n  resolution,\n  image_count: imageCount,\n  task_trace_id: trace,\n};\n\nif (refs.length) {\n  mcpRequest.reference_urls = refs;\n}\n\nreturn [{\n  json: {\n    ...d,\n    scene: Number(d.scene),\n    prompt,\n    original_prompt: originalPrompt,\n    base_image_prompt: originalPrompt,\n    optimized_image_prompt: optimizedPrompt,\n    image_prompt: prompt,\n    image_count: imageCount,\n    provider: 'kling_mcp',\n    kling_tool: klingTool,\n    task_trace_id: trace,\n    mcp_request: mcpRequest,\n  },\n}];"
+      },
+      "id": "420ff93b-b4fb-4f02-979b-ac6a0c9d6e8c",
+      "name": "Normalize Image Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://kling.ai/mcp",
+        "authentication": "mcpOAuth2Api",
+        "tool": {
+          "__rl": true,
+          "value": "text_to_image",
+          "mode": "list",
+          "cachedResultName": "text_to_image"
+        },
+        "parameters": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "arguments": "=[\n  { \"name\": \"prompt\", \"value\": \"{{ $json.mcp_request.prompt }}\" },\n  { \"name\": \"img_resolution\", \"value\": \"{{ $json.mcp_request.resolution }}\" },\n  { \"name\": \"aspect_ratio\", \"value\": \"{{ $json.mcp_request.aspect_ratio }}\" },\n  { \"name\": \"imageCount\", \"value\": {{ $json.mcp_request.image_count }} }\n]",
+            "model": "={{ $json.mcp_request.model }}",
+            "taskTraceId": "={{ $json.mcp_request.task_trace_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "model",
+              "displayName": "model",
+              "defaultMatch": false,
+              "required": false,
+              "display": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "arguments",
+              "displayName": "arguments",
+              "defaultMatch": false,
+              "required": false,
+              "display": true,
+              "type": "array",
+              "defaultValue": "[\n  {\n    \"name\": \"string\",\n    \"value\": \"string\"\n  }\n]",
+              "removed": false
+            },
+            {
+              "id": "inputs",
+              "displayName": "inputs",
+              "defaultMatch": false,
+              "required": false,
+              "display": true,
+              "type": "array",
+              "defaultValue": "[\n  {\n    \"inputType\": \"string\",\n    \"name\": \"string\",\n    \"url\": \"string\"\n  }\n]",
+              "removed": true
+            },
+            {
+              "id": "rationale",
+              "displayName": "rationale",
+              "defaultMatch": false,
+              "required": false,
+              "display": true,
+              "type": "string",
+              "removed": true
+            },
+            {
+              "id": "taskTraceId",
+              "displayName": "taskTraceId",
+              "defaultMatch": false,
+              "required": false,
+              "display": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "convertToBinary": true,
+          "timeout": 120000
+        }
+      },
+      "id": "ee370c6e-156b-42bb-9db1-c0427f778c7a",
+      "name": "Submit Kling Image",
+      "type": "@n8n/n8n-nodes-langchain.mcpClient",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        -80
+      ],
+      "credentials": {
+        "mcpOAuth2Api": {
+          "id": "KikoKlingMcpOAuth01",
+          "name": "Kling MCP OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "debug-prompt",
+              "name": "debug_prompt",
+              "value": "={{ $('Normalize Image Request').first().json.prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "debug-original-prompt",
+              "name": "debug_original_prompt",
+              "value": "={{ $('Normalize Image Request').first().json.original_prompt }}",
+              "type": "string"
+            },
+            {
+              "id": "debug-optimized-prompt",
+              "name": "debug_optimized_image_prompt",
+              "value": "={{ $('Normalize Image Request').first().json.optimized_image_prompt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -208,
+        -128
+      ],
+      "id": "4d631a79-9632-4056-88fa-cb070197ed8d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json;\nconst base = $('Normalize Image Request').first().json;\nconst payload = raw.structuredContent ?? raw.content?.find(x => x.type === 'text')?.text ?? raw;\nfunction find(o, names) {\n  if (!o || typeof o !== 'object') return undefined;\n  for (const [k, v] of Object.entries(o)) {\n    if (names.includes(k) && typeof v === 'string' && v) return v;\n  }\n  for (const v of Object.values(o)) {\n    const hit = find(v, names);\n    if (hit) return hit;\n  }\n}\nconst generation_id = find(payload, ['generation_id', 'generationId']);\nif (!generation_id) throw new Error('Kling image submission did not return generation_id');\nreturn [{\n  json: {\n    provider: 'kling_mcp',\n    asset_type: 'image',\n    episode_id: base.episode_id,\n    scene: base.scene,\n    narration: base.narration,\n    narration_en: base.narration_en,\n    sfx_cue: base.sfx_cue,\n    prompt: base.prompt,\n    image_prompt: base.image_prompt,\n    original_prompt: base.original_prompt,\n    base_image_prompt: base.base_image_prompt,\n    optimized_image_prompt: base.optimized_image_prompt,\n    generation_id,\n    task_trace_id: base.task_trace_id,\n    status: 'submitted',\n    submitted_at: new Date().toISOString(),\n  },\n}];"
+      },
+      "id": "c1a45d6e-9db3-4551-9dd5-d2f12695375b",
+      "name": "Image Submission Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -96
+      ]
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Normalize Image Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Image Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit Kling Image": {
+      "main": [
+        [
+          {
+            "node": "Image Submission Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Submit Kling Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "5424787c-88d3-482b-be80-8eb7dd64a4e7",
+  "activeVersionId": null,
+  "versionCounter": 60,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-03T14:48:25.285Z",
+      "createdAt": "2026-08-03T14:48:25.285Z",
+      "role": "workflow:owner",
+      "workflowId": "KikoKlingImageSubmit01",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": null
+}

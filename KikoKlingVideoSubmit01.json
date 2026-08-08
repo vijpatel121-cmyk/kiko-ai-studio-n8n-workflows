@@ -1,0 +1,188 @@
+{
+  "updatedAt": "2026-08-03T14:48:36.659Z",
+  "createdAt": "2026-08-03T14:48:36.659Z",
+  "id": "KikoKlingVideoSubmit01",
+  "name": "08B_Kling_MCP_Scene_Video_Submit",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "scene",
+              "type": "number"
+            },
+            {
+              "name": "prompt"
+            },
+            {
+              "name": "image_url"
+            },
+            {
+              "name": "model"
+            },
+            {
+              "name": "duration",
+              "type": "number"
+            },
+            {
+              "name": "resolution"
+            },
+            {
+              "name": "aspect_ratio"
+            },
+            {
+              "name": "task_trace_id"
+            }
+          ]
+        }
+      },
+      "id": "75664bcd-127d-4292-883e-b041e49bf440",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d=$input.first().json;\nif(!d.episode_id) throw new Error('episode_id is required');\nif(!Number.isInteger(Number(d.scene)) || Number(d.scene)<1) throw new Error('scene must be a positive integer');\nif(typeof d.prompt!=='string' || !d.prompt.trim()) throw new Error('prompt is required');\nif(!d.image_url || !/^https:\\/\\//i.test(d.image_url)) throw new Error('image_url must be an HTTPS Kling generation/upload URL');\nconst duration=Number(d.duration || 5);\nif(!Number.isInteger(duration)||duration<3||duration>15) throw new Error('duration must be an integer from 3 to 15 seconds');\nconst trace=d.task_trace_id || (()=>{const ts=Date.now().toString(16).padStart(12,'0');const r=n=>Array.from({length:n},()=>Math.floor(Math.random()*16).toString(16)).join('');return `${ts.slice(0,8)}-${ts.slice(8)}-7${r(3)}-${['8','9','a','b'][Math.floor(Math.random()*4)]}${r(3)}-${r(12)}`;})();\nconst mcp_request={model:d.model || 'kling-video-v3_0_turbo',arguments:[{name:'prompt',value:d.prompt.trim()},{name:'duration',value:String(duration)},{name:'resolution',value:String(d.resolution || '1080p')},{name:'imageCount',value:'1'}],inputs:[{name:'first_image',inputType:'URL',url:d.image_url}],rationale:`Animate Kiko episode ${d.episode_id} scene ${d.scene} from its approved scene image for local assembly.`,taskTraceId:trace};\nreturn [{json:{...d,scene:Number(d.scene),duration,provider:'kling_mcp',task_trace_id:trace,mcp_request}}];"
+      },
+      "id": "ca9f939e-6800-4bdf-858e-9b43b9ce90bc",
+      "name": "Normalize Video Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "serverTransport": "httpStreamable",
+        "endpointUrl": "https://kling.ai/mcp",
+        "authentication": "mcpOAuth2Api",
+        "tool": {
+          "__rl": true,
+          "value": "image_to_video",
+          "mode": "list",
+          "cachedResultName": "image_to_video"
+        },
+        "inputMode": "json",
+        "jsonInput": "={{ JSON.stringify($json.mcp_request) }}",
+        "options": {
+          "convertToBinary": true,
+          "timeout": 120000
+        }
+      },
+      "id": "0bfe748d-cd33-446c-a3db-377a45c50bdc",
+      "name": "Submit Kling Scene Video",
+      "type": "@n8n/n8n-nodes-langchain.mcpClient",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "mcpOAuth2Api": {
+          "id": "KikoKlingMcpOAuth01",
+          "name": "Kling MCP OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw=$input.first().json;\nconst base=$('Normalize Video Request').first().json;\nconst payload=raw.structuredContent ?? raw.content?.find(x=>x.type==='text')?.text ?? raw;\nfunction find(o,names){if(!o||typeof o!=='object')return undefined;for(const [k,v] of Object.entries(o)){if(names.includes(k)&&typeof v==='string'&&v)return v;}for(const v of Object.values(o)){const hit=find(v,names);if(hit)return hit;}}\nconst generation_id=find(payload,['generation_id','generationId']);\nif(!generation_id) throw new Error('Kling video submission did not return generation_id');\nreturn [{json:{provider:'kling_mcp',asset_type:'scene_video',episode_id:base.episode_id,scene:base.scene,duration:base.duration,generation_id,task_trace_id:base.task_trace_id,status:'submitted',submitted_at:new Date().toISOString()}}];"
+      },
+      "id": "4eb697b2-5f7b-45d6-ad14-4adf4e0ec3aa",
+      "name": "Video Submission Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Normalize Video Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Video Request": {
+      "main": [
+        [
+          {
+            "node": "Submit Kling Scene Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit Kling Scene Video": {
+      "main": [
+        [
+          {
+            "node": "Video Submission Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": null,
+  "versionId": "d89c2e81-1453-41b1-8b9c-23a8236ee492",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-03T14:48:36.659Z",
+      "createdAt": "2026-08-03T14:48:36.659Z",
+      "role": "workflow:owner",
+      "workflowId": "KikoKlingVideoSubmit01",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

@@ -1,0 +1,329 @@
+{
+  "updatedAt": "2026-08-03T15:31:11.000Z",
+  "createdAt": "2026-08-02T12:00:40.620Z",
+  "id": "V7FWvvv35GB3l5rm",
+  "name": "09_HuggingFace_Asset_Trial_Generator",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "e5a81134-be81-4953-afde-7ad28869fedd",
+      "name": "When clicking 'Execute workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "asset-type",
+              "name": "asset_type",
+              "value": "background",
+              "type": "string"
+            },
+            {
+              "id": "asset-id",
+              "name": "asset_id",
+              "value": "village_park",
+              "type": "string"
+            },
+            {
+              "id": "asset-label",
+              "name": "asset_label",
+              "value": "village-park-day",
+              "type": "string"
+            },
+            {
+              "id": "time",
+              "name": "time_variant",
+              "value": "day",
+              "type": "string"
+            },
+            {
+              "id": "prompt",
+              "name": "prompt_override",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "c5733ea7-fc37-4b86-b0ba-43878e23a9ab",
+      "name": "Edit Trial Asset Request",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "C:/Users/pc-11/Documents/New project/libraries/prompt-library.json",
+        "options": {
+          "dataPropertyName": "prompt_library"
+        }
+      },
+      "id": "c817a258-564f-4fdb-a639-e59a12a16c4f",
+      "name": "Read Prompt Library",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        432,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "C:/Users/pc-11/Documents/New project/background-bible.json",
+        "options": {
+          "dataPropertyName": "background_bible"
+        }
+      },
+      "id": "47c6c7dd-5fca-4f4e-be67-1f3ba3a60393",
+      "name": "Read Background Bible",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "C:/Users/pc-11/Documents/New project/character-bible.json",
+        "options": {
+          "dataPropertyName": "character_bible"
+        }
+      },
+      "id": "2a127277-a73c-443f-a107-312513812929",
+      "name": "Read Character Bible",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        864,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const readJson = (nodeName, property) => JSON.parse(Buffer.from($(nodeName).first().binary[property].data, 'base64').toString('utf8'));\nconst request = $('Edit Trial Asset Request').first().json;\nconst prompts = readJson('Read Prompt Library', 'prompt_library').prompts;\nconst backgrounds = readJson('Read Background Bible', 'background_bible');\nconst characters = readJson('Read Character Bible', 'character_bible');\nconst type = String(request.asset_type || '').toLowerCase();\nif (!['background', 'character'].includes(type)) throw new Error('asset_type must be background or character');\nconst label = String(request.asset_label || request.asset_id || 'trial-asset').replace(/[^a-z0-9_-]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase();\nlet prompt;\nlet outputFolder;\nif (type === 'background') {\n  const location = backgrounds.locations.find(x => x.id === request.asset_id);\n  if (!location) throw new Error('Unknown background asset_id: ' + request.asset_id);\n  const time = backgrounds.time_variants[request.time_variant] || backgrounds.time_variants.day;\n  prompt = `${backgrounds.visual_style.rendering}, ${backgrounds.visual_style.lighting}, ${backgrounds.visual_style.composition}. Create a clean reusable background plate only: ${location.purpose}. Locked features: ${location.locked_features.join(', ')}. Time: ${time}. ${prompts.background_lock} ${prompts.image_negative}`;\n  outputFolder = 'C:\\\\Users\\\\pc-11\\\\Desktop\\\\Kiko AI Studio\\\\Assets\\\\images';\n} else {\n  const character = characters.characters.find(x => x.id === request.asset_id);\n  if (!character) throw new Error('Unknown character asset_id: ' + request.asset_id);\n  prompt = `${characters.visual_style.medium}, ${characters.visual_style.rendering}. Create one full-body character turnaround/reference image on a plain soft-cream studio background: ${character.locked_description}. Neutral friendly pose, facing camera, child-safe, no props. ${prompts.character_lock} ${prompts.image_negative}`;\n  outputFolder = 'C:\\\\Users\\\\pc-11\\\\Desktop\\\\Kiko AI Studio\\\\Assets\\\\characters';\n}\nif (String(request.prompt_override || '').trim()) prompt += ` Additional request: ${request.prompt_override.trim()}`;\nconst fileName = `${type}_${label}.png`;\nreturn [{ json: { ...request, generated_prompt: prompt, file_name: fileName, output_path: `${outputFolder}\\\\${fileName}`, asset_trial: true } }];"
+      },
+      "id": "58e3af96-900a-4c3b-891f-c62024c934bb",
+      "name": "Build Asset Prompt and Save Path",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://router.huggingface.co/hf-inference/models/black-forest-labs/FLUX.1-schnell",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { inputs: $('Build Asset Prompt and Save Path').first().json.generated_prompt, parameters: { width: 1024, height: 1024, num_inference_steps: 4 } } }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "7ae92ec9-51c0-4f04-934a-356e66815b5f",
+      "name": "Generate Trial Asset (Hugging Face)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1376,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "taKEdvWwcznRhvrf",
+          "name": "Hugging Face Inference API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{$('Build Asset Prompt and Save Path').first().json.output_path}}",
+        "options": {}
+      },
+      "id": "cfbb9537-10e8-4c5b-a6ff-83079fdb009f",
+      "name": "Save Asset to Existing Kiko Folder",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        1632,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $('Build Asset Prompt and Save Path').first().json;\nreturn [{ json: { ...d, success: true, image_file: d.output_path } }];"
+      },
+      "id": "0aa06e15-7a1e-4adc-9312-a1c8c46577c6",
+      "name": "Trial Asset Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1888,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "When clicking 'Execute workflow'": {
+      "main": [
+        [
+          {
+            "node": "Edit Trial Asset Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Trial Asset Request": {
+      "main": [
+        [
+          {
+            "node": "Read Prompt Library",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Prompt Library": {
+      "main": [
+        [
+          {
+            "node": "Read Background Bible",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Background Bible": {
+      "main": [
+        [
+          {
+            "node": "Read Character Bible",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Character Bible": {
+      "main": [
+        [
+          {
+            "node": "Build Asset Prompt and Save Path",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Asset Prompt and Save Path": {
+      "main": [
+        [
+          {
+            "node": "Generate Trial Asset (Hugging Face)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Trial Asset (Hugging Face)": {
+      "main": [
+        [
+          {
+            "node": "Save Asset to Existing Kiko Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Asset to Existing Kiko Folder": {
+      "main": [
+        [
+          {
+            "node": "Trial Asset Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "34df7b94-6004-46a4-a016-3a8b1869f3bd",
+  "activeVersionId": null,
+  "versionCounter": 2,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-02T12:00:40.621Z",
+      "createdAt": "2026-08-02T12:00:40.621Z",
+      "role": "workflow:owner",
+      "workflowId": "V7FWvvv35GB3l5rm",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

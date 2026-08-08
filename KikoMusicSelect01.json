@@ -1,0 +1,189 @@
+{
+  "updatedAt": "2026-07-31T21:56:02.660Z",
+  "createdAt": "2026-07-31T21:56:02.660Z",
+  "id": "KikoMusicSelect01",
+  "name": "10A_Music_Selector",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "eec67798-54a2-4678-8398-b06907f4dae5",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        0
+      ],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "music_mood"
+            },
+            {
+              "name": "video_file"
+            },
+            {
+              "name": "subtitle_scenes",
+              "type": "array"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "c33e8b6b-b986-4d45-be39-6730e9a18e7d",
+      "name": "Select Licensed Music",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/select-music",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}"
+            },
+            {
+              "name": "music_mood",
+              "value": "={{$json.music_mood}}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "46b10d4f-c847-4cb0-b498-75bd2e96a718",
+      "name": "Music Selection Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d37c9216-8a12-467c-b85e-48062ff414f5",
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}",
+              "type": "string"
+            },
+            {
+              "id": "bd7b309d-51f3-4632-9495-5d875dd9c453",
+              "name": "music_mood",
+              "value": "={{$json.music_mood}}",
+              "type": "string"
+            },
+            {
+              "id": "6f708513-e363-4bac-b638-00689612565f",
+              "name": "music_file",
+              "value": "={{$json.music_file}}",
+              "type": "string"
+            },
+            {
+              "id": "d32461c8-27a3-4f1c-b824-76857d45769d",
+              "name": "music_volume",
+              "value": "={{Number($json.music_volume)}}",
+              "type": "number"
+            },
+            {
+              "id": "1c330d81-c0f1-4f16-bee3-5e77e5733062",
+              "name": "music_license",
+              "value": "={{$json.license}}",
+              "type": "string"
+            },
+            {
+              "id": "0277830f-6bc4-4861-8b2c-d228d85b9672",
+              "name": "video_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.video_file}}",
+              "type": "string"
+            },
+            {
+              "id": "fcecd0d5-93d5-480d-80bb-c5966bf0f87f",
+              "name": "subtitle_scenes",
+              "value": "={{$('When Executed by Another Workflow').first().json.subtitle_scenes}}",
+              "type": "array"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Select Licensed Music",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Licensed Music": {
+      "main": [
+        [
+          {
+            "node": "Music Selection Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": null,
+  "versionId": "ace3b0d3-9c70-49df-a752-cd06f0c3af25",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-31T21:56:02.663Z",
+      "createdAt": "2026-07-31T21:56:02.663Z",
+      "role": "workflow:owner",
+      "workflowId": "KikoMusicSelect01",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

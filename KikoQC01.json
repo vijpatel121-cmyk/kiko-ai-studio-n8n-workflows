@@ -1,0 +1,132 @@
+{
+  "updatedAt": "2026-07-31T23:48:15.081Z",
+  "createdAt": "2026-07-31T23:48:15.081Z",
+  "id": "KikoQC01",
+  "name": "14_Quality_Control",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "a40120aa-b390-4727-a8ef-44f4e8948dcf",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        0
+      ],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "video_file"
+            },
+            {
+              "name": "thumbnail_file"
+            },
+            {
+              "name": "subtitle_id_file"
+            },
+            {
+              "name": "subtitle_en_file"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "a2e86815-6486-4fd3-b05f-6ca5c8af47ba",
+      "name": "Verify Final Delivery Assets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/quality-control",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}"
+            },
+            {
+              "name": "video_file",
+              "value": "={{$json.video_file}}"
+            },
+            {
+              "name": "thumbnail_file",
+              "value": "={{$json.thumbnail_file}}"
+            },
+            {
+              "name": "subtitle_id_file",
+              "value": "={{$json.subtitle_id_file}}"
+            },
+            {
+              "name": "subtitle_en_file",
+              "value": "={{$json.subtitle_en_file}}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Verify Final Delivery Assets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": null,
+  "versionId": "66cd7924-b116-4c65-a32b-68d7280edbc6",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-31T23:48:15.081Z",
+      "createdAt": "2026-07-31T23:48:15.081Z",
+      "role": "workflow:owner",
+      "workflowId": "KikoQC01",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

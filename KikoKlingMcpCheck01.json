@@ -1,0 +1,175 @@
+{
+  "updatedAt": "2026-08-03T15:22:44.731Z",
+  "createdAt": "2026-08-03T14:40:32.776Z",
+  "id": "KikoKlingMcpCheck01",
+  "name": "08_Kling_MCP_Connection_Check",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "b7e26516-8c57-4d21-9137-10a55fe8f30a",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -528,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://kling.ai/mcp",
+        "authentication": "mcpOAuth2Api",
+        "tool": {
+          "__rl": true,
+          "value": "who_am_i",
+          "mode": "list",
+          "cachedResultName": "who_am_i"
+        },
+        "inputMode": "json",
+        "jsonInput": "{}",
+        "options": {
+          "convertToBinary": true,
+          "timeout": 60000
+        }
+      },
+      "id": "34b087bb-7683-4fc0-87ee-9316aa64a1bf",
+      "name": "Kling Identity",
+      "type": "@n8n/n8n-nodes-langchain.mcpClient",
+      "typeVersion": 1.1,
+      "position": [
+        -288,
+        0
+      ],
+      "credentials": {
+        "mcpOAuth2Api": {
+          "id": "KikoKlingMcpOAuth01",
+          "name": "Kling MCP OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://kling.ai/mcp",
+        "authentication": "mcpOAuth2Api",
+        "tool": {
+          "__rl": true,
+          "value": "query_membership_and_credits",
+          "mode": "list",
+          "cachedResultName": "query_membership_and_credits"
+        },
+        "inputMode": "json",
+        "jsonInput": "{}",
+        "options": {
+          "convertToBinary": true,
+          "timeout": 60000
+        }
+      },
+      "id": "0cb98510-4d8f-4baa-91d2-9ca8ff04f643",
+      "name": "Kling Credit Check",
+      "type": "@n8n/n8n-nodes-langchain.mcpClient",
+      "typeVersion": 1.1,
+      "position": [
+        -48,
+        0
+      ],
+      "credentials": {
+        "mcpOAuth2Api": {
+          "id": "KikoKlingMcpOAuth01",
+          "name": "Kling MCP OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const identity = $('Kling Identity').first().json;\nconst credits = $('Kling Credit Check').first().json;\nreturn [{ json: {\n  provider: 'kling_mcp',\n  endpoint: 'https://kling.ai/mcp',\n  authenticated: true,\n  identity,\n  credits,\n  checked_at: new Date().toISOString()\n} }];"
+      },
+      "id": "4523aaeb-9731-4aa4-a1ba-153119dd9f56",
+      "name": "Connection Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Kling Identity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kling Identity": {
+      "main": [
+        [
+          {
+            "node": "Kling Credit Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kling Credit Check": {
+      "main": [
+        [
+          {
+            "node": "Connection Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "0b2279bd-c80f-4478-9ba2-ce0676c169d3",
+  "activeVersionId": null,
+  "versionCounter": 2,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-03T14:40:32.776Z",
+      "createdAt": "2026-08-03T14:40:32.776Z",
+      "role": "workflow:owner",
+      "workflowId": "KikoKlingMcpCheck01",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

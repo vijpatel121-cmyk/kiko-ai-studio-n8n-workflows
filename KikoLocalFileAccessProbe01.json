@@ -1,0 +1,112 @@
+{
+  "updatedAt": "2026-08-08T14:09:22.587Z",
+  "createdAt": "2026-08-08T14:09:22.587Z",
+  "id": "KikoLocalFileAccessProbe01",
+  "name": "Kiko Local File Access Probe",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b8540d56-c71d-4e95-9729-0ef5ea171fbb",
+      "name": "When clicking Execute workflow",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "C:\\Users\\pc-11\\Desktop\\Kiko AI Studio\\Assets\\images\\KIKO-20260802-103157_scene_01.png",
+        "options": {}
+      },
+      "id": "64b930b0-8a33-48a4-af9b-52965733f3c4",
+      "name": "Read Existing Kiko Image",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "C:\\Users\\pc-11\\Desktop\\Kiko AI Studio\\Temp\\n8n_file_access_probe.png",
+        "options": {}
+      },
+      "id": "839f9ce1-9c28-4dab-84c1-968301c9c623",
+      "name": "Write Kiko Image Probe",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "When clicking Execute workflow": {
+      "main": [
+        [
+          {
+            "node": "Read Existing Kiko Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Existing Kiko Image": {
+      "main": [
+        [
+          {
+            "node": "Write Kiko Image Probe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": null,
+  "versionId": "bc0332f1-abae-4ff8-94df-f7d3f4705ae2",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-08T14:09:22.591Z",
+      "createdAt": "2026-08-08T14:09:22.591Z",
+      "role": "workflow:owner",
+      "workflowId": "KikoLocalFileAccessProbe01",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

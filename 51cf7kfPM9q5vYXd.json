@@ -1,0 +1,240 @@
+{
+  "updatedAt": "2026-07-31T19:20:48.999Z",
+  "createdAt": "2026-07-28T16:52:37.673Z",
+  "id": "51cf7kfPM9q5vYXd",
+  "name": "01_Story_Generator",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5e089e59-9085-48ab-8ad1-cd4838523e70",
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}",
+              "type": "string"
+            },
+            {
+              "id": "74259e59-06b5-4aaf-ad67-48c8a803524c",
+              "name": "theme",
+              "value": "={{$json.theme}}",
+              "type": "string"
+            },
+            {
+              "id": "3fa7a2c9-9447-4cf9-acbd-17aed5b22ba3",
+              "name": "target_age",
+              "value": "={{Number($json.target_age)}}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -656,
+        -592
+      ],
+      "id": "adf5e2b7-aa9d-4ef6-9973-332a9508e145",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-flash-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-flash-latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Create one safe, cheerful Indonesian children's story about {{$('Edit Fields').first().json.theme}} for age {{$('Edit Fields').first().json.target_age}}.\nReturn ONLY valid JSON with this exact shape:\n{\"title\":\"...\",\"music_mood\":\"happy\",\"scenes\":[{\"scene_number\":1,\"location_id\":\"playground\",\"image_prompt\":\"English environment and action prompt\",\"narration\":\"Bahasa Indonesia narration\",\"narration_en\":\"Natural English translation\",\"sfx_cue\":\"none\",\"characters\":[{\"character_id\":\"kiko\",\"expression\":\"happy\",\"pose\":\"waving\",\"action\":\"greets his friends\",\"position\":\"center\"}]}]}\nSelected reusable story template: {{JSON.stringify($json.story_template)}}.\nCharacter memory: {{JSON.stringify($json.character_memory)}}.\nUse these prompt rules: {{JSON.stringify($json.prompts)}}.\nUse exactly one music_mood from: happy, playful, adventure, curious, calm, gentle, celebration. For every scene use exactly one recurring location_id from: kiko_home_living_room, kiko_bedroom, classroom, playground, neighborhood_street, village_park, gentle_forest. Keep a location unchanged across consecutive scenes unless the story clearly moves. For every scene use exactly one restrained sfx_cue from: none, footsteps_grass, footsteps_wood, footsteps_concrete, soft_bell, light_impact, click, switch. Use none unless the effect is clearly visible in the scene. Use 4-6 scenes and only these character IDs: kiko, lala, bimo, nara, toto. Use 1-3 characters per scene. Allowed expressions: happy, excited, curious, surprised, worried, sad, thinking, laughing, sleeping, child_safe_angry. Allowed poses: neutral, waving, pointing, running, helping, celebrating, listening, sitting, thinking, sleeping. Keep the cast and locations consistent, use natural Bahasa Indonesia, short sentences, accurate child-friendly English translations, and positive values. No Markdown."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        -464
+      ],
+      "id": "c4d4a86f-825c-488b-a9d9-0daa567b8b3c",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "31BAMtqCrg6tfTbf",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.content?.parts?.[0]?.text ?? '';\nconst clean = raw.replace(/^\\s*\\x60\\x60\\x60(?:json)?/i, '').replace(/\\x60\\x60\\x60\\s*$/i, '').trim();\nconst story = JSON.parse(clean);\nconst moods=new Set(['happy','playful','adventure','curious','calm','gentle','celebration']);\nif (!story.title || !moods.has(story.music_mood) || !Array.isArray(story.scenes) || story.scenes.length === 0) throw new Error('Gemini returned an invalid story schema');\nfor (const [index, scene] of story.scenes.entries()) {\n  if (!scene.location_id || !scene.image_prompt || !scene.narration || !scene.narration_en || !Array.isArray(scene.characters) || !scene.characters.length) throw new Error('Scene ' + (index + 1) + ' is incomplete');\n  const locations=new Set(['kiko_home_living_room','kiko_bedroom','classroom','playground','neighborhood_street','village_park','gentle_forest']); if(!locations.has(scene.location_id)) throw new Error('Scene '+(index+1)+' has invalid location_id');\n  const sfx=new Set(['none','footsteps_grass','footsteps_wood','footsteps_concrete','soft_bell','light_impact','click','switch']); if(!sfx.has(scene.sfx_cue)) throw new Error('Scene '+(index+1)+' has invalid sfx_cue');\n  const ids=new Set(['kiko','lala','bimo','nara','toto']); const expressions=new Set(['happy','excited','curious','surprised','worried','sad','thinking','laughing','sleeping','child_safe_angry']); const poses=new Set(['neutral','waving','pointing','running','helping','celebrating','listening','sitting','thinking','sleeping']);\n  for(const c of scene.characters){if(!ids.has(c.character_id)||!expressions.has(c.expression)||!poses.has(c.pose)) throw new Error('Scene '+(index+1)+' has invalid character direction');}\n  scene.scene_number = Number(scene.scene_number ?? index + 1);\n}\nconst input = $('Edit Fields').first().json;\nconst libraries=$('Select Reusable Libraries').first().json;\nreturn [{json:{episode_id:input.episode_id,theme:input.theme,target_age:input.target_age,language:'id',title:story.title,music_mood:story.music_mood,story_template:libraries.story_template,animation_preset:libraries.animation_preset,thumbnail_template:libraries.thumbnail_template,scenes:story.scenes}}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        -352
+      ],
+      "id": "9d2f7189-48a5-4f3b-8b49-614c047d0aa5",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "episode_id"
+            },
+            {
+              "name": "theme"
+            },
+            {
+              "name": "target_age"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -752,
+        -416
+      ],
+      "id": "c92326db-8f95-4791-80ef-6a98705d2700",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "id": "fa3e6d18-d6e2-4fbe-b582-5a0368f811c7",
+      "name": "Select Reusable Libraries",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -120,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/library-context",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "theme",
+              "value": "={{$json.theme}}"
+            },
+            {
+              "name": "scene",
+              "value": 1
+            },
+            {
+              "name": "character_count",
+              "value": 2
+            }
+          ]
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Select Reusable Libraries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Reusable Libraries": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "2effb7f1-807a-440c-99c6-73456dc58b19",
+  "activeVersionId": null,
+  "versionCounter": 65,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-28T16:52:37.674Z",
+      "createdAt": "2026-07-28T16:52:37.674Z",
+      "role": "workflow:owner",
+      "workflowId": "51cf7kfPM9q5vYXd",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

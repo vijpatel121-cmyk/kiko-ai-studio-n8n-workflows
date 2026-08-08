@@ -1,0 +1,165 @@
+{
+  "updatedAt": "2026-08-03T14:48:45.938Z",
+  "createdAt": "2026-08-03T14:48:45.938Z",
+  "id": "KikoKlingTaskStatus01",
+  "name": "08C_Kling_MCP_Task_Status",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "generation_id"
+            },
+            {
+              "name": "task_trace_id"
+            }
+          ]
+        }
+      },
+      "id": "5014e282-1893-4076-a374-80c415a2bdd8",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -360,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d=$input.first().json;if(!d.generation_id)throw new Error('generation_id is required');return [{json:{generation_id:String(d.generation_id),task_trace_id:d.task_trace_id || undefined,mcp_request:{generationId:String(d.generation_id),...(d.task_trace_id?{taskTraceId:d.task_trace_id}:{})}}}];"
+      },
+      "id": "2d47a365-1955-4111-8372-244c0887e620",
+      "name": "Normalize Status Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -120,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "serverTransport": "httpStreamable",
+        "endpointUrl": "https://kling.ai/mcp",
+        "authentication": "mcpOAuth2Api",
+        "tool": {
+          "__rl": true,
+          "value": "query_tasks",
+          "mode": "list",
+          "cachedResultName": "query_tasks"
+        },
+        "inputMode": "json",
+        "jsonInput": "={{ JSON.stringify($json.mcp_request) }}",
+        "options": {
+          "convertToBinary": true,
+          "timeout": 60000
+        }
+      },
+      "id": "716d3ea4-f892-4844-83c8-ef37a956957a",
+      "name": "Query Kling Task",
+      "type": "@n8n/n8n-nodes-langchain.mcpClient",
+      "typeVersion": 1.1,
+      "position": [
+        120,
+        0
+      ],
+      "credentials": {
+        "mcpOAuth2Api": {
+          "id": "KikoKlingMcpOAuth01",
+          "name": "Kling MCP OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw=$input.first().json;const base=$('Normalize Status Request').first().json;const payload=raw.structuredContent ?? raw.content?.find(x=>x.type==='text')?.text ?? raw;\nconst statuses=[];const urls=[];function walk(v,k=''){if(typeof v==='string'){if(['status','state','task_status','taskStatus'].includes(k))statuses.push(v);if(/^https:\\/\\//i.test(v))urls.push(v);return;}if(Array.isArray(v)){for(const x of v)walk(x,k);return;}if(v&&typeof v==='object'){for(const [key,val] of Object.entries(v))walk(val,key);}}walk(payload);\nconst status=(statuses[0]||'unknown').toLowerCase();const done=['success','succeeded','completed','complete','finished'].some(x=>status.includes(x));const failed=['failed','error','cancelled','canceled','rejected'].some(x=>status.includes(x));\nreturn [{json:{provider:'kling_mcp',generation_id:base.generation_id,task_trace_id:base.task_trace_id,status,done,failed,result_urls:[...new Set(urls)],checked_at:new Date().toISOString(),raw:payload}}];"
+      },
+      "id": "c685fdea-9304-41fb-935c-4499a974e023",
+      "name": "Task Status Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        360,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Normalize Status Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Status Request": {
+      "main": [
+        [
+          {
+            "node": "Query Kling Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Kling Task": {
+      "main": [
+        [
+          {
+            "node": "Task Status Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": null,
+  "versionId": "76bf56b4-ecf8-474a-9c54-f3aa4a608d97",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-03T14:48:45.938Z",
+      "createdAt": "2026-08-03T14:48:45.938Z",
+      "role": "workflow:owner",
+      "workflowId": "KikoKlingTaskStatus01",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

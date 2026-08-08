@@ -1,0 +1,2242 @@
+{
+  "updatedAt": "2026-08-08T14:43:40.946Z",
+  "createdAt": "2026-07-28T16:43:04.788Z",
+  "id": "Ni41kWKoEEfw1qiA",
+  "name": "00_Master_Workflow",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1056,
+        -736
+      ],
+      "id": "b022c647-e8f5-4596-9fcf-569ea5ff519d",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfcc1bc7-83eb-432b-9be8-4b24b990d285",
+              "name": "episode_id",
+              "value": "={{'KIKO-'+$now.toFormat('yyyyMMdd-HHmmss')}}",
+              "type": "string"
+            },
+            {
+              "id": "e6f93586-d329-4e47-b960-51c9b7939176",
+              "name": "theme",
+              "value": "Persahabatan",
+              "type": "string"
+            },
+            {
+              "id": "0109b955-0159-410b-8626-f065da2f302b",
+              "name": "target_age",
+              "value": 5,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b5712e28-3547-4afa-bdc5-0c8cbb736c5c",
+      "name": "Episode Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -832,
+        -736
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "51cf7kfPM9q5vYXd",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/51cf7kfPM9q5vYXd",
+          "cachedResultName": "01_Story_Generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "theme": "={{$json.theme}}",
+            "target_age": "={{$json.target_age}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "theme",
+              "displayName": "theme",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "target_age",
+              "displayName": "target_age",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "41ce410c-b249-42dc-ad31-aa341e466af0",
+      "name": "Story Generator",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -608,
+        -736
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "wjLGVh1sFfC7FRPA",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/wjLGVh1sFfC7FRPA",
+          "cachedResultName": "02_Scene_Splitter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "title": "={{$json.title}}",
+            "language": "={{$json.language}}",
+            "theme": "={{$json.theme}}",
+            "target_age": "={{$json.target_age}}",
+            "scenes": "={{$json.scenes}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "theme",
+              "displayName": "theme",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "target_age",
+              "displayName": "target_age",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "scenes",
+              "displayName": "scenes",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "a6a9fd58-9d27-4a17-adef-63b45690295c",
+      "name": "Scene Splitter",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -384,
+        -736
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b456b00c-aae8-498a-9a0f-b2ac6f06307e",
+      "name": "Process Scenes Sequentially",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -160,
+        -736
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "KikoCharacters01",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/KikoCharacters01",
+          "cachedResultName": "03_Character_Prompt_Optimizer"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "scene": "={{$json.scene}}",
+            "location_id": "={{$json.location_id}}",
+            "image_prompt": "={{$json.image_prompt}}",
+            "narration": "={{$json.narration}}",
+            "narration_en": "={{$json.narration_en}}",
+            "sfx_cue": "={{$json.sfx_cue}}",
+            "characters": "={{$json.characters}}",
+            "title": "={{$json.title}}",
+            "language": "={{$json.language}}",
+            "theme": "={{$json.theme}}",
+            "target_age": "={{$json.target_age}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "scene",
+              "displayName": "scene",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "location_id",
+              "displayName": "location_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "image_prompt",
+              "displayName": "image_prompt",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "narration",
+              "displayName": "narration",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "narration_en",
+              "displayName": "narration_en",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "sfx_cue",
+              "displayName": "sfx_cue",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "characters",
+              "displayName": "characters",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "theme",
+              "displayName": "theme",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "target_age",
+              "displayName": "target_age",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "6ccc6def-3224-4b8c-b37a-85bfc6195cad",
+      "name": "Character Prompt Optimizer",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        64,
+        -736
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "w8l6pzpUDURTyy9L",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/w8l6pzpUDURTyy9L",
+          "cachedResultName": "05_Voice_Generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "scene": "={{$json.scene}}",
+            "narration": "={{$json.narration}}",
+            "narration_en": "={{$json.narration_en}}",
+            "sfx_cue": "={{$json.sfx_cue}}",
+            "image_file": "={{$json.image_file}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "scene",
+              "displayName": "scene",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "narration",
+              "displayName": "narration",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "narration_en",
+              "displayName": "narration_en",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "sfx_cue",
+              "displayName": "sfx_cue",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "image_file",
+              "displayName": "image_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "d31d7c4e-f00a-42de-9baf-7cc44f1fe863",
+      "name": "Voice Generator",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2080,
+        -864
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "rMjc82KgsFW7RXnu",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/rMjc82KgsFW7RXnu",
+          "cachedResultName": "09_Timeline_Generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "scene": "={{$json.scene}}",
+            "narration": "={{$json.narration}}",
+            "narration_en": "={{$json.narration_en}}",
+            "sfx_cue": "={{$json.sfx_cue}}",
+            "image_file": "={{$json.image_file}}",
+            "voice_file": "={{$json.voice_file}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "scene",
+              "displayName": "scene",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "narration",
+              "displayName": "narration",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "narration_en",
+              "displayName": "narration_en",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "sfx_cue",
+              "displayName": "sfx_cue",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "image_file",
+              "displayName": "image_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "voice_file",
+              "displayName": "voice_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "e36d67ef-e8c1-44ff-b42f-4af7a04931a0",
+      "name": "Audio Duration",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2304,
+        -864
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "KikoSfxSelect01",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/KikoSfxSelect01",
+          "cachedResultName": "09A_Scene_SFX_Selector"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "scene": "={{$json.scene}}",
+            "narration": "={{$json.narration}}",
+            "narration_en": "={{$json.narration_en}}",
+            "sfx_cue": "={{$json.sfx_cue}}",
+            "image_file": "={{$json.image_file}}",
+            "voice_file": "={{$json.voice_file}}",
+            "duration": "={{$json.duration}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "scene",
+              "displayName": "scene",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "narration",
+              "displayName": "narration",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "narration_en",
+              "displayName": "narration_en",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "sfx_cue",
+              "displayName": "sfx_cue",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "image_file",
+              "displayName": "image_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "voice_file",
+              "displayName": "voice_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "duration",
+              "displayName": "duration",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "bc6dd81a-b7b9-4d63-a05e-2e332062ca32",
+      "name": "Select Scene SFX",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2528,
+        -864
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "XFgWYCP8axob74d0",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/XFgWYCP8axob74d0",
+          "cachedResultName": "10 - FFmpeg Renderer"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "scene": "={{$json.scene}}",
+            "animation_preset_id": "={{$('Story Generator').first().json.animation_preset.id}}",
+            "narration": "={{$json.narration}}",
+            "narration_en": "={{$json.narration_en}}",
+            "sfx_cue": "={{$json.sfx_cue}}",
+            "sfx_file": "={{$json.sfx_file}}",
+            "sfx_volume": "={{$json.sfx_volume}}",
+            "image_file": "={{$json.image_file}}",
+            "voice_file": "={{$json.voice_file}}",
+            "duration": "={{$json.duration}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "scene",
+              "displayName": "scene",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "animation_preset_id",
+              "displayName": "animation_preset_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "narration",
+              "displayName": "narration",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "narration_en",
+              "displayName": "narration_en",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "sfx_cue",
+              "displayName": "sfx_cue",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "sfx_file",
+              "displayName": "sfx_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "sfx_volume",
+              "displayName": "sfx_volume",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "image_file",
+              "displayName": "image_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "voice_file",
+              "displayName": "voice_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "duration",
+              "displayName": "duration",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "dd425110-ff03-47ee-84e7-1bc002c92a69",
+      "name": "Scene Renderer",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2752,
+        -864
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 12
+      },
+      "id": "2c7ae243-7a78-42d6-851d-fc6e097b860d",
+      "name": "Image Rate Limit Pause",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2976,
+        -672
+      ],
+      "webhookId": "ed35b306-4af2-4f56-9455-0cc237c020ff"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items=$input.all(); if(!items.length) throw new Error('No scene videos returned'); return [{json:{episode_id:items[0].json.episode_id,scene_videos:items.map(i=>i.json.video_file),subtitle_scenes:items.map(i=>({scene:i.json.scene,narration:i.json.narration,narration_en:i.json.narration_en,duration:Number(i.json.duration)}))}}];"
+      },
+      "id": "f2950122-801b-4019-aadb-805cdb8f81b0",
+      "name": "Collect Scene Videos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        64,
+        -1056
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "0CJnUbAEpPqtM3x4",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/0CJnUbAEpPqtM3x4",
+          "cachedResultName": "11_Final_Render"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "scene_videos": "={{$json.scene_videos}}",
+            "subtitle_scenes": "={{$json.subtitle_scenes}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "scene_videos",
+              "displayName": "scene_videos",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            },
+            {
+              "id": "subtitle_scenes",
+              "displayName": "subtitle_scenes",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "00dde9a5-b7e8-4159-8382-c54a1b44984e",
+      "name": "Merge Final Video",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        288,
+        -1056
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "KikoMusicSelect01",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/KikoMusicSelect01",
+          "cachedResultName": "10A_Music_Selector"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "music_mood": "={{$('Story Generator').first().json.music_mood}}",
+            "video_file": "={{$json.video_file}}",
+            "subtitle_scenes": "={{$json.subtitle_scenes}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "music_mood",
+              "displayName": "music_mood",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "video_file",
+              "displayName": "video_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "subtitle_scenes",
+              "displayName": "subtitle_scenes",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "d9469d50-c0bd-4a06-92ff-b20d6cf54984",
+      "name": "Select Story Music",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        -1056
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "RSDNXPKrbTUWunpY",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/RSDNXPKrbTUWunpY",
+          "cachedResultName": "10_Music_Generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "video_file": "={{$json.video_file}}",
+            "music_file": "={{$json.music_file}}",
+            "music_volume": "={{$json.music_volume}}",
+            "subtitle_scenes": "={{$json.subtitle_scenes}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "video_file",
+              "displayName": "video_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "music_file",
+              "displayName": "music_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "music_volume",
+              "displayName": "music_volume",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "subtitle_scenes",
+              "displayName": "subtitle_scenes",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "454446b2-8a63-43c7-a5f4-795f880f0b82",
+      "name": "Add Background Music",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        736,
+        -1056
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "KikoSubtitles01",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/KikoSubtitles01",
+          "cachedResultName": "12_Subtitle_Generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "video_file": "={{$json.video_file}}",
+            "subtitle_scenes": "={{$json.subtitle_scenes}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "video_file",
+              "displayName": "video_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "subtitle_scenes",
+              "displayName": "subtitle_scenes",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "0d534437-2d81-4cbe-a68c-b257dd92dcba",
+      "name": "Generate YouTube CC",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        960,
+        -1056
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "A2oeIglkXbOt42qK",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/A2oeIglkXbOt42qK",
+          "cachedResultName": "07_Thumbnail_Generator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "video_file": "={{$json.video_file}}",
+            "subtitle_id_file": "={{$json.subtitle_id_file}}",
+            "subtitle_en_file": "={{$json.subtitle_en_file}}",
+            "thumbnail_template_id": "={{$('Story Generator').first().json.thumbnail_template.id}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "video_file",
+              "displayName": "video_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "subtitle_id_file",
+              "displayName": "subtitle_id_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "subtitle_en_file",
+              "displayName": "subtitle_en_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "thumbnail_template_id",
+              "displayName": "thumbnail_template_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "3445fe81-3bce-4d3b-bd8f-328985904f1b",
+      "name": "Create Thumbnail",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1184,
+        -1056
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "KikoQC01",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/KikoQC01",
+          "cachedResultName": "14_Quality_Control"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "video_file": "={{$json.video_file}}",
+            "thumbnail_file": "={{$json.thumbnail_file}}",
+            "subtitle_id_file": "={{$json.subtitle_id_file}}",
+            "subtitle_en_file": "={{$json.subtitle_en_file}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "video_file",
+              "displayName": "video_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "thumbnail_file",
+              "displayName": "thumbnail_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "subtitle_id_file",
+              "displayName": "subtitle_id_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "subtitle_en_file",
+              "displayName": "subtitle_en_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "5dd78afa-e835-4522-8903-0c7572ca4a7a",
+      "name": "Quality Control Gate",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1408,
+        -1056
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "KikoMetadata01",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/KikoMetadata01",
+          "cachedResultName": "13_YouTube_Metadata"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "title": "={{$('Story Generator').first().json.title}}",
+            "theme": "={{$('Episode Input').first().json.theme}}",
+            "target_age": "={{$('Episode Input').first().json.target_age}}",
+            "video_file": "={{$json.video_file}}",
+            "thumbnail_file": "={{$json.thumbnail_file}}",
+            "subtitle_id_file": "={{$json.subtitle_id_file}}",
+            "subtitle_en_file": "={{$json.subtitle_en_file}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "theme",
+              "displayName": "theme",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "target_age",
+              "displayName": "target_age",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "video_file",
+              "displayName": "video_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "thumbnail_file",
+              "displayName": "thumbnail_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "subtitle_id_file",
+              "displayName": "subtitle_id_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "subtitle_en_file",
+              "displayName": "subtitle_en_file",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "c522cb9d-0706-4920-903f-cf889bfdc6fe",
+      "name": "Create YouTube Metadata",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1632,
+        -1056
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "KikoMemory01",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/KikoMemory01",
+          "cachedResultName": "15_Character_Memory_Update"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "title": "={{$('Story Generator').first().json.title}}",
+            "theme": "={{$('Episode Input').first().json.theme}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "theme",
+              "displayName": "theme",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "5221f449-d27c-4290-85fa-885e6df8d38c",
+      "name": "Update Character Memory",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1856,
+        -1056
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "KikoKlingImageSubmit01",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/KikoKlingImageSubmit01",
+          "cachedResultName": "08_Kling_MCP_Image_Submit"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "episode_id": "={{$json.episode_id}}",
+            "scene": "={{$json.scene}}",
+            "reference_urls": "={{ [] }}",
+            "model": "=kling-image-v3_0_omni",
+            "img_resolution": "=1k",
+            "aspect_ratio": "=16:9",
+            "image_count": "={{ 1 }}",
+            "task_trace_id": "={{ \"\" }}",
+            "prompt": "={{ $json.image_prompt }}",
+            "narration": "={{ $json.narration }}",
+            "narration_en": "={{ $json.narration_en }}",
+            "sfx_cue": "={{ $json.sfx_cue }}",
+            "original_prompt": "={{ $json.original_prompt || $json.base_image_prompt || $json.image_prompt }}",
+            "base_image_prompt": "={{ $json.base_image_prompt || $json.original_prompt || $json.image_prompt }}",
+            "optimized_image_prompt": "={{ $json.optimized_image_prompt || $json.image_prompt }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "episode_id",
+              "displayName": "episode_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "scene",
+              "displayName": "scene",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "prompt",
+              "displayName": "prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "reference_urls",
+              "displayName": "reference_urls",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            },
+            {
+              "id": "model",
+              "displayName": "model",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "img_resolution",
+              "displayName": "img_resolution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "aspect_ratio",
+              "displayName": "aspect_ratio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "image_count",
+              "displayName": "image_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "task_trace_id",
+              "displayName": "task_trace_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "narration",
+              "displayName": "narration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "narration_en",
+              "displayName": "narration_en",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "sfx_cue",
+              "displayName": "sfx_cue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "original_prompt",
+              "displayName": "original_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "base_image_prompt",
+              "displayName": "base_image_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "optimized_image_prompt",
+              "displayName": "optimized_image_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "b3613434-22e3-48ea-891d-4c9016a8bd8f",
+      "name": "Kling MCP Image Submit",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        288,
+        -736
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "id": "965f4421-03af-434e-92ee-69c9fad49d5b",
+      "name": "Wait For Kling Render",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        512,
+        -736
+      ],
+      "webhookId": "8f2c1a6e-3b9d-4e2a-9c7f-1d2e3f4a5b6c"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "KikoKlingTaskStatus01",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/KikoKlingTaskStatus01",
+          "cachedResultName": "08C_Kling_MCP_Task_Status"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "generation_id": "={{ $('Kling MCP Image Submit').first().json.generation_id }}",
+            "task_trace_id": "={{ $('Kling MCP Image Submit').first().json.task_trace_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "generation_id",
+              "displayName": "generation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "task_trace_id",
+              "displayName": "task_trace_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": true,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "1ef57959-a433-43c1-ac14-6427e06d17d4",
+      "name": "Check Kling Task Status",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        736,
+        -816
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-done",
+              "leftValue": "={{ $json.done }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "90912560-b6b5-44f1-8ade-f03c35a76bdd",
+      "name": "Kling Image Ready?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        -816
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-failed",
+              "leftValue": "={{ $json.failed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b8a1bd31-12ae-40a1-b4c7-f8ae5b9b062c",
+      "name": "Kling Generation Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1184,
+        -640
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const status = $input.first().json;\nconst base = $('Kling MCP Image Submit').first().json;\nconst image_file = status.result_urls && status.result_urls[0];\nif (!image_file) {\n  throw new Error('Kling task marked done but no result_urls found for generation_id ' + status.generation_id);\n}\nconst scenePadded = String(base.scene).padStart(2, '0');\nconst local_image_path = 'C:\\\\Users\\\\pc-11\\\\Desktop\\\\Kiko AI Studio\\\\Assets\\\\images\\\\' + base.episode_id + '_scene_' + scenePadded + '.png';\nconst original_prompt = base.original_prompt || base.base_image_prompt || '';\nconst optimized_image_prompt = base.optimized_image_prompt || base.prompt || base.image_prompt || '';\nreturn [{\n  json: {\n    episode_id: base.episode_id,\n    scene: base.scene,\n    narration: base.narration,\n    narration_en: base.narration_en,\n    sfx_cue: base.sfx_cue,\n    original_prompt,\n    base_image_prompt: original_prompt,\n    optimized_image_prompt,\n    image_prompt: optimized_image_prompt,\n    prompt: optimized_image_prompt,\n    image_file,\n    local_image_path,\n  },\n}];"
+      },
+      "id": "76fdb03e-f735-4483-8a7d-25f3d8352cae",
+      "name": "Finalize Image Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        -864
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.image_file }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "e17e199a-0934-4586-8a52-38b9b77cdde1",
+      "name": "Download Kling Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1408,
+        -864
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.local_image_path }}",
+        "options": {}
+      },
+      "id": "82a1283b-5947-4634-b1dc-7cafac86bd7e",
+      "name": "Save Kling Image Locally",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        -864
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $input.first().json;\nreturn [{\n  json: {\n    episode_id: d.episode_id,\n    scene: d.scene,\n    narration: d.narration,\n    narration_en: d.narration_en,\n    sfx_cue: d.sfx_cue,\n    original_prompt: d.original_prompt || d.base_image_prompt || '',\n    base_image_prompt: d.base_image_prompt || d.original_prompt || '',\n    optimized_image_prompt: d.optimized_image_prompt || d.prompt || d.image_prompt || '',\n    image_prompt: d.image_prompt || d.optimized_image_prompt || d.prompt || '',\n    prompt: d.prompt || d.optimized_image_prompt || d.image_prompt || '',\n    image_file: d.local_image_path,\n  },\n}];"
+      },
+      "id": "4b88fde7-bb19-43e7-a66e-1bc9bf91f815",
+      "name": "Finalize Local Image",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1856,
+        -864
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const status=$input.first().json;throw new Error('Kling image generation failed for generation_id '+status.generation_id+' (status: '+status.status+')');"
+      },
+      "id": "e539ce64-1e3c-4e5d-9d53-633d8f4f852f",
+      "name": "Kling Generation Failed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        -640
+      ]
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Episode Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Episode Input": {
+      "main": [
+        [
+          {
+            "node": "Story Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Story Generator": {
+      "main": [
+        [
+          {
+            "node": "Scene Splitter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scene Splitter": {
+      "main": [
+        [
+          {
+            "node": "Process Scenes Sequentially",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Scenes Sequentially": {
+      "main": [
+        [
+          {
+            "node": "Collect Scene Videos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Character Prompt Optimizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Prompt Optimizer": {
+      "main": [
+        [
+          {
+            "node": "Kling MCP Image Submit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Voice Generator": {
+      "main": [
+        [
+          {
+            "node": "Audio Duration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio Duration": {
+      "main": [
+        [
+          {
+            "node": "Select Scene SFX",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Scene SFX": {
+      "main": [
+        [
+          {
+            "node": "Scene Renderer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scene Renderer": {
+      "main": [
+        [
+          {
+            "node": "Image Rate Limit Pause",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Rate Limit Pause": {
+      "main": [
+        [
+          {
+            "node": "Process Scenes Sequentially",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Scene Videos": {
+      "main": [
+        [
+          {
+            "node": "Merge Final Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Final Video": {
+      "main": [
+        [
+          {
+            "node": "Select Story Music",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Story Music": {
+      "main": [
+        [
+          {
+            "node": "Add Background Music",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Background Music": {
+      "main": [
+        [
+          {
+            "node": "Generate YouTube CC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate YouTube CC": {
+      "main": [
+        [
+          {
+            "node": "Create Thumbnail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Thumbnail": {
+      "main": [
+        [
+          {
+            "node": "Quality Control Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quality Control Gate": {
+      "main": [
+        [
+          {
+            "node": "Create YouTube Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create YouTube Metadata": {
+      "main": [
+        [
+          {
+            "node": "Update Character Memory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kling MCP Image Submit": {
+      "main": [
+        [
+          {
+            "node": "Wait For Kling Render",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait For Kling Render": {
+      "main": [
+        [
+          {
+            "node": "Check Kling Task Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Kling Task Status": {
+      "main": [
+        [
+          {
+            "node": "Kling Image Ready?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kling Image Ready?": {
+      "main": [
+        [
+          {
+            "node": "Finalize Image Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Kling Generation Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kling Generation Failed?": {
+      "main": [
+        [
+          {
+            "node": "Kling Generation Failed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait For Kling Render",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalize Image Result": {
+      "main": [
+        [
+          {
+            "node": "Download Kling Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Kling Image": {
+      "main": [
+        [
+          {
+            "node": "Save Kling Image Locally",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Kling Image Locally": {
+      "main": [
+        [
+          {
+            "node": "Finalize Local Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finalize Local Image": {
+      "main": [
+        [
+          {
+            "node": "Voice Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "86bab233-5c2d-4ca3-a349-5229fb0951a1",
+  "activeVersionId": null,
+  "versionCounter": 225,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-07-28T16:43:04.788Z",
+      "createdAt": "2026-07-28T16:43:04.788Z",
+      "role": "workflow:owner",
+      "workflowId": "Ni41kWKoEEfw1qiA",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": null
+}
