@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-31T19:24:15.216Z",
+  "updatedAt": "2026-08-09T13:23:00.768Z",
   "createdAt": "2026-07-27T19:48:35.173Z",
   "id": "XFgWYCP8axob74d0",
   "name": "10 - FFmpeg Renderer",
@@ -46,6 +46,10 @@
             {
               "name": "duration",
               "type": "number"
+            },
+            {
+              "name": "voice_segments",
+              "type": "array"
             }
           ]
         }
@@ -53,10 +57,10 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.2,
       "position": [
-        -272,
-        -384
+        192,
+        16
       ],
-      "id": "aef5154c-9b2a-4455-aef6-43a1eed659a9",
+      "id": "a8c8685c-325d-4544-8bf1-87bcff7130ea",
       "name": "When Executed by Another Workflow"
     },
     {
@@ -105,21 +109,13 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        208,
-        -176
+        672,
+        224
       ],
-      "id": "dc13d9ac-7b31-4fe7-99f7-b76f8cf43f1b",
+      "id": "5a384ab5-b106-4d38-acfa-6483ba14eb7a",
       "name": "HTTP Request"
     },
     {
-      "id": "eb06bfe1-3366-42df-8768-30848d1d8951",
-      "name": "Render Output",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        420,
-        -176
-      ],
       "parameters": {
         "assignments": {
           "assignments": [
@@ -199,7 +195,15 @@
         },
         "includeOtherFields": true,
         "options": {}
-      }
+      },
+      "id": "a742f841-c20d-43a4-8a69-edb9ae5b68c5",
+      "name": "Render Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        224
+      ]
     }
   ],
   "connections": {
@@ -235,9 +239,9 @@
   "meta": null,
   "nodeGroups": [],
   "pinData": {},
-  "versionId": "911d968a-e226-48ac-8e7a-523234d387b6",
+  "versionId": "0b2c842a-4c63-4cee-a6e9-aec69402c113",
   "activeVersionId": null,
-  "versionCounter": 113,
+  "versionCounter": 115,
   "triggerCount": 0,
   "sourceWorkflowId": null,
   "tags": [],

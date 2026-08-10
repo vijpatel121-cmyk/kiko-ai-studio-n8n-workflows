@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-31T19:10:59.125Z",
+  "updatedAt": "2026-08-09T13:00:01.113Z",
   "createdAt": "2026-07-29T14:48:28.075Z",
   "id": "wjLGVh1sFfC7FRPA",
   "name": "02_Scene_Splitter",
@@ -37,23 +37,23 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.2,
       "position": [
-        -144,
-        -112
+        192,
+        192
       ],
-      "id": "822918b2-9634-4a74-b07d-a3dc48ec4c55",
+      "id": "b40cde68-5f84-4140-8240-b826dc8059c9",
       "name": "When Executed by Another Workflow"
     },
     {
       "parameters": {
-        "jsCode": "const input = $input.first().json;\nif (!Array.isArray(input.scenes) || input.scenes.length === 0) throw new Error('scenes must be a non-empty array');\nreturn input.scenes.map((scene,index)=>({json:{episode_id:input.episode_id,title:input.title,language:input.language ?? 'id',theme:input.theme,target_age:Number(input.target_age),scene:Number(scene.scene_number ?? index+1),location_id:scene.location_id,image_prompt:scene.image_prompt,narration:scene.narration,narration_en:scene.narration_en,sfx_cue:scene.sfx_cue,characters:scene.characters}}));"
+        "jsCode": "const input = $input.first().json;\nif (!Array.isArray(input.scenes) || input.scenes.length === 0) throw new Error('scenes must be a non-empty array');\nreturn input.scenes.map((scene,index)=>({json:{episode_id:input.episode_id,title:input.title,language:input.language ?? 'id',theme:input.theme,target_age:Number(input.target_age),scene:Number(scene.scene_number ?? index+1),location_id:scene.location_id,image_prompt:scene.image_prompt,narration:scene.narration,narration_en:scene.narration_en,sfx_cue:scene.sfx_cue,characters:scene.characters,dialogue_lines:scene.dialogue_lines || []}}));"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        64,
-        -112
+        400,
+        192
       ],
-      "id": "3e78a65e-bb5d-4689-9062-35bad79bfdef",
+      "id": "668785bb-b5bb-490d-bcd2-c367179b6d2b",
       "name": "Code in JavaScript"
     }
   ],
@@ -79,9 +79,9 @@
   "meta": null,
   "nodeGroups": [],
   "pinData": {},
-  "versionId": "969e5b61-4c87-4a06-b78d-5f1ba791071d",
+  "versionId": "3b119bb1-52c3-412f-85b2-49e67776009c",
   "activeVersionId": null,
-  "versionCounter": 30,
+  "versionCounter": 32,
   "triggerCount": 0,
   "sourceWorkflowId": null,
   "tags": [],

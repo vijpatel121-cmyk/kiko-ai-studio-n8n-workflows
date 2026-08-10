@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-08T14:43:40.946Z",
+  "updatedAt": "2026-08-09T13:09:13.659Z",
   "createdAt": "2026-07-28T16:43:04.788Z",
   "id": "Ni41kWKoEEfw1qiA",
   "name": "00_Master_Workflow",
@@ -12,10 +12,10 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -1056,
-        -736
+        192,
+        560
       ],
-      "id": "b022c647-e8f5-4596-9fcf-569ea5ff519d",
+      "id": "3a6345ed-6e50-44d4-8a81-57da7f8ee88d",
       "name": "When clicking ‘Execute workflow’"
     },
     {
@@ -44,13 +44,13 @@
         },
         "options": {}
       },
-      "id": "b5712e28-3547-4afa-bdc5-0c8cbb736c5c",
+      "id": "4e72c7c6-d2cd-49c4-8946-ec8eb664edd2",
       "name": "Episode Input",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -832,
-        -736
+        416,
+        560
       ]
     },
     {
@@ -106,13 +106,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "41ce410c-b249-42dc-ad31-aa341e466af0",
+      "id": "4f939c88-2ee4-4b46-9b06-6edadccb8f90",
       "name": "Story Generator",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        -608,
-        -736
+        640,
+        560
       ]
     },
     {
@@ -198,26 +198,26 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "a6a9fd58-9d27-4a17-adef-63b45690295c",
+      "id": "33b606be-ccde-40fd-b273-8e1aca646370",
       "name": "Scene Splitter",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        -384,
-        -736
+        864,
+        560
       ]
     },
     {
       "parameters": {
         "options": {}
       },
-      "id": "b456b00c-aae8-498a-9a0f-b2ac6f06307e",
+      "id": "728ee48f-5d46-4d9b-a1a1-dad055e750ca",
       "name": "Process Scenes Sequentially",
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -160,
-        -736
+        1088,
+        560
       ]
     },
     {
@@ -240,6 +240,7 @@
             "narration_en": "={{$json.narration_en}}",
             "sfx_cue": "={{$json.sfx_cue}}",
             "characters": "={{$json.characters}}",
+            "dialogue_lines": "={{$json.dialogue_lines}}",
             "title": "={{$json.title}}",
             "language": "={{$json.language}}",
             "theme": "={{$json.theme}}",
@@ -320,6 +321,15 @@
               "type": "array"
             },
             {
+              "id": "dialogue_lines",
+              "displayName": "dialogue_lines",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            },
+            {
               "id": "title",
               "displayName": "title",
               "required": true,
@@ -363,13 +373,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "6ccc6def-3224-4b8c-b37a-85bfc6195cad",
+      "id": "30e2d47a-3d1c-4ef9-b463-6f983a53d1b9",
       "name": "Character Prompt Optimizer",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        64,
-        -736
+        1312,
+        560
       ]
     },
     {
@@ -455,13 +465,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "d31d7c4e-f00a-42de-9baf-7cc44f1fe863",
+      "id": "4f537d5f-4235-46bd-a8c9-a3abd4ccc14e",
       "name": "Voice Generator",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        2080,
-        -864
+        3328,
+        432
       ]
     },
     {
@@ -482,7 +492,8 @@
             "narration_en": "={{$json.narration_en}}",
             "sfx_cue": "={{$json.sfx_cue}}",
             "image_file": "={{$json.image_file}}",
-            "voice_file": "={{$json.voice_file}}"
+            "voice_file": "={{$json.voice_file}}",
+            "voice_segments": "={{$json.voice_segments}}"
           },
           "matchingColumns": [],
           "schema": [
@@ -548,6 +559,15 @@
               "display": true,
               "canBeUsedToMatch": true,
               "type": "string"
+            },
+            {
+              "id": "voice_segments",
+              "displayName": "voice_segments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
             }
           ],
           "attemptToConvertTypes": true,
@@ -558,13 +578,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "e36d67ef-e8c1-44ff-b42f-4af7a04931a0",
+      "id": "4a41601a-54c6-4d8e-b664-f9fa5fa3e8f8",
       "name": "Audio Duration",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        2304,
-        -864
+        3552,
+        432
       ]
     },
     {
@@ -586,7 +606,8 @@
             "sfx_cue": "={{$json.sfx_cue}}",
             "image_file": "={{$json.image_file}}",
             "voice_file": "={{$json.voice_file}}",
-            "duration": "={{$json.duration}}"
+            "duration": "={{$json.duration}}",
+            "voice_segments": "={{$json.voice_segments}}"
           },
           "matchingColumns": [],
           "schema": [
@@ -661,6 +682,15 @@
               "display": true,
               "canBeUsedToMatch": true,
               "type": "number"
+            },
+            {
+              "id": "voice_segments",
+              "displayName": "voice_segments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
             }
           ],
           "attemptToConvertTypes": true,
@@ -671,13 +701,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "bc6dd81a-b7b9-4d63-a05e-2e332062ca32",
+      "id": "1a95a3c3-3427-49d4-82dc-e2d560f093f4",
       "name": "Select Scene SFX",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        2528,
-        -864
+        3776,
+        432
       ]
     },
     {
@@ -702,7 +732,8 @@
             "sfx_volume": "={{$json.sfx_volume}}",
             "image_file": "={{$json.image_file}}",
             "voice_file": "={{$json.voice_file}}",
-            "duration": "={{$json.duration}}"
+            "duration": "={{$json.duration}}",
+            "voice_segments": "={{$json.voice_segments}}"
           },
           "matchingColumns": [],
           "schema": [
@@ -804,6 +835,15 @@
               "display": true,
               "canBeUsedToMatch": true,
               "type": "number"
+            },
+            {
+              "id": "voice_segments",
+              "displayName": "voice_segments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
             }
           ],
           "attemptToConvertTypes": true,
@@ -814,40 +854,40 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "dd425110-ff03-47ee-84e7-1bc002c92a69",
+      "id": "f4726ee8-13cd-4297-b6f7-0e7c4b8e2f18",
       "name": "Scene Renderer",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        2752,
-        -864
+        4000,
+        432
       ]
     },
     {
       "parameters": {
         "amount": 12
       },
-      "id": "2c7ae243-7a78-42d6-851d-fc6e097b860d",
+      "id": "02213380-2d9a-40dd-82e3-4d396056454e",
       "name": "Image Rate Limit Pause",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        2976,
-        -672
+        4224,
+        624
       ],
       "webhookId": "ed35b306-4af2-4f56-9455-0cc237c020ff"
     },
     {
       "parameters": {
-        "jsCode": "const items=$input.all(); if(!items.length) throw new Error('No scene videos returned'); return [{json:{episode_id:items[0].json.episode_id,scene_videos:items.map(i=>i.json.video_file),subtitle_scenes:items.map(i=>({scene:i.json.scene,narration:i.json.narration,narration_en:i.json.narration_en,duration:Number(i.json.duration)}))}}];"
+        "jsCode": "const items=$input.all(); if(!items.length) throw new Error('No scene videos returned'); return [{json:{episode_id:items[0].json.episode_id,scene_videos:items.map(i=>i.json.video_file),subtitle_scenes:items.map(i=>({scene:i.json.scene,narration:i.json.narration,narration_en:i.json.narration_en,duration:Number(i.json.duration),voice_segments:i.json.voice_segments || []}))}}];"
       },
-      "id": "f2950122-801b-4019-aadb-805cdb8f81b0",
+      "id": "b5c7df23-d4ac-4ec6-b41d-d2453e7a4fca",
       "name": "Collect Scene Videos",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        64,
-        -1056
+        1312,
+        240
       ]
     },
     {
@@ -903,13 +943,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "00dde9a5-b7e8-4159-8382-c54a1b44984e",
+      "id": "1d4b3a06-4a2e-430b-83d3-3ae295b7cf2e",
       "name": "Merge Final Video",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        288,
-        -1056
+        1536,
+        240
       ]
     },
     {
@@ -975,13 +1015,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "d9469d50-c0bd-4a06-92ff-b20d6cf54984",
+      "id": "1de9af06-887d-4fb4-9629-826c774c16fb",
       "name": "Select Story Music",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        512,
-        -1056
+        1760,
+        240
       ]
     },
     {
@@ -1057,13 +1097,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "454446b2-8a63-43c7-a5f4-795f880f0b82",
+      "id": "59561738-4c7e-452e-9d3a-ec656a134551",
       "name": "Add Background Music",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        736,
-        -1056
+        1984,
+        240
       ]
     },
     {
@@ -1119,13 +1159,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "0d534437-2d81-4cbe-a68c-b257dd92dcba",
+      "id": "67cbd063-a94d-45bc-a05b-39b62cbfbe44",
       "name": "Generate YouTube CC",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        960,
-        -1056
+        2208,
+        240
       ]
     },
     {
@@ -1201,13 +1241,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "3445fe81-3bce-4d3b-bd8f-328985904f1b",
+      "id": "ec70e571-c807-42bf-8b70-3ad09c628d01",
       "name": "Create Thumbnail",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1184,
-        -1056
+        2432,
+        240
       ]
     },
     {
@@ -1283,13 +1323,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "5dd78afa-e835-4522-8903-0c7572ca4a7a",
+      "id": "f4ca6c3d-e178-4ca5-aae3-c33fcd6a6ad2",
       "name": "Quality Control Gate",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1408,
-        -1056
+        2656,
+        240
       ]
     },
     {
@@ -1395,13 +1435,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "c522cb9d-0706-4920-903f-cf889bfdc6fe",
+      "id": "54b3855e-d1d9-40da-ac0d-d25e96de70d4",
       "name": "Create YouTube Metadata",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1632,
-        -1056
+        2880,
+        240
       ]
     },
     {
@@ -1457,13 +1497,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "5221f449-d27c-4290-85fa-885e6df8d38c",
+      "id": "bd3f3c11-6e2e-4680-9cf1-a329235bc3c6",
       "name": "Update Character Memory",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1856,
-        -1056
+        3104,
+        240
       ]
     },
     {
@@ -1490,6 +1530,7 @@
             "narration": "={{ $json.narration }}",
             "narration_en": "={{ $json.narration_en }}",
             "sfx_cue": "={{ $json.sfx_cue }}",
+            "dialogue_lines": "={{ $json.dialogue_lines }}",
             "original_prompt": "={{ $json.original_prompt || $json.base_image_prompt || $json.image_prompt }}",
             "base_image_prompt": "={{ $json.base_image_prompt || $json.original_prompt || $json.image_prompt }}",
             "optimized_image_prompt": "={{ $json.optimized_image_prompt || $json.image_prompt }}"
@@ -1617,6 +1658,16 @@
               "removed": false
             },
             {
+              "id": "dialogue_lines",
+              "displayName": "dialogue_lines",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            },
+            {
               "id": "original_prompt",
               "displayName": "original_prompt",
               "required": false,
@@ -1654,26 +1705,26 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "b3613434-22e3-48ea-891d-4c9016a8bd8f",
+      "id": "054d2afe-ff16-4571-ab23-71fa59114a71",
       "name": "Kling MCP Image Submit",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        288,
-        -736
+        1536,
+        560
       ]
     },
     {
       "parameters": {
         "amount": 15
       },
-      "id": "965f4421-03af-434e-92ee-69c9fad49d5b",
+      "id": "c526646e-a6d1-4fbd-8bcd-5424231e1c5f",
       "name": "Wait For Kling Render",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        512,
-        -736
+        1760,
+        560
       ],
       "webhookId": "8f2c1a6e-3b9d-4e2a-9c7f-1d2e3f4a5b6c"
     },
@@ -1722,13 +1773,13 @@
           "waitForSubWorkflow": true
         }
       },
-      "id": "1ef57959-a433-43c1-ac14-6427e06d17d4",
+      "id": "5cc91d3e-a3fb-490d-9ea1-b3b85108418e",
       "name": "Check Kling Task Status",
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        736,
-        -816
+        1984,
+        480
       ]
     },
     {
@@ -1755,13 +1806,13 @@
         },
         "options": {}
       },
-      "id": "90912560-b6b5-44f1-8ade-f03c35a76bdd",
+      "id": "39780a2e-061e-472b-87dd-d7005e011100",
       "name": "Kling Image Ready?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        960,
-        -816
+        2208,
+        480
       ]
     },
     {
@@ -1788,26 +1839,26 @@
         },
         "options": {}
       },
-      "id": "b8a1bd31-12ae-40a1-b4c7-f8ae5b9b062c",
+      "id": "b114fd3c-78a3-4c6d-ad52-1cb40e804e4f",
       "name": "Kling Generation Failed?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1184,
-        -640
+        2432,
+        656
       ]
     },
     {
       "parameters": {
-        "jsCode": "const status = $input.first().json;\nconst base = $('Kling MCP Image Submit').first().json;\nconst image_file = status.result_urls && status.result_urls[0];\nif (!image_file) {\n  throw new Error('Kling task marked done but no result_urls found for generation_id ' + status.generation_id);\n}\nconst scenePadded = String(base.scene).padStart(2, '0');\nconst local_image_path = 'C:\\\\Users\\\\pc-11\\\\Desktop\\\\Kiko AI Studio\\\\Assets\\\\images\\\\' + base.episode_id + '_scene_' + scenePadded + '.png';\nconst original_prompt = base.original_prompt || base.base_image_prompt || '';\nconst optimized_image_prompt = base.optimized_image_prompt || base.prompt || base.image_prompt || '';\nreturn [{\n  json: {\n    episode_id: base.episode_id,\n    scene: base.scene,\n    narration: base.narration,\n    narration_en: base.narration_en,\n    sfx_cue: base.sfx_cue,\n    original_prompt,\n    base_image_prompt: original_prompt,\n    optimized_image_prompt,\n    image_prompt: optimized_image_prompt,\n    prompt: optimized_image_prompt,\n    image_file,\n    local_image_path,\n  },\n}];"
+        "jsCode": "const status = $input.first().json;\nconst base = $('Kling MCP Image Submit').first().json;\nconst image_file = status.result_urls && status.result_urls[0];\nif (!image_file) {\n  throw new Error('Kling task marked done but no result_urls found for generation_id ' + status.generation_id);\n}\nconst scenePadded = String(base.scene).padStart(2, '0');\nconst local_image_path = 'C:\\\\Users\\\\pc-11\\\\Desktop\\\\Kiko AI Studio\\\\Assets\\\\images\\\\' + base.episode_id + '_scene_' + scenePadded + '.png';\nconst original_prompt = base.original_prompt || base.base_image_prompt || '';\nconst optimized_image_prompt = base.optimized_image_prompt || base.prompt || base.image_prompt || '';\nreturn [{\n  json: {\n    episode_id: base.episode_id,\n    scene: base.scene,\n    narration: base.narration,\n    narration_en: base.narration_en,\n    sfx_cue: base.sfx_cue,\n    dialogue_lines: base.dialogue_lines || [],\n    original_prompt,\n    base_image_prompt: original_prompt,\n    optimized_image_prompt,\n    image_prompt: optimized_image_prompt,\n    prompt: optimized_image_prompt,\n    image_file,\n    local_image_path,\n  },\n}];"
       },
-      "id": "76fdb03e-f735-4483-8a7d-25f3d8352cae",
+      "id": "29c66044-8b8b-485f-bea9-604a80da8042",
       "name": "Finalize Image Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1184,
-        -864
+        2432,
+        432
       ]
     },
     {
@@ -1821,13 +1872,13 @@
           }
         }
       },
-      "id": "e17e199a-0934-4586-8a52-38b9b77cdde1",
+      "id": "a9e6db27-179c-4cd7-b33b-b0c46f1321f6",
       "name": "Download Kling Image",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1408,
-        -864
+        2656,
+        432
       ]
     },
     {
@@ -1836,39 +1887,39 @@
         "fileName": "={{ $json.local_image_path }}",
         "options": {}
       },
-      "id": "82a1283b-5947-4634-b1dc-7cafac86bd7e",
+      "id": "b312db25-89b0-42fa-ae68-105171c64887",
       "name": "Save Kling Image Locally",
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        1632,
-        -864
+        2880,
+        432
       ]
     },
     {
       "parameters": {
-        "jsCode": "const d = $input.first().json;\nreturn [{\n  json: {\n    episode_id: d.episode_id,\n    scene: d.scene,\n    narration: d.narration,\n    narration_en: d.narration_en,\n    sfx_cue: d.sfx_cue,\n    original_prompt: d.original_prompt || d.base_image_prompt || '',\n    base_image_prompt: d.base_image_prompt || d.original_prompt || '',\n    optimized_image_prompt: d.optimized_image_prompt || d.prompt || d.image_prompt || '',\n    image_prompt: d.image_prompt || d.optimized_image_prompt || d.prompt || '',\n    prompt: d.prompt || d.optimized_image_prompt || d.image_prompt || '',\n    image_file: d.local_image_path,\n  },\n}];"
+        "jsCode": "const d = $input.first().json;\nreturn [{\n  json: {\n    episode_id: d.episode_id,\n    scene: d.scene,\n    narration: d.narration,\n    narration_en: d.narration_en,\n    sfx_cue: d.sfx_cue,\n    dialogue_lines: d.dialogue_lines || [],\n    original_prompt: d.original_prompt || d.base_image_prompt || '',\n    base_image_prompt: d.base_image_prompt || d.original_prompt || '',\n    optimized_image_prompt: d.optimized_image_prompt || d.prompt || d.image_prompt || '',\n    image_prompt: d.image_prompt || d.optimized_image_prompt || d.prompt || '',\n    prompt: d.prompt || d.optimized_image_prompt || d.image_prompt || '',\n    image_file: d.local_image_path,\n  },\n}];"
       },
-      "id": "4b88fde7-bb19-43e7-a66e-1bc9bf91f815",
+      "id": "e84705c8-b642-4106-9d69-7e9e617e23f3",
       "name": "Finalize Local Image",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1856,
-        -864
+        3104,
+        432
       ]
     },
     {
       "parameters": {
         "jsCode": "const status=$input.first().json;throw new Error('Kling image generation failed for generation_id '+status.generation_id+' (status: '+status.status+')');"
       },
-      "id": "e539ce64-1e3c-4e5d-9d53-633d8f4f852f",
+      "id": "24b9c346-25b9-485c-9d5c-65f6425596ee",
       "name": "Kling Generation Failed",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1408,
-        -640
+        2656,
+        656
       ]
     }
   ],
@@ -2212,9 +2263,9 @@
   "meta": null,
   "nodeGroups": [],
   "pinData": {},
-  "versionId": "86bab233-5c2d-4ca3-a349-5229fb0951a1",
+  "versionId": "1a34810d-907a-415c-85c0-b35f79f8b987",
   "activeVersionId": null,
-  "versionCounter": 225,
+  "versionCounter": 227,
   "triggerCount": 0,
   "sourceWorkflowId": null,
   "tags": [],
@@ -2238,5 +2289,8 @@
       }
     }
   ],
-  "versionMetadata": null
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
 }

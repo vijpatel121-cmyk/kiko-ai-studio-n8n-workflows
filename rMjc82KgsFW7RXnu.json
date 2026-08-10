@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-31T19:12:41.876Z",
+  "updatedAt": "2026-08-09T13:17:12.067Z",
   "createdAt": "2026-07-28T16:39:00.421Z",
   "id": "rMjc82KgsFW7RXnu",
   "name": "09_Timeline_Generator",
@@ -14,10 +14,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -144,
-        -240
+        224,
+        16
       ],
-      "id": "e8292b5a-b7a7-4d5a-b300-30fd0bfbfe89",
+      "id": "9fb4c962-3246-44ee-8a68-9670b23ba328",
       "name": "Code in JavaScript"
     },
     {
@@ -36,7 +36,6 @@
         "options": {
           "response": {
             "response": {
-              "neverError": false,
               "responseFormat": "json"
             }
           }
@@ -45,10 +44,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        16,
-        -224
+        384,
+        32
       ],
-      "id": "572792d6-ef2c-46be-a43f-a2fe4d9e6fce",
+      "id": "052c00e4-a3e1-41c8-abb4-2a7357c2b505",
       "name": "HTTP Request"
     },
     {
@@ -76,6 +75,10 @@
             },
             {
               "name": "voice_file"
+            },
+            {
+              "name": "voice_segments",
+              "type": "array"
             }
           ]
         }
@@ -83,21 +86,13 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.2,
       "position": [
-        -320,
-        -240
+        48,
+        16
       ],
-      "id": "a1bd4a97-b5f5-49fe-a374-ef07e912849c",
+      "id": "fd44414c-21f1-4f69-952e-e7c0f14a82f5",
       "name": "When Executed by Another Workflow"
     },
     {
-      "id": "b711080f-f55d-4777-a60f-72ec8dfd263b",
-      "name": "Duration Output",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        240,
-        -224
-      ],
       "parameters": {
         "assignments": {
           "assignments": [
@@ -153,7 +148,15 @@
         },
         "includeOtherFields": true,
         "options": {}
-      }
+      },
+      "id": "6b895282-fb00-4765-816f-12bf73c36999",
+      "name": "Duration Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        32
+      ]
     }
   ],
   "connections": {
@@ -200,9 +203,9 @@
   "meta": null,
   "nodeGroups": [],
   "pinData": {},
-  "versionId": "1f2ba615-b492-47ad-a10a-267537b5920f",
+  "versionId": "c0274075-291f-4c53-b455-5178c1fb3b58",
   "activeVersionId": null,
-  "versionCounter": 63,
+  "versionCounter": 65,
   "triggerCount": 0,
   "sourceWorkflowId": null,
   "tags": [],

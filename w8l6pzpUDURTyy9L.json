@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-03T08:58:54.693Z",
+  "updatedAt": "2026-08-09T13:12:47.122Z",
   "createdAt": "2026-07-27T17:54:01.719Z",
   "id": "w8l6pzpUDURTyy9L",
   "name": "05_Voice_Generator",
@@ -29,6 +29,10 @@
             },
             {
               "name": "image_file"
+            },
+            {
+              "name": "dialogue_lines",
+              "type": "array"
             }
           ]
         }
@@ -36,11 +40,44 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.2,
       "position": [
-        -768,
-        -432
+        -816,
+        -128
       ],
-      "id": "63bbf919-1409-45ef-aa64-246f6de3f6af",
+      "id": "0e2506e4-81a2-4ddd-a688-efa68b4bc5b3",
       "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-has-lines",
+              "leftValue": "={{ Array.isArray($json.dialogue_lines) && $json.dialogue_lines.length > 0 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -608,
+        -128
+      ],
+      "id": "fbb1e12c-bd7d-46db-92c6-bef68fbbf2b5",
+      "name": "Has Dialogue Lines?"
     },
     {
       "parameters": {
@@ -68,10 +105,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        -512,
-        -576
+        -432,
+        -272
       ],
-      "id": "b4ffa909-2cfd-4d30-8811-4a7f997eca35",
+      "id": "ad245550-656a-4e28-8162-5e6b5dd496c7",
       "name": "HTTP Request"
     },
     {
@@ -125,6 +162,12 @@
               "name": "voice_file",
               "value": "={{$json.file}}",
               "type": "string"
+            },
+            {
+              "id": "b3f2a1e0-1a2b-4c3d-9e8f-7a6b5c4d3e2f",
+              "name": "voice_segments",
+              "value": "={{ [] }}",
+              "type": "array"
             }
           ]
         },
@@ -134,16 +177,204 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -272,
-        -512
+        -256,
+        -272
       ],
-      "id": "7f449651-ffee-4817-996d-9e8cfe9e0881",
+      "id": "7c4e8347-7f15-436c-a0a9-3a54fbeecfda",
       "name": "Voice Output"
+    },
+    {
+      "parameters": {
+        "jsCode": "const trigger = $input.first().json;\nreturn trigger.dialogue_lines.map((line, index) => ({\n  json: {\n    episode_id: trigger.episode_id,\n    scene: Number(trigger.scene),\n    speaker: line.speaker,\n    text: line.text,\n    text_en: line.text_en,\n    line_type: line.line_type,\n    line_index: index,\n  },\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -432,
+        16
+      ],
+      "id": "23cced0f-0815-4b2f-bf3e-4d9fe4199735",
+      "name": "Split Dialogue Lines"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/tts",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "episode_id",
+              "value": "={{$json.episode_id}}"
+            },
+            {
+              "name": "scene",
+              "value": "={{$json.scene}}"
+            },
+            {
+              "name": "narration",
+              "value": "={{$json.text}}"
+            },
+            {
+              "name": "speaker",
+              "value": "={{$json.speaker}}"
+            },
+            {
+              "name": "line_index",
+              "value": "={{$json.line_index}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -256,
+        16
+      ],
+      "id": "69fa7d72-4f61-4e3d-91e5-bfcbb180edc6",
+      "name": "Synthesize Line"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const pre = $('Split Dialogue Lines').item.json;\nreturn {\n  json: {\n    speaker: pre.speaker,\n    text: pre.text,\n    text_en: pre.text_en,\n    file: $json.file,\n  },\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        16
+      ],
+      "id": "742dc0b7-e793-4a4f-9c24-bf626a80037c",
+      "name": "Combine Line Result"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lines = $input.all().map(i => i.json);\nconst trigger = $('When Executed by Another Workflow').first().json;\nreturn [{\n  json: {\n    episode_id: trigger.episode_id,\n    scene: Number(trigger.scene),\n    lines,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        112,
+        16
+      ],
+      "id": "92cdf8df-e14f-4ffa-bf79-bdca3cb5ff82",
+      "name": "Aggregate Line Results"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5000/mix-voice-lines",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { episode_id: $json.episode_id, scene: $json.scene, lines: $json.lines } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        288,
+        16
+      ],
+      "id": "c5ff9c4d-cc8a-4ff6-9386-1966ba92d4de",
+      "name": "Mix Voice Lines"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e1a2b3c4-0001-4a2b-9c3d-4e5f6a7b8c9d",
+              "name": "episode_id",
+              "value": "={{$('When Executed by Another Workflow').first().json.episode_id}}",
+              "type": "string"
+            },
+            {
+              "id": "e1a2b3c4-0002-4a2b-9c3d-4e5f6a7b8c9d",
+              "name": "scene",
+              "value": "={{Number($('When Executed by Another Workflow').first().json.scene)}}",
+              "type": "number"
+            },
+            {
+              "id": "e1a2b3c4-0003-4a2b-9c3d-4e5f6a7b8c9d",
+              "name": "narration",
+              "value": "={{$('When Executed by Another Workflow').first().json.narration}}",
+              "type": "string"
+            },
+            {
+              "id": "e1a2b3c4-0004-4a2b-9c3d-4e5f6a7b8c9d",
+              "name": "narration_en",
+              "value": "={{$('When Executed by Another Workflow').first().json.narration_en}}",
+              "type": "string"
+            },
+            {
+              "id": "e1a2b3c4-0005-4a2b-9c3d-4e5f6a7b8c9d",
+              "name": "sfx_cue",
+              "value": "={{$('When Executed by Another Workflow').first().json.sfx_cue}}",
+              "type": "string"
+            },
+            {
+              "id": "e1a2b3c4-0006-4a2b-9c3d-4e5f6a7b8c9d",
+              "name": "image_file",
+              "value": "={{$('When Executed by Another Workflow').first().json.image_file}}",
+              "type": "string"
+            },
+            {
+              "id": "e1a2b3c4-0007-4a2b-9c3d-4e5f6a7b8c9d",
+              "name": "voice_success",
+              "value": "={{$json.success}}",
+              "type": "boolean"
+            },
+            {
+              "id": "e1a2b3c4-0008-4a2b-9c3d-4e5f6a7b8c9d",
+              "name": "voice_file",
+              "value": "={{$json.file}}",
+              "type": "string"
+            },
+            {
+              "id": "e1a2b3c4-0009-4a2b-9c3d-4e5f6a7b8c9d",
+              "name": "voice_segments",
+              "value": "={{$json.segments}}",
+              "type": "array"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        16
+      ],
+      "id": "b135a43a-7bbf-4afb-8138-c4d78064f3f4",
+      "name": "Voice Output Multi"
     }
   ],
   "connections": {
     "When Executed by Another Workflow": {
       "main": [
+        [
+          {
+            "node": "Has Dialogue Lines?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Dialogue Lines?": {
+      "main": [
+        [
+          {
+            "node": "Split Dialogue Lines",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "HTTP Request",
@@ -163,6 +394,61 @@
           }
         ]
       ]
+    },
+    "Split Dialogue Lines": {
+      "main": [
+        [
+          {
+            "node": "Synthesize Line",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Synthesize Line": {
+      "main": [
+        [
+          {
+            "node": "Combine Line Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Line Result": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Line Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Line Results": {
+      "main": [
+        [
+          {
+            "node": "Mix Voice Lines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mix Voice Lines": {
+      "main": [
+        [
+          {
+            "node": "Voice Output Multi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -176,9 +462,9 @@
   },
   "nodeGroups": [],
   "pinData": {},
-  "versionId": "ba740395-04ee-4317-9d76-f3a2cdabcd04",
+  "versionId": "4120027f-2e67-4b16-8510-897e96a231ee",
   "activeVersionId": null,
-  "versionCounter": 247,
+  "versionCounter": 249,
   "triggerCount": 0,
   "sourceWorkflowId": null,
   "tags": [],

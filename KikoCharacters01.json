@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-08T14:43:40.946Z",
+  "updatedAt": "2026-08-09T13:02:57.264Z",
   "createdAt": "2026-07-31T20:59:15.856Z",
   "id": "KikoCharacters01",
   "name": "03_Character_Prompt_Optimizer",
@@ -8,14 +8,6 @@
   "isArchived": false,
   "nodes": [
     {
-      "id": "4067b3c5-1465-4bae-ac09-ba1e6ad9fec7",
-      "name": "When Executed by Another Workflow",
-      "type": "n8n-nodes-base.executeWorkflowTrigger",
-      "typeVersion": 1.2,
-      "position": [
-        -240,
-        0
-      ],
       "parameters": {
         "workflowInputs": {
           "values": [
@@ -46,6 +38,10 @@
               "type": "array"
             },
             {
+              "name": "dialogue_lines",
+              "type": "array"
+            },
+            {
               "name": "title"
             },
             {
@@ -69,20 +65,28 @@
             }
           ]
         }
-      }
+      },
+      "id": "c9bf7fff-258a-4ad4-9f80-999d2cf1a8d6",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        176
+      ]
     },
     {
-      "id": "68c056f5-9d09-4c5c-966b-7fbf4cc37b9f",
+      "parameters": {
+        "jsCode": "const d=$input.first().json;\nconst designs={\nkiko:'Kiko, a 7-year-old Indonesian boy with warm tan skin, a round friendly face, large dark-brown eyes, short wavy black hair with one curved forelock, an orange zip hoodie over a cream T-shirt, teal knee-length shorts, white ankle socks, and orange-and-white sneakers',\nlala:'Lala, a 7-year-old Indonesian girl with medium-brown skin, a soft oval face, large dark-brown eyes, black hair in two neat braided pigtails tied with yellow bands, a sunny-yellow short-sleeve shirt, purple short overalls, white socks, and purple-and-yellow sneakers',\nbimo:'Bimo, an 8-year-old Indonesian boy with deep-brown skin, a broad friendly face, large dark-brown eyes, short rounded curly black hair, a leaf-green lightweight jacket over a sky-blue T-shirt, navy jogger pants, and green-and-white sneakers',\nnara:'Nara, a 6-year-old Indonesian girl with light-brown skin, a small round face, large dark-brown eyes, straight black chin-length bob hair with a turquoise star hairclip on the left, a turquoise A-line dress over coral leggings, and coral-and-white sneakers',\ntoto:'Toto, a small round turquoise sunbird companion with a pale-yellow chest, tiny coral feet, a short dark-gray beak, large dark-brown expressive eyes, two small feather tufts, and compact rounded wings'};\nconst expressions={happy:'warm open smile, relaxed eyebrows, bright eyes',excited:'wide joyful smile, raised eyebrows, sparkling wide eyes',curious:'slight head tilt, one eyebrow raised, attentive eyes',surprised:'rounded eyes, raised eyebrows, small open mouth',worried:'inner eyebrows gently raised, closed uncertain mouth, soft concerned eyes',sad:'lowered gaze, gently downturned mouth, raised inner eyebrows',thinking:'eyes looking slightly upward, focused gentle smile',laughing:'eyes softly squeezed, broad open smile',sleeping:'closed eyes, peaceful smile',child_safe_angry:'lowered eyebrows, firm closed mouth, non-threatening posture'};\nconst sheets={kiko:'kiko-expression-sheet-v1.png',lala:'lala-expression-sheet-v1.png',bimo:'bimo-expression-sheet-v1.png',nara:'nara-expression-sheet-v1.png',toto:'toto-expression-sheet-v1.png'};\nconst locations={kiko_home_living_room:'Kiko home living room: cream walls, turquoise sofa, round wooden table, sunny-yellow cushions, a large window on the left, and a small indoor plant',kiko_bedroom:'Kiko bedroom: orange-and-cream bed, low bookcase, round turquoise rug, toy storage, and a star night-light',classroom:'Classroom: warm cream walls, green board with no readable text, paired wooden desks, yellow storage shelves, large windows on the right, and a craft corner',playground:'Playground: oval grass field, central shade tree, yellow slide, turquoise climbing frame, coral benches, and safe soft ground',neighborhood_street:'Neighborhood street: low colorful houses, wide safe footpath, turquoise signs with no text, regular shade trees, marked crossing, and distant hills',village_park:'Village park: large central tree, curved path, small pond, wooden footbridge, flower beds, and open picnic lawn',gentle_forest:'Gentle forest: rounded tropical trees, wide visible trail, mossy stones, small stream, warm sunbeams, and no dark or threatening areas'};\nif(!Array.isArray(d.characters)||!d.characters.length) throw new Error('characters must be a non-empty array');\nif(!locations[d.location_id]) throw new Error('Unknown background location');\nconst directions=d.characters.map(c=>{if(!designs[c.character_id]||!expressions[c.expression])throw new Error('Unknown character or expression');return designs[c.character_id]+'. Expression: '+expressions[c.expression]+'. Pose: '+c.pose+'. Action: '+c.action+'. Position: '+c.position+'.';}).join(' ');\nconst locked='Polished stylized 3D children animation, soft rounded forms, cinematic soft lighting, 16:9 composition. Locked recurring background: '+locations[d.location_id]+'. Preserve this exact location layout, landmark positions, furniture colors, paths, trees, and major props whenever the location returns. Scene action: '+d.image_prompt+' Characters: '+directions+' Match the requested facial expression for every named character. Use the primary character expression sheet as the facial reference and the lineup as the identity reference. Keep the exact face, skin tone, hairstyle, clothing colors, footwear, proportions, and markings from the Kiko character reference. Child-height camera, uncluttered foreground, no unsafe objects, no redesign, no random background changes, no extra characters, no text, no watermark.';\nconst expression_reference_files=[...new Set(d.characters.map(c=>'C:\\\\Users\\\\pc-11\\\\.n8n-files\\\\Kiko\\\\'+sheets[c.character_id]))];\nconst original_prompt=d.original_prompt||d.base_image_prompt||d.image_prompt;\nreturn [{json:{...d,original_prompt,base_image_prompt:original_prompt,optimized_image_prompt:locked,image_prompt:locked,character_reference_file:'C:\\\\Users\\\\pc-11\\\\Desktop\\\\Kiko AI Studio\\\\Assets\\\\characters\\\\kiko-five-character-lineup-v1.png',expression_reference_files,character_bible_version:'1.0.0',background_bible_version:'1.0.0'}}];"
+      },
+      "id": "bc7b6056-c75e-4f9f-a67c-b492d1579001",
       "name": "Apply Character Bible",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        0,
-        0
-      ],
-      "parameters": {
-        "jsCode": "const d=$input.first().json;\nconst designs={\nkiko:'Kiko, a 7-year-old Indonesian boy with warm tan skin, a round friendly face, large dark-brown eyes, short wavy black hair with one curved forelock, an orange zip hoodie over a cream T-shirt, teal knee-length shorts, white ankle socks, and orange-and-white sneakers',\nlala:'Lala, a 7-year-old Indonesian girl with medium-brown skin, a soft oval face, large dark-brown eyes, black hair in two neat braided pigtails tied with yellow bands, a sunny-yellow short-sleeve shirt, purple short overalls, white socks, and purple-and-yellow sneakers',\nbimo:'Bimo, an 8-year-old Indonesian boy with deep-brown skin, a broad friendly face, large dark-brown eyes, short rounded curly black hair, a leaf-green lightweight jacket over a sky-blue T-shirt, navy jogger pants, and green-and-white sneakers',\nnara:'Nara, a 6-year-old Indonesian girl with light-brown skin, a small round face, large dark-brown eyes, straight black chin-length bob hair with a turquoise star hairclip on the left, a turquoise A-line dress over coral leggings, and coral-and-white sneakers',\ntoto:'Toto, a small round turquoise sunbird companion with a pale-yellow chest, tiny coral feet, a short dark-gray beak, large dark-brown expressive eyes, two small feather tufts, and compact rounded wings'};\nconst expressions={happy:'warm open smile, relaxed eyebrows, bright eyes',excited:'wide joyful smile, raised eyebrows, sparkling wide eyes',curious:'slight head tilt, one eyebrow raised, attentive eyes',surprised:'rounded eyes, raised eyebrows, small open mouth',worried:'inner eyebrows gently raised, closed uncertain mouth, soft concerned eyes',sad:'lowered gaze, gently downturned mouth, raised inner eyebrows',thinking:'eyes looking slightly upward, focused gentle smile',laughing:'eyes softly squeezed, broad open smile',sleeping:'closed eyes, peaceful smile',child_safe_angry:'lowered eyebrows, firm closed mouth, non-threatening posture'};\nconst sheets={kiko:'kiko-expression-sheet-v1.png',lala:'lala-expression-sheet-v1.png',bimo:'bimo-expression-sheet-v1.png',nara:'nara-expression-sheet-v1.png',toto:'toto-expression-sheet-v1.png'};\nconst locations={kiko_home_living_room:'Kiko home living room: cream walls, turquoise sofa, round wooden table, sunny-yellow cushions, a large window on the left, and a small indoor plant',kiko_bedroom:'Kiko bedroom: orange-and-cream bed, low bookcase, round turquoise rug, toy storage, and a star night-light',classroom:'Classroom: warm cream walls, green board with no readable text, paired wooden desks, yellow storage shelves, large windows on the right, and a craft corner',playground:'Playground: oval grass field, central shade tree, yellow slide, turquoise climbing frame, coral benches, and safe soft ground',neighborhood_street:'Neighborhood street: low colorful houses, wide safe footpath, turquoise signs with no text, regular shade trees, marked crossing, and distant hills',village_park:'Village park: large central tree, curved path, small pond, wooden footbridge, flower beds, and open picnic lawn',gentle_forest:'Gentle forest: rounded tropical trees, wide visible trail, mossy stones, small stream, warm sunbeams, and no dark or threatening areas'};\nif(!Array.isArray(d.characters)||!d.characters.length) throw new Error('characters must be a non-empty array');\nif(!locations[d.location_id]) throw new Error('Unknown background location');\nconst directions=d.characters.map(c=>{if(!designs[c.character_id]||!expressions[c.expression])throw new Error('Unknown character or expression');return designs[c.character_id]+'. Expression: '+expressions[c.expression]+'. Pose: '+c.pose+'. Action: '+c.action+'. Position: '+c.position+'.';}).join(' ');\nconst locked='Polished stylized 3D children animation, soft rounded forms, cinematic soft lighting, 16:9 composition. Locked recurring background: '+locations[d.location_id]+'. Preserve this exact location layout, landmark positions, furniture colors, paths, trees, and major props whenever the location returns. Scene action: '+d.image_prompt+' Characters: '+directions+' Match the requested facial expression for every named character. Use the primary character expression sheet as the facial reference and the lineup as the identity reference. Keep the exact face, skin tone, hairstyle, clothing colors, footwear, proportions, and markings from the Kiko character reference. Child-height camera, uncluttered foreground, no unsafe objects, no redesign, no random background changes, no extra characters, no text, no watermark.';\nconst expression_reference_files=[...new Set(d.characters.map(c=>'C:\\\\Users\\\\pc-11\\\\.n8n-files\\\\Kiko\\\\'+sheets[c.character_id]))];\nconst original_prompt=d.original_prompt||d.base_image_prompt||d.image_prompt;\nreturn [{json:{...d,original_prompt,base_image_prompt:original_prompt,optimized_image_prompt:locked,image_prompt:locked,character_reference_file:'C:\\\\Users\\\\pc-11\\\\Desktop\\\\Kiko AI Studio\\\\Assets\\\\characters\\\\kiko-five-character-lineup-v1.png',expression_reference_files,character_bible_version:'1.0.0',background_bible_version:'1.0.0'}}];"
-      }
+        208,
+        176
+      ]
     }
   ],
   "connections": {
@@ -99,15 +103,16 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "binaryMode": "separate"
   },
   "staticData": null,
   "meta": null,
   "nodeGroups": [],
-  "pinData": null,
-  "versionId": "c7f95ccf-b9bb-45a8-9a9f-8d1745a8942b",
+  "pinData": {},
+  "versionId": "d6110a7a-6b9a-4b16-ac3a-64174b8210a7",
   "activeVersionId": null,
-  "versionCounter": 6,
+  "versionCounter": 8,
   "triggerCount": 0,
   "sourceWorkflowId": null,
   "tags": [],
@@ -131,5 +136,8 @@
       }
     }
   ],
-  "versionMetadata": null
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-31T22:07:31.744Z",
+  "updatedAt": "2026-08-09T13:19:54.598Z",
   "createdAt": "2026-07-31T22:07:31.744Z",
   "id": "KikoSfxSelect01",
   "name": "09A_Scene_SFX_Selector",
@@ -8,14 +8,6 @@
   "isArchived": false,
   "nodes": [
     {
-      "id": "ac1406a3-9896-4a01-8c6f-b8b418c98498",
-      "name": "When Executed by Another Workflow",
-      "type": "n8n-nodes-base.executeWorkflowTrigger",
-      "typeVersion": 1.2,
-      "position": [
-        -240,
-        0
-      ],
       "parameters": {
         "workflowInputs": {
           "values": [
@@ -44,20 +36,24 @@
             {
               "name": "duration",
               "type": "number"
+            },
+            {
+              "name": "voice_segments",
+              "type": "array"
             }
           ]
         }
-      }
+      },
+      "id": "f2f6edfb-7cad-4d86-84f7-108b97dba158",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        224
+      ]
     },
     {
-      "id": "4c45c9d9-5a56-42a5-a5b5-d0c1e8624558",
-      "name": "Select Licensed SFX",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [
-        0,
-        0
-      ],
       "parameters": {
         "method": "POST",
         "url": "http://127.0.0.1:5000/select-sfx",
@@ -79,17 +75,17 @@
           ]
         },
         "options": {}
-      }
+      },
+      "id": "d2be5778-1527-4227-844b-0b4a0923f5d2",
+      "name": "Select Licensed SFX",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        336,
+        224
+      ]
     },
     {
-      "id": "bb691905-ba64-45ea-93c2-5973804fb941",
-      "name": "SFX Selection Output",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        240,
-        0
-      ],
       "parameters": {
         "assignments": {
           "assignments": [
@@ -163,7 +159,15 @@
         },
         "includeOtherFields": true,
         "options": {}
-      }
+      },
+      "id": "d48ef61d-70f4-48bf-8d67-a5fe4237432a",
+      "name": "SFX Selection Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        224
+      ]
     }
   ],
   "connections": {
@@ -191,15 +195,16 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "binaryMode": "separate"
   },
   "staticData": null,
   "meta": null,
   "nodeGroups": [],
-  "pinData": null,
-  "versionId": "45b92f2f-bbe6-4921-995e-7cdc61f695fb",
+  "pinData": {},
+  "versionId": "0d4df8e1-7d76-48cd-a89d-d9987b5044aa",
   "activeVersionId": null,
-  "versionCounter": 1,
+  "versionCounter": 3,
   "triggerCount": 0,
   "sourceWorkflowId": null,
   "tags": [],
