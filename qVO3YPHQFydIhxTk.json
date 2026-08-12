@@ -1,0 +1,3394 @@
+{
+  "updatedAt": "2026-08-10T22:08:44.150Z",
+  "createdAt": "2026-08-10T20:54:09.411Z",
+  "id": "qVO3YPHQFydIhxTk",
+  "name": "SITE 1 — CLAUDE AGENT WORKFLOW (FIXED)",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "8a1eeccc-1912-4d6c-9762-208e61477d9c",
+      "name": "S1 Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1200,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Read persistent storage for current_processing_row.\nconst staticData = $getWorkflowStaticData('global');\nlet currentRow = Number(staticData.current_processing_row || 2);\nif (!currentRow || currentRow < 2) currentRow = 2;\nstaticData.current_processing_row = currentRow;\n\nconst promptsLoaded = staticData.promptsLoaded || false;\n\nreturn [{\n  json: {\n    current_processing_row: currentRow,\n    promptsLoaded,\n    isFirstCycle: !promptsLoaded\n  }\n}];"
+      },
+      "id": "b6e5e605-836a-42c5-a17c-a79d188d545e",
+      "name": "S1 Init Row From Storage",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.title_keyword || '' }}",
+              "operation": "isEmpty"
+            }
+          ]
+        }
+      },
+      "id": "89e0b4f3-d38b-41a5-8565-2309ab9588fd",
+      "name": "S1 Blank Check - Stop if Empty",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Save current row and current keyword/product data to persistent workflow storage.\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json;\nconst row = Number(item.current_processing_row || staticData.current_processing_row || 2);\n\nstaticData.current_processing_row = row;\nstaticData.title_keyword = item.title_keyword || '';\nstaticData.high_end_products = item.high_end_products || '';\nstaticData.mid_and_afford_products = item.mid_and_afford_products || '';\n\nconst promptsLoaded = staticData.promptsLoaded || false;\n\nreturn [{\n  json: {\n    ...item,\n    current_processing_row: row,\n    isFirstCycle: !promptsLoaded,\n    promptsLoaded\n  }\n}];"
+      },
+      "id": "a8d2e757-07a4-4c2d-8b02-76bad61548b1",
+      "name": "S1 Save Row To Persistent Storage",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.isFirstCycle }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "04afd407-38e2-4526-9b57-717ce8ea9dbe",
+      "name": "S1 First Cycle Route Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        208,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Works with Excel headers: SR.NO and PROMTS (as in your sheet)\nconst items = $input.all();\n\nconst promptIds = [\n  'prompt_1', 'prompt_1_1', 'prompt_2', 'prompt_2_1',\n  'prompt_4', 'prompt_4_1', 'prompt_4_2', 'prompt_4_3',\n  'prompt_5', 'prompt_5_1', 'prompt_5_2', 'prompt_5_3',\n  'prompt_5_4', 'prompt_5_5', 'prompt_5_6', 'prompt_5_7',\n  'prompt_6', 'prompt_6_1', 'prompt_7', 'prompt_7_1',\n  'prompt_8', 'prompt_9', 'prompt_9_1', 'prompt_10',\n  'prompt_11', 'prompt_11_1'\n];\n\n// Collect values in row order\nconst promptValues = [];\nfor (const item of items) {\n  const row = item.json || {};\n\n  // Your sheet uses PROMTS (not PROMPT)\n  const value =\n    row['PROMTS'] ??\n    row['PROMPT'] ??          // keep fallback if you later rename header\n    row['Promts'] ??\n    row['Prompt'] ??\n    row.B ??\n    row[1] ??\n    row[0] ??\n    '';\n\n  const cleaned = String(value).trim();\n  if (cleaned !== '') promptValues.push(cleaned);\n}\n\nconst result = {};\nfor (let i = 0; i < promptIds.length; i++) {\n  result[promptIds[i]] = promptValues[i] || '';\n}\n\nreturn [{ json: result }];"
+      },
+      "id": "ed01a972-7b28-4944-ba4c-59f095ceb456",
+      "name": "S2 Map 26 Prompt IDs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst row = $input.first().json || {};   // only 1 row, contains all prompts\n\nconst promptIds = [\n  'prompt_1', 'prompt_1_1', 'prompt_2', 'prompt_2_1',\n  'prompt_4', 'prompt_4_1', 'prompt_4_2', 'prompt_4_3',\n  'prompt_5', 'prompt_5_1', 'prompt_5_2', 'prompt_5_3',\n  'prompt_5_4', 'prompt_5_5', 'prompt_5_6', 'prompt_5_7',\n  'prompt_6', 'prompt_6_1', 'prompt_7', 'prompt_7_1',\n  'prompt_8', 'prompt_9', 'prompt_9_1', 'prompt_10',\n  'prompt_11', 'prompt_11_1'\n];\n\n// Store directly by column names\nfor (const id of promptIds) {\n  staticData[id] = (row[id] ?? '').toString();\n}\n\nstaticData.promptsLoaded = true;\n\nreturn [{\n  json: {\n    promptsLoaded: true,\n    stored: promptIds.length,\n    preview_prompt_1: String(staticData.prompt_1).slice(0, 60),\n    preview_prompt_1_1: String(staticData.prompt_1_1).slice(0, 60)\n  }\n}];"
+      },
+      "id": "fae2633c-20d8-4417-9c98-b70b03a8d2be",
+      "name": "S2 Store Prompts in Global Memory",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1216,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load inputs for Section 3: Intro Section Generation\nconst staticData = $getWorkflowStaticData('global');\n\nreturn [{ json: {\n  prompt_1: staticData.prompt_1 || '',\n  prompt_1_1: staticData.prompt_1_1 || '',\n  title_keyword: staticData.title_keyword || $input.first().json.title_keyword || '',\n  high_end_products: staticData.high_end_products || $input.first().json.high_end_products || ''\n} }];"
+      },
+      "id": "eb33c634-99f5-4be3-9ebe-050a5618f133",
+      "name": "S3 Load Inputs (prompts + keywords)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_1\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_1\";\nconst CONTEXT_KEYS = [\"title_keyword\", \"high_end_products\"];\nconst OUTPUT_KEYS  = [];\nconst STAGE_ID     = \"prompt_1\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "5876b580-7744-40d2-9049-480c8d2fb45b",
+      "name": "S3 Build API Call 1 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "f46b23ad-48f4-4f11-89b7-180e9fe3e91d",
+      "name": "S3 API Call 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -800,
+        400
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_3_1 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_3_1\";\nconst STAGE_ID   = \"output_3_1\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "a85e464e-cac1-4690-8ba2-f9e3ebff216f",
+      "name": "S3 Extract output_3_1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_1_1\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_1_1\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_3_1\"];\nconst STAGE_ID     = \"prompt_1_1\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "572f25b5-42c9-4669-926c-62ab573540da",
+      "name": "S3 Build API Call 2 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "03657d53-993a-4a08-9b53-072268e78b17",
+      "name": "S3 API Call 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -208,
+        400
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_3_2 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_3_2\";\nconst STAGE_ID   = \"output_3_2\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\nresult.docTitle = titleKeyword || 'Untitled Article';\nstaticData.docTitle = result.docTitle;\n\nreturn [{ json: result }];"
+      },
+      "id": "d26e39d4-3e9f-4502-a56f-94e7556d8ca9",
+      "name": "S3 Extract output_3_2 + Doc Title",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "driveId": "=myDrive",
+        "title": "={{$json.docTitle}}",
+        "folderId": "root"
+      },
+      "id": "a0f8aa68-3a57-422b-b1ef-79311ee4523f",
+      "name": "S3 Create Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        208,
+        400
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract doc_file_id and store in global static data.\n// Also pass output_3_2 forward so it can be inserted into the newly created Google Doc.\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst docId = item.documentId || item.id || item.document_id || item.documentIdFromGoogle || '';\n\nstaticData.doc_file_id = docId;\n\nconst output_3_2 = staticData.output_3_2 || item.output_3_2 || '';\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst docTitle = staticData.docTitle || titleKeyword || 'Untitled Article';\n\nreturn [{\n  json: {\n    ...item,\n    doc_file_id: docId,\n    output_3_2,\n    docTitle,\n    title_keyword: titleKeyword,\n    high_end_products: staticData.high_end_products || item.high_end_products || '',\n    mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || '',\n    document_created: true,\n    section_3_complete: true\n  }\n}];"
+      },
+      "id": "b317c3d6-a0fb-488f-89d6-47121b7ad4e8",
+      "name": "S3 Store doc_file_id in Global Memory",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{$json.doc_file_id}}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output_3_2 || \"\" }}"
+            }
+          ]
+        }
+      },
+      "id": "25cc7765-ef09-4245-a8e2-9ca304d56912",
+      "name": "S3 Append Intro to Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        816,
+        400
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load inputs for Section 4: Are You in a Hurry\nconst staticData = $getWorkflowStaticData('global');\n\nreturn [{ json: {\n  prompt_2: staticData.prompt_2 || '',\n  prompt_2_1: staticData.prompt_2_1 || '',\n  title_keyword: staticData.title_keyword || '',\n  high_end_products: staticData.high_end_products || '',\n  doc_file_id: staticData.doc_file_id || ''\n} }];"
+      },
+      "id": "19da9df9-6168-41cc-af65-ed5d8d3b9bed",
+      "name": "S4 Load Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_2\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_2\";\nconst CONTEXT_KEYS = [\"title_keyword\", \"high_end_products\"];\nconst OUTPUT_KEYS  = [];\nconst STAGE_ID     = \"prompt_2\";\nconst USE_SEARCH   = true;\nconst MAX_TURNS    = 30;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "0b955d1b-0caf-4a86-96ee-e6be4a9dddc8",
+      "name": "S4 Build API Call 1 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "5e7a3bcc-3fdf-45cf-9226-4ce8a3275dae",
+      "name": "S4 API Call 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -800,
+        608
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_4_1 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_4_1\";\nconst STAGE_ID   = \"output_4_1\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "77ce9ed9-235f-4920-983e-646cfdc0b6de",
+      "name": "S4 Extract output_4_1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_2_1\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_2_1\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_4_1\"];\nconst STAGE_ID     = \"prompt_2_1\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "755bef04-74d9-4521-8157-33e66b2680f4",
+      "name": "S4 Build API Call 2 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "1442bdb5-2a05-4808-9f23-f35290210ba3",
+      "name": "S4 API Call 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -208,
+        608
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_4_2 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_4_2\";\nconst STAGE_ID   = \"output_4_2\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "1ae96d24-d083-41e5-8679-225145339371",
+      "name": "S4 Extract output_4_2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{$json.doc_file_id}}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output_4_2 || \"\" }}"
+            }
+          ]
+        }
+      },
+      "id": "ae621274-94a0-4499-b37e-d48120b9cce8",
+      "name": "S4 Append to Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        208,
+        608
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load inputs for Section 5: Buying Guide Generation\nconst staticData = $getWorkflowStaticData('global');\n\nreturn [{ json: {\n  prompt_4: staticData.prompt_4 || '',\n  prompt_4_1: staticData.prompt_4_1 || '',\n  prompt_4_2: staticData.prompt_4_2 || '',\n  prompt_4_3: staticData.prompt_4_3 || '',\n  title_keyword: staticData.title_keyword || '',\n  doc_file_id: staticData.doc_file_id || ''\n} }];"
+      },
+      "id": "0d11822c-d772-494e-9171-25c48adf6ad5",
+      "name": "S5 Load Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_4\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_4\";\nconst CONTEXT_KEYS = [\"title_keyword\"];\nconst OUTPUT_KEYS  = [];\nconst STAGE_ID     = \"prompt_4\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "4c5663e5-9fa1-495d-bc8a-f94d31b6e1a7",
+      "name": "S5 Build API Call 1 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "03dac3dd-1f36-4af8-9543-988066e809fa",
+      "name": "S5 API Call 1 (Web Search ON)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -800,
+        800
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_5_1 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_5_1\";\nconst STAGE_ID   = \"output_5_1\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "e8e765cf-6c4b-4b55-afb8-00302055dd75",
+      "name": "S5 Extract output_5_1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_4_1\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_4_1\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_5_1\"];\nconst STAGE_ID     = \"prompt_4_1\";\nconst USE_SEARCH   = true;\nconst MAX_TURNS    = 30;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "e661ba93-f22a-49cd-8f98-885b21d14765",
+      "name": "S5 Build API Call 2 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "5201881a-08d5-40ec-9dc3-a0b724c00053",
+      "name": "S5 API Call 2 (Web Search ON)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -208,
+        800
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_5_2 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_5_2\";\nconst STAGE_ID   = \"output_5_2\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "0a3d27bb-61be-4ba2-a574-4030c417e82e",
+      "name": "S5 Extract output_5_2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_4_2\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_4_2\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_5_2\"];\nconst STAGE_ID     = \"prompt_4_2\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "a7561a35-af1c-400f-98fe-9fe2ff3207d0",
+      "name": "S5 Build API Call 3 Payload (output_5_2 ONLY)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "a6b29916-12f4-478d-bd2f-44bcd71ce149",
+      "name": "S5 API Call 3",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        608,
+        800
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_5_3 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_5_3\";\nconst STAGE_ID   = \"output_5_3\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "6c79b3de-de03-4a03-b937-57f1a24dc222",
+      "name": "S5 Extract output_5_3",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_4_3\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_4_3\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_5_3\"];\nconst STAGE_ID     = \"prompt_4_3\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "a9f499e5-b517-461e-8135-725258bc31f8",
+      "name": "S5 Build API Call 4 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "4edea580-3fcf-4cb8-aadb-0fb71dd42fd1",
+      "name": "S5 API Call 4",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1216,
+        800
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_5_4 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_5_4\";\nconst STAGE_ID   = \"output_5_4\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "853c9a8a-7d96-4d5b-8cd7-91c64b88be85",
+      "name": "S5 Extract output_5_4",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{$json.doc_file_id}}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output_5_4 || \"\" }}"
+            }
+          ]
+        }
+      },
+      "id": "7b12b423-f967-48c8-8276-c7981eba9418",
+      "name": "S5 Append Buying Guide to Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1616,
+        800
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load inputs for Section 6: High End Product Description\nconst staticData = $getWorkflowStaticData('global');\n\nreturn [{ json: {\n  prompt_5: staticData.prompt_5 || '',\n  prompt_5_1: staticData.prompt_5_1 || '',\n  prompt_5_2: staticData.prompt_5_2 || '',\n  prompt_5_3: staticData.prompt_5_3 || '',\n  title_keyword: staticData.title_keyword || '',\n  high_end_products: staticData.high_end_products || '',\n  doc_file_id: staticData.doc_file_id || ''\n} }];"
+      },
+      "id": "1123aad7-e7f0-44b4-8832-051940346a07",
+      "name": "S6 Load Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_5\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_5\";\nconst CONTEXT_KEYS = [\"title_keyword\", \"high_end_products\"];\nconst OUTPUT_KEYS  = [];\nconst STAGE_ID     = \"prompt_5\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "16727485-7b44-4314-ad39-400bdc64078c",
+      "name": "S6 Build API Call 1 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "78c8924e-b44b-484f-9de1-09a45f21932c",
+      "name": "S6 API Call 1 (Web Search ON)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -800,
+        1008
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_6_1 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_6_1\";\nconst STAGE_ID   = \"output_6_1\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "16eb5668-f974-4513-9465-e63bb36eba5b",
+      "name": "S6 Extract output_6_1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_5_1\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_5_1\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_6_1\"];\nconst STAGE_ID     = \"prompt_5_1\";\nconst USE_SEARCH   = true;\nconst MAX_TURNS    = 30;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "a77978dd-e343-4854-a0d6-1a425fd249fc",
+      "name": "S6 Build API Call 2 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "0f2bfdf5-034c-4708-9ba0-ea533b4a9a89",
+      "name": "S6 API Call 2 (Web Search ON)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -208,
+        1008
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_6_2 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_6_2\";\nconst STAGE_ID   = \"output_6_2\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "04ce662a-6086-47cd-8461-366bd8b7889b",
+      "name": "S6 Extract output_6_2 + Retain output_6_1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_5_2\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_5_2\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_6_1\", \"output_6_2\"];\nconst STAGE_ID     = \"prompt_5_2\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "0c8e4881-3b40-4a65-9eaf-445dd0509c2d",
+      "name": "S6 Build API Call 3 Payload (BOTH merged)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "48336f88-86fe-4d80-b5a5-bfc9cdcef0f2",
+      "name": "S6 API Call 3 (MERGED)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        608,
+        1008
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_6_3 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_6_3\";\nconst STAGE_ID   = \"output_6_3\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "a981ef24-181a-44e6-ac79-fcc6ec7f5d26",
+      "name": "S6 Extract output_6_3",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_5_3\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_5_3\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_6_3\"];\nconst STAGE_ID     = \"prompt_5_3\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "d054a00d-6a1c-4817-b765-a2a82479d02d",
+      "name": "S6 Build API Call 4 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "5e0801db-6ce7-4b29-8c30-66792710cec7",
+      "name": "S6 API Call 4",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1216,
+        1008
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_6_4 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_6_4\";\nconst STAGE_ID   = \"output_6_4\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "9e67d7e7-57c1-4577-9624-644d8c7b6de1",
+      "name": "S6 Extract output_6_4",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{$json.doc_file_id}}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output_6_4 || \"\" }}"
+            }
+          ]
+        }
+      },
+      "id": "1865a738-0369-4337-afe7-2c43a231e955",
+      "name": "S6 Append High End Description to Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1616,
+        1008
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load inputs for Section 7: Mid and Affordable Product Description\nconst staticData = $getWorkflowStaticData('global');\n\nreturn [{ json: {\n  prompt_5_4: staticData.prompt_5_4 || '',\n  prompt_5_5: staticData.prompt_5_5 || '',\n  prompt_5_6: staticData.prompt_5_6 || '',\n  prompt_5_7: staticData.prompt_5_7 || '',\n  title_keyword: staticData.title_keyword || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || '',\n  doc_file_id: staticData.doc_file_id || ''\n} }];"
+      },
+      "id": "ea7ce481-4535-48c8-ab53-73e776de5529",
+      "name": "S7 Load Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_5_4\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_5_4\";\nconst CONTEXT_KEYS = [\"title_keyword\", \"mid_and_afford_products\"];\nconst OUTPUT_KEYS  = [];\nconst STAGE_ID     = \"prompt_5_4\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "cf6acaf6-c6b6-4465-97b7-2c8aff747864",
+      "name": "S7 Build API Call 1 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "8209c2c2-6c2f-4ce6-8765-d9df65780ec0",
+      "name": "S7 API Call 1 (Web Search ON)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -800,
+        1200
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_7_1 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_7_1\";\nconst STAGE_ID   = \"output_7_1\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "329c0a3f-bb58-46bc-92d6-766f34621ce3",
+      "name": "S7 Extract output_7_1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_5_5\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_5_5\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_7_1\"];\nconst STAGE_ID     = \"prompt_5_5\";\nconst USE_SEARCH   = true;\nconst MAX_TURNS    = 30;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "bd7abb42-f437-41df-bf8c-d60163b79d32",
+      "name": "S7 Build API Call 2 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "ec007bae-133c-4df3-b2e6-207c9faace5b",
+      "name": "S7 API Call 2 (Web Search ON)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -208,
+        1200
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_7_2 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_7_2\";\nconst STAGE_ID   = \"output_7_2\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "f03da56a-fc7a-4b71-92fe-5a437c163a68",
+      "name": "S7 Extract output_7_2 + Retain output_7_1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_5_6\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_5_6\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_7_1\", \"output_7_2\"];\nconst STAGE_ID     = \"prompt_5_6\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "b22a571b-b8df-44d7-9f31-e112c88ee00a",
+      "name": "S7 Build API Call 3 Payload (BOTH merged)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "fe77748c-cc73-4a69-be53-ea85f9eb68ce",
+      "name": "S7 API Call 3 (MERGED)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        608,
+        1200
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_7_3 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_7_3\";\nconst STAGE_ID   = \"output_7_3\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "be7c94e4-13d0-4af0-ab99-64458877e826",
+      "name": "S7 Extract output_7_3",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_5_7\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_5_7\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_7_3\"];\nconst STAGE_ID     = \"prompt_5_7\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "cd73274d-54e2-4099-8ef5-ce5e05a5e299",
+      "name": "S7 Build API Call 4 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "640b54a2-23ef-4cb8-b01e-d5774b23371f",
+      "name": "S7 API Call 4",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1216,
+        1200
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_7_4 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_7_4\";\nconst STAGE_ID   = \"output_7_4\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "085201f6-0985-4704-b09f-01ac7b397246",
+      "name": "S7 Extract output_7_4",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{$json.doc_file_id}}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output_7_4 || \"\" }}"
+            }
+          ]
+        }
+      },
+      "id": "9beaa26a-d282-47be-a9d4-65e9c15cc9a9",
+      "name": "S7 Append Mid & Afford Description to Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        1616,
+        1200
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load inputs for Section 8: Specification Table Generation\nconst staticData = $getWorkflowStaticData('global');\n\nreturn [{ json: {\n  prompt_6: staticData.prompt_6 || '',\n  prompt_6_1: staticData.prompt_6_1 || '',\n  title_keyword: staticData.title_keyword || '',\n  high_end_products: staticData.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || '',\n  doc_file_id: staticData.doc_file_id || ''\n} }];"
+      },
+      "id": "09391cf3-e721-46dc-bec4-71154c3e74a4",
+      "name": "S8 Load Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        1408
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_6\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_6\";\nconst CONTEXT_KEYS = [\"title_keyword\", \"high_end_products\", \"mid_and_afford_products\"];\nconst OUTPUT_KEYS  = [];\nconst STAGE_ID     = \"prompt_6\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "d4fb160f-ad48-4cc7-81e4-4f0162487f77",
+      "name": "S8 Build API Call 1 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        1408
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "aaf7bc58-c238-466b-b3b9-cee3a0c68c35",
+      "name": "S8 API Call 1 (Web Search ON)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -800,
+        1408
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_8_1 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_8_1\";\nconst STAGE_ID   = \"output_8_1\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "bbacad94-d314-4f9a-97d7-4e5e3509f1ef",
+      "name": "S8 Extract output_8_1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        1408
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_6_1\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_6_1\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_8_1\"];\nconst STAGE_ID     = \"prompt_6_1\";\nconst USE_SEARCH   = true;\nconst MAX_TURNS    = 30;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "cd53cf6f-b7cf-45d3-9d5f-b671d4ba2604",
+      "name": "S8 Build API Call 2 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        1408
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "1e0d2ce2-a2bb-4052-b6b5-2cb2c62bfdf7",
+      "name": "S8 API Call 2 (Web Search ON)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -208,
+        1408
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_8_2 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_8_2\";\nconst STAGE_ID   = \"output_8_2\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "a74c2029-bf57-4fdb-b98f-3497b7ced73f",
+      "name": "S8 Extract output_8_2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1408
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{$json.doc_file_id}}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output_8_2 || \"\" }}"
+            }
+          ]
+        }
+      },
+      "id": "996d475a-eaa9-4b94-9b72-bef88fb62cbb",
+      "name": "S8 Append Spec Table to Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        208,
+        1408
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load inputs for Section 9: Feature Table Generation\nconst staticData = $getWorkflowStaticData('global');\n\nreturn [{ json: {\n  prompt_7: staticData.prompt_7 || '',\n  prompt_7_1: staticData.prompt_7_1 || '',\n  title_keyword: staticData.title_keyword || '',\n  high_end_products: staticData.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || '',\n  doc_file_id: staticData.doc_file_id || ''\n} }];"
+      },
+      "id": "035b27e9-637b-4663-a5d4-8d3b39453e3d",
+      "name": "S9 Load Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_7\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_7\";\nconst CONTEXT_KEYS = [\"title_keyword\", \"high_end_products\", \"mid_and_afford_products\"];\nconst OUTPUT_KEYS  = [];\nconst STAGE_ID     = \"prompt_7\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "c0a750ac-7189-4ec3-89ba-02928ea45a89",
+      "name": "S9 Build API Call 1 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "d22128cc-1e09-41d5-a793-b1209cedcf23",
+      "name": "S9 API Call 1 (Web Search ON)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -800,
+        1600
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_9_1 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_9_1\";\nconst STAGE_ID   = \"output_9_1\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "2b330bce-7f82-41f0-9c99-f803e2fd950f",
+      "name": "S9 Extract output_9_1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_7_1\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_7_1\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_9_1\"];\nconst STAGE_ID     = \"prompt_7_1\";\nconst USE_SEARCH   = true;\nconst MAX_TURNS    = 30;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "9e46032a-850f-446d-bad2-14111802502f",
+      "name": "S9 Build API Call 2 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "7d301457-030c-4cdc-ae93-74dc4e06c29c",
+      "name": "S9 API Call 2 (Web Search ON)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -208,
+        1600
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_9_2 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_9_2\";\nconst STAGE_ID   = \"output_9_2\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "487cf41f-9612-4609-a515-c975228c14fa",
+      "name": "S9 Extract output_9_2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{$json.doc_file_id}}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output_9_2 || \"\" }}"
+            }
+          ]
+        }
+      },
+      "id": "e8bb3c7e-5c2a-4dad-ad6d-272b6830a580",
+      "name": "S9 Append Feature Table to Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        208,
+        1600
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load inputs for Section 10: Pro and Cons Generation\nconst staticData = $getWorkflowStaticData('global');\n\nreturn [{ json: {\n  prompt_8: staticData.prompt_8 || '',\n  title_keyword: staticData.title_keyword || '',\n  high_end_products: staticData.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || '',\n  doc_file_id: staticData.doc_file_id || ''\n} }];"
+      },
+      "id": "3d734911-fcbe-4878-8bc1-8032c05adc29",
+      "name": "S10 Load Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        1808
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_8\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_8\";\nconst CONTEXT_KEYS = [\"title_keyword\", \"high_end_products\", \"mid_and_afford_products\"];\nconst OUTPUT_KEYS  = [];\nconst STAGE_ID     = \"prompt_8\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "387a5b56-f924-4537-8087-4969c706e6db",
+      "name": "S10 Build API Call 1 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        1808
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "3cf4e35e-ca57-43e3-aaf1-f8e76f7306c9",
+      "name": "S10 API Call 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -800,
+        1808
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_10_1 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_10_1\";\nconst STAGE_ID   = \"output_10_1\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "db27df78-ebda-46c0-a419-4c7820141540",
+      "name": "S10 Extract output_10_1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        1808
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{$json.doc_file_id}}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output_10_1 || \"\" }}"
+            }
+          ]
+        }
+      },
+      "id": "0dff8cdd-4473-4600-81a4-7b7c236f3185",
+      "name": "S10 Append Pro and Cons to Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        1808
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load inputs for Section 11: Recommended Product Generation\nconst staticData = $getWorkflowStaticData('global');\n\nreturn [{ json: {\n  prompt_9: staticData.prompt_9 || '',\n  prompt_9_1: staticData.prompt_9_1 || '',\n  title_keyword: staticData.title_keyword || '',\n  doc_file_id: staticData.doc_file_id || ''\n} }];"
+      },
+      "id": "43f3a36a-990c-4a11-9587-05519c9fec10",
+      "name": "S11 Load Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_9\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_9\";\nconst CONTEXT_KEYS = [\"title_keyword\"];\nconst OUTPUT_KEYS  = [];\nconst STAGE_ID     = \"prompt_9\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "73234cc2-e7f4-4b59-b6bc-9199a11e5629",
+      "name": "S11 Build API Call 1 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "7599dfb1-5f10-41d9-b3ac-a97d21afc7ab",
+      "name": "S11 API Call 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -800,
+        2000
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_11_1 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_11_1\";\nconst STAGE_ID   = \"output_11_1\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "8d5eeabd-d93d-4acf-aa0a-85ae2d109932",
+      "name": "S11 Extract output_11_1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_9_1\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_9_1\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_11_1\"];\nconst STAGE_ID     = \"prompt_9_1\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "093e89af-77a5-4bb6-8d2e-de07596a4492",
+      "name": "S11 Build API Call 2 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "dfe10042-a3d6-47c8-acfd-88e5f6b11ca3",
+      "name": "S11 API Call 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -208,
+        2000
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_11_2 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_11_2\";\nconst STAGE_ID   = \"output_11_2\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "f0f53778-3e6b-4b09-bbc9-bcb0a3a85bde",
+      "name": "S11 Extract output_11_2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        2000
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{$json.doc_file_id}}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output_11_2 || \"\" }}"
+            }
+          ]
+        }
+      },
+      "id": "1f26b84d-8335-4260-b0d9-8339d47149a7",
+      "name": "S11 Append Recommended Product to Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        208,
+        2000
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load inputs for Section 12: How We Test Generation\nconst staticData = $getWorkflowStaticData('global');\n\nreturn [{ json: {\n  prompt_10: staticData.prompt_10 || '',\n  title_keyword: staticData.title_keyword || '',\n  doc_file_id: staticData.doc_file_id || ''\n} }];"
+      },
+      "id": "39452e06-6848-4dc5-90f4-b8be8a26f633",
+      "name": "S12 Load Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        2208
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_10\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_10\";\nconst CONTEXT_KEYS = [\"title_keyword\"];\nconst OUTPUT_KEYS  = [];\nconst STAGE_ID     = \"prompt_10\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "b5c582c0-5919-421c-9c96-e435b26287d5",
+      "name": "S12 Build API Call 1 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        2208
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "18a42f89-b830-4e83-ad45-711f39edd88e",
+      "name": "S12 API Call 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -800,
+        2208
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_12_1 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_12_1\";\nconst STAGE_ID   = \"output_12_1\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "07a865f6-e3b2-486a-9718-d5d3cc7bcb23",
+      "name": "S12 Extract output_12_1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        2208
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{$json.doc_file_id}}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output_12_1 || \"\" }}"
+            }
+          ]
+        }
+      },
+      "id": "f167846b-89dd-46ea-94b3-de8df9a5c8b8",
+      "name": "S12 Append How We Test to Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        2208
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Load inputs for Section 13: Conclusion and FAQ Generation\nconst staticData = $getWorkflowStaticData('global');\n\nreturn [{ json: {\n  prompt_11: staticData.prompt_11 || '',\n  prompt_11_1: staticData.prompt_11_1 || '',\n  title_keyword: staticData.title_keyword || '',\n  high_end_products: staticData.high_end_products || '',\n  doc_file_id: staticData.doc_file_id || ''\n} }];"
+      },
+      "id": "f60bdc6b-3718-4a9c-b2d5-b5f2a390b15d",
+      "name": "S13 Load Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_11\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_11\";\nconst CONTEXT_KEYS = [\"title_keyword\", \"high_end_products\"];\nconst OUTPUT_KEYS  = [];\nconst STAGE_ID     = \"prompt_11\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "4d646a53-e628-41a7-9b92-1d4267b07d13",
+      "name": "S13 Build API Call 1 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "1f51b16d-1788-4a89-a215-2ee3c097377f",
+      "name": "S13 API Call 1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -800,
+        2400
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_13_1 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_13_1\";\nconst STAGE_ID   = \"output_13_1\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "02453450-a69f-4354-a3cd-f1079926943c",
+      "name": "S13 Extract output_13_1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build payload for prompt_11_1\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\n\nconst PROMPT_KEY   = \"prompt_11_1\";\nconst CONTEXT_KEYS = [];\nconst OUTPUT_KEYS  = [\"output_13_1\"];\nconst STAGE_ID     = \"prompt_11_1\";\nconst USE_SEARCH   = false;\nconst MAX_TURNS    = 12;\n\nconst read = (key) => {\n  const v = item[key] ?? staticData[key] ?? '';\n  return (v === undefined || v === null) ? '' : String(v);\n};\n\nconst systemContent = read(PROMPT_KEY);\nif (!systemContent.trim()) {\n  throw new Error(STAGE_ID + ': prompt \"' + PROMPT_KEY + '\" is empty. Run the first '\n    + 'cycle so the prompt sheet loads into workflow static data.');\n}\n\n// Upstream outputs are required input. Empty means the previous stage did not\n// store its result, which is the bug that made every rewrite stage run blind.\nconst parts = [];\nfor (const key of CONTEXT_KEYS) {\n  const v = read(key);\n  if (v.trim() !== '') parts.push(key + ':\\n' + v);\n}\nfor (const key of OUTPUT_KEYS) {\n  const v = read(key);\n  if (!v.trim()) {\n    throw new Error(STAGE_ID + ': required upstream output \"' + key + '\" is empty.');\n  }\n  parts.push(key + ':\\n' + v);\n}\n\nreturn [{ json: {\n  ...item,\n  systemContent,\n  userContent: parts.join('\\n\\n'),\n  stageId: STAGE_ID,\n  rowNumber: Number(staticData.current_processing_row || 2),\n  useWebSearch: USE_SEARCH,\n  maxTurns: MAX_TURNS\n} }];"
+      },
+      "id": "880e10cf-0cd9-4589-8294-062d8c779c58",
+      "name": "S13 Build API Call 2 Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:7002/gpt-process",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 900000
+        }
+      },
+      "id": "269a4078-1c20-4070-83be-464629729b14",
+      "name": "S13 API Call 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -208,
+        2400
+      ],
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store output_13_2 from the GPT/Codex CLI server\nconst staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst OUTPUT_KEY = \"output_13_2\";\nconst STAGE_ID   = \"output_13_2\";\n\nif (item.paused === true) {\n  throw new Error(STAGE_ID + ': PAUSED — GPT/Codex CLI usage limit reached. '\n    + 'No API fallback was used and nothing was billed. Wait for the limit to reset, '\n    + 'delete PAUSED.flag next to claude_agent_server.py, then re-run this workflow. '\n    + 'Completed stages replay from checkpoint and are not regenerated.');\n}\nif (item.success === false) {\n  throw new Error(STAGE_ID + ': GPT/Codex CLI server error — ' + (item.error || 'unknown'));\n}\n\nconst text = String(item.output || '').trim();\nif (!text) {\n  throw new Error(STAGE_ID + ': server returned success with an empty output.');\n}\n\nstaticData[OUTPUT_KEY] = text;\n\nconst titleKeyword = staticData.title_keyword || item.title_keyword || '';\nconst result = {\n  ...item,\n  [OUTPUT_KEY]: text,\n  doc_file_id: staticData.doc_file_id || item.doc_file_id || '',\n  title_keyword: titleKeyword,\n  high_end_products: staticData.high_end_products || item.high_end_products || '',\n  mid_and_afford_products: staticData.mid_and_afford_products || item.mid_and_afford_products || ''\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "1b812e16-6360-461d-9866-bd62f47e3f97",
+      "name": "S13 Extract output_13_2",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{$json.doc_file_id}}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output_13_2 || \"\" }}"
+            }
+          ]
+        }
+      },
+      "id": "0d60bb85-e0e3-459e-be38-fbd5acc9f348",
+      "name": "S13 Append Conclusion & FAQ to Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        208,
+        2400
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop complete — increment row counter and save to persistent storage\nconst staticData = $getWorkflowStaticData('global');\nconst currentRow = staticData.current_processing_row || 2;\nconst nextRow = currentRow + 1;\nstaticData.current_processing_row = nextRow;\n\n// Keep promptsLoaded flag — prompts stay in memory for next cycle\nstaticData.promptsLoaded = true;\n\n// Clear cycle-specific data but keep prompt variables\nconst promptIds = [\n  'prompt_1', 'prompt_1_1', 'prompt_2', 'prompt_2_1',\n  'prompt_4', 'prompt_4_1', 'prompt_4_2', 'prompt_4_3',\n  'prompt_5', 'prompt_5_1', 'prompt_5_2', 'prompt_5_3',\n  'prompt_5_4', 'prompt_5_5', 'prompt_5_6', 'prompt_5_7',\n  'prompt_6', 'prompt_6_1', 'prompt_7', 'prompt_7_1',\n  'prompt_8', 'prompt_9', 'prompt_9_1', 'prompt_10',\n  'prompt_11', 'prompt_11_1'\n];\n\n// Clear keyword and output data but preserve prompts\nconst keysToKeep = [...promptIds, 'promptsLoaded', 'current_processing_row'];\nfor (const key of Object.keys(staticData)) {\n  if (!keysToKeep.includes(key)) {\n    delete staticData[key];\n  }\n}\n\nreturn [{\n  json: {\n    loopComplete: true,\n    nextRow: nextRow,\n    message: 'Cycle complete. Row incremented to ' + nextRow + '. Restarting from Section 1.'\n  }\n}];"
+      },
+      "id": "f66c057c-d896-4670-ba87-096039b09f41",
+      "name": "S13 Loop Complete - Increment Row & Restart",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "C:\\Users\\pc-11\\.n8n-files\\site 1 automation product keyword sheet.xlsx",
+        "options": {}
+      },
+      "id": "8aafc984-6412-4dff-874c-3187558ce4b5",
+      "name": "S1 Read Keyword Excel File From Disk",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -800,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "sheetName": "MAIN FINAL 7 PRODUCT SHEET"
+        }
+      },
+      "id": "40619c65-0d90-436d-84ef-cb8f5c0c4e36",
+      "name": "S1 Convert Keyword Excel To JSON Rows",
+      "type": "n8n-nodes-base.spreadsheetFile",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Input from Spreadsheet File is JSON rows, one item per Excel row.\n// Excel headers expected: TITLE KEYWORD, HIGH END PRODUCTS, MID AND AFFORD END PRODUCTS.\nconst staticData = $getWorkflowStaticData('global');\nconst currentRow = Number(staticData.current_processing_row || 2);\nconst rows = $input.all();\nconst rowIndex = currentRow - 2; // Excel row 2 = first JSON item after header row\nconst row = rows[rowIndex]?.json || {};\n\nconst title_keyword = String(row['Keyword name'] ?? row['KEYWORD NAME'] ?? row['keyword_name'] ?? row['TITLE KEYWORD'] ?? row['Title Keyword'] ?? row['title_keyword'] ?? row.A ?? row[0] ?? '').trim();\nconst high_end_products = String(row['High end products'] ?? row['HIGH END PRODUCTS'] ?? row['High End Products'] ?? row['high_end_products'] ?? row.C ?? row[2] ?? '').trim();\nconst mid_and_afford_products = String(row['Mid and afford end product'] ?? row['MID AND AFFORD END PRODUCTS'] ?? row['MID AND AFFORD PRODUCTS'] ?? row['Mid And Afford End Products'] ?? row['mid_and_afford_products'] ?? row.D ?? row[3] ?? '').trim();\n\nreturn [{\n  json: {\n    current_processing_row: currentRow,\n    title_keyword,\n    high_end_products,\n    mid_and_afford_products,\n    raw_excel_row: row\n  }\n}];"
+      },
+      "id": "691d764a-431d-4820-8a3b-dc1a7544c4b3",
+      "name": "S1 Pick Current Keyword Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "throw new Error('Workflow stopped: title_keyword cell is blank. No more articles to process.');"
+      },
+      "id": "6931b1f7-c77d-46c8-9340-bec9b2e1e30c",
+      "name": "S1 STOP - Blank Title Keyword Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fileSelector": "C:\\Users\\pc-11\\.n8n-files\\site 1 product promt sheet main.xlsx",
+        "options": {}
+      },
+      "id": "588343ac-ee9f-4a96-9e86-1ff69f873cc5",
+      "name": "S2 Read Prompt Excel File From Disk",
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        608,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "sheetName": "Sheet1"
+        }
+      },
+      "id": "ed9a9295-c2a1-4cdb-aa89-eb365063bf4c",
+      "name": "S2 Convert Prompt Excel To JSON Rows",
+      "type": "n8n-nodes-base.spreadsheetFile",
+      "typeVersion": 1,
+      "position": [
+        816,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "S1 Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "S1 Init Row From Storage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S1 Init Row From Storage": {
+      "main": [
+        [
+          {
+            "node": "S1 Read Keyword Excel File From Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S1 Blank Check - Stop if Empty": {
+      "main": [
+        [
+          {
+            "node": "S1 STOP - Blank Title Keyword Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "S1 Save Row To Persistent Storage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S1 Save Row To Persistent Storage": {
+      "main": [
+        [
+          {
+            "node": "S1 First Cycle Route Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S1 First Cycle Route Check": {
+      "main": [
+        [
+          {
+            "node": "S2 Read Prompt Excel File From Disk",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "S3 Load Inputs (prompts + keywords)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S2 Map 26 Prompt IDs": {
+      "main": [
+        [
+          {
+            "node": "S2 Store Prompts in Global Memory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S2 Store Prompts in Global Memory": {
+      "main": [
+        [
+          {
+            "node": "S3 Load Inputs (prompts + keywords)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3 Load Inputs (prompts + keywords)": {
+      "main": [
+        [
+          {
+            "node": "S3 Build API Call 1 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3 Build API Call 1 Payload": {
+      "main": [
+        [
+          {
+            "node": "S3 API Call 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3 API Call 1": {
+      "main": [
+        [
+          {
+            "node": "S3 Extract output_3_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3 Extract output_3_1": {
+      "main": [
+        [
+          {
+            "node": "S3 Build API Call 2 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3 Build API Call 2 Payload": {
+      "main": [
+        [
+          {
+            "node": "S3 API Call 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3 API Call 2": {
+      "main": [
+        [
+          {
+            "node": "S3 Extract output_3_2 + Doc Title",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3 Extract output_3_2 + Doc Title": {
+      "main": [
+        [
+          {
+            "node": "S3 Create Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3 Create Google Doc": {
+      "main": [
+        [
+          {
+            "node": "S3 Store doc_file_id in Global Memory",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3 Store doc_file_id in Global Memory": {
+      "main": [
+        [
+          {
+            "node": "S3 Append Intro to Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S4 Load Inputs": {
+      "main": [
+        [
+          {
+            "node": "S4 Build API Call 1 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S4 Build API Call 1 Payload": {
+      "main": [
+        [
+          {
+            "node": "S4 API Call 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S4 API Call 1": {
+      "main": [
+        [
+          {
+            "node": "S4 Extract output_4_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S4 Extract output_4_1": {
+      "main": [
+        [
+          {
+            "node": "S4 Build API Call 2 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S4 Build API Call 2 Payload": {
+      "main": [
+        [
+          {
+            "node": "S4 API Call 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S4 API Call 2": {
+      "main": [
+        [
+          {
+            "node": "S4 Extract output_4_2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S4 Extract output_4_2": {
+      "main": [
+        [
+          {
+            "node": "S4 Append to Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S4 Append to Google Doc": {
+      "main": [
+        [
+          {
+            "node": "S5 Load Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 Load Inputs": {
+      "main": [
+        [
+          {
+            "node": "S5 Build API Call 1 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 Build API Call 1 Payload": {
+      "main": [
+        [
+          {
+            "node": "S5 API Call 1 (Web Search ON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 API Call 1 (Web Search ON)": {
+      "main": [
+        [
+          {
+            "node": "S5 Extract output_5_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 Extract output_5_1": {
+      "main": [
+        [
+          {
+            "node": "S5 Build API Call 2 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 Build API Call 2 Payload": {
+      "main": [
+        [
+          {
+            "node": "S5 API Call 2 (Web Search ON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 API Call 2 (Web Search ON)": {
+      "main": [
+        [
+          {
+            "node": "S5 Extract output_5_2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 Extract output_5_2": {
+      "main": [
+        [
+          {
+            "node": "S5 Build API Call 3 Payload (output_5_2 ONLY)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 Build API Call 3 Payload (output_5_2 ONLY)": {
+      "main": [
+        [
+          {
+            "node": "S5 API Call 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 API Call 3": {
+      "main": [
+        [
+          {
+            "node": "S5 Extract output_5_3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 Extract output_5_3": {
+      "main": [
+        [
+          {
+            "node": "S5 Build API Call 4 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 Build API Call 4 Payload": {
+      "main": [
+        [
+          {
+            "node": "S5 API Call 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 API Call 4": {
+      "main": [
+        [
+          {
+            "node": "S5 Extract output_5_4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 Extract output_5_4": {
+      "main": [
+        [
+          {
+            "node": "S5 Append Buying Guide to Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S5 Append Buying Guide to Doc": {
+      "main": [
+        [
+          {
+            "node": "S6 Load Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 Load Inputs": {
+      "main": [
+        [
+          {
+            "node": "S6 Build API Call 1 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 Build API Call 1 Payload": {
+      "main": [
+        [
+          {
+            "node": "S6 API Call 1 (Web Search ON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 API Call 1 (Web Search ON)": {
+      "main": [
+        [
+          {
+            "node": "S6 Extract output_6_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 Extract output_6_1": {
+      "main": [
+        [
+          {
+            "node": "S6 Build API Call 2 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 Build API Call 2 Payload": {
+      "main": [
+        [
+          {
+            "node": "S6 API Call 2 (Web Search ON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 API Call 2 (Web Search ON)": {
+      "main": [
+        [
+          {
+            "node": "S6 Extract output_6_2 + Retain output_6_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 Extract output_6_2 + Retain output_6_1": {
+      "main": [
+        [
+          {
+            "node": "S6 Build API Call 3 Payload (BOTH merged)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 Build API Call 3 Payload (BOTH merged)": {
+      "main": [
+        [
+          {
+            "node": "S6 API Call 3 (MERGED)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 API Call 3 (MERGED)": {
+      "main": [
+        [
+          {
+            "node": "S6 Extract output_6_3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 Extract output_6_3": {
+      "main": [
+        [
+          {
+            "node": "S6 Build API Call 4 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 Build API Call 4 Payload": {
+      "main": [
+        [
+          {
+            "node": "S6 API Call 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 API Call 4": {
+      "main": [
+        [
+          {
+            "node": "S6 Extract output_6_4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 Extract output_6_4": {
+      "main": [
+        [
+          {
+            "node": "S6 Append High End Description to Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S6 Append High End Description to Doc": {
+      "main": [
+        [
+          {
+            "node": "S7 Load Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 Load Inputs": {
+      "main": [
+        [
+          {
+            "node": "S7 Build API Call 1 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 Build API Call 1 Payload": {
+      "main": [
+        [
+          {
+            "node": "S7 API Call 1 (Web Search ON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 API Call 1 (Web Search ON)": {
+      "main": [
+        [
+          {
+            "node": "S7 Extract output_7_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 Extract output_7_1": {
+      "main": [
+        [
+          {
+            "node": "S7 Build API Call 2 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 Build API Call 2 Payload": {
+      "main": [
+        [
+          {
+            "node": "S7 API Call 2 (Web Search ON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 API Call 2 (Web Search ON)": {
+      "main": [
+        [
+          {
+            "node": "S7 Extract output_7_2 + Retain output_7_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 Extract output_7_2 + Retain output_7_1": {
+      "main": [
+        [
+          {
+            "node": "S7 Build API Call 3 Payload (BOTH merged)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 Build API Call 3 Payload (BOTH merged)": {
+      "main": [
+        [
+          {
+            "node": "S7 API Call 3 (MERGED)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 API Call 3 (MERGED)": {
+      "main": [
+        [
+          {
+            "node": "S7 Extract output_7_3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 Extract output_7_3": {
+      "main": [
+        [
+          {
+            "node": "S7 Build API Call 4 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 Build API Call 4 Payload": {
+      "main": [
+        [
+          {
+            "node": "S7 API Call 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 API Call 4": {
+      "main": [
+        [
+          {
+            "node": "S7 Extract output_7_4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 Extract output_7_4": {
+      "main": [
+        [
+          {
+            "node": "S7 Append Mid & Afford Description to Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S7 Append Mid & Afford Description to Doc": {
+      "main": [
+        [
+          {
+            "node": "S8 Load Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S8 Load Inputs": {
+      "main": [
+        [
+          {
+            "node": "S8 Build API Call 1 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S8 Build API Call 1 Payload": {
+      "main": [
+        [
+          {
+            "node": "S8 API Call 1 (Web Search ON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S8 API Call 1 (Web Search ON)": {
+      "main": [
+        [
+          {
+            "node": "S8 Extract output_8_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S8 Extract output_8_1": {
+      "main": [
+        [
+          {
+            "node": "S8 Build API Call 2 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S8 Build API Call 2 Payload": {
+      "main": [
+        [
+          {
+            "node": "S8 API Call 2 (Web Search ON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S8 API Call 2 (Web Search ON)": {
+      "main": [
+        [
+          {
+            "node": "S8 Extract output_8_2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S8 Extract output_8_2": {
+      "main": [
+        [
+          {
+            "node": "S8 Append Spec Table to Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S8 Append Spec Table to Doc": {
+      "main": [
+        [
+          {
+            "node": "S9 Load Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S9 Load Inputs": {
+      "main": [
+        [
+          {
+            "node": "S9 Build API Call 1 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S9 Build API Call 1 Payload": {
+      "main": [
+        [
+          {
+            "node": "S9 API Call 1 (Web Search ON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S9 API Call 1 (Web Search ON)": {
+      "main": [
+        [
+          {
+            "node": "S9 Extract output_9_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S9 Extract output_9_1": {
+      "main": [
+        [
+          {
+            "node": "S9 Build API Call 2 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S9 Build API Call 2 Payload": {
+      "main": [
+        [
+          {
+            "node": "S9 API Call 2 (Web Search ON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S9 API Call 2 (Web Search ON)": {
+      "main": [
+        [
+          {
+            "node": "S9 Extract output_9_2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S9 Extract output_9_2": {
+      "main": [
+        [
+          {
+            "node": "S9 Append Feature Table to Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S9 Append Feature Table to Doc": {
+      "main": [
+        [
+          {
+            "node": "S10 Load Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S10 Load Inputs": {
+      "main": [
+        [
+          {
+            "node": "S10 Build API Call 1 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S10 Build API Call 1 Payload": {
+      "main": [
+        [
+          {
+            "node": "S10 API Call 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S10 API Call 1": {
+      "main": [
+        [
+          {
+            "node": "S10 Extract output_10_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S10 Extract output_10_1": {
+      "main": [
+        [
+          {
+            "node": "S10 Append Pro and Cons to Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S10 Append Pro and Cons to Doc": {
+      "main": [
+        [
+          {
+            "node": "S11 Load Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S11 Load Inputs": {
+      "main": [
+        [
+          {
+            "node": "S11 Build API Call 1 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S11 Build API Call 1 Payload": {
+      "main": [
+        [
+          {
+            "node": "S11 API Call 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S11 API Call 1": {
+      "main": [
+        [
+          {
+            "node": "S11 Extract output_11_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S11 Extract output_11_1": {
+      "main": [
+        [
+          {
+            "node": "S11 Build API Call 2 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S11 Build API Call 2 Payload": {
+      "main": [
+        [
+          {
+            "node": "S11 API Call 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S11 API Call 2": {
+      "main": [
+        [
+          {
+            "node": "S11 Extract output_11_2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S11 Extract output_11_2": {
+      "main": [
+        [
+          {
+            "node": "S11 Append Recommended Product to Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S11 Append Recommended Product to Doc": {
+      "main": [
+        [
+          {
+            "node": "S12 Load Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S12 Load Inputs": {
+      "main": [
+        [
+          {
+            "node": "S12 Build API Call 1 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S12 Build API Call 1 Payload": {
+      "main": [
+        [
+          {
+            "node": "S12 API Call 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S12 API Call 1": {
+      "main": [
+        [
+          {
+            "node": "S12 Extract output_12_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S12 Extract output_12_1": {
+      "main": [
+        [
+          {
+            "node": "S12 Append How We Test to Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S12 Append How We Test to Doc": {
+      "main": [
+        [
+          {
+            "node": "S13 Load Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S13 Load Inputs": {
+      "main": [
+        [
+          {
+            "node": "S13 Build API Call 1 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S13 Build API Call 1 Payload": {
+      "main": [
+        [
+          {
+            "node": "S13 API Call 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S13 API Call 1": {
+      "main": [
+        [
+          {
+            "node": "S13 Extract output_13_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S13 Extract output_13_1": {
+      "main": [
+        [
+          {
+            "node": "S13 Build API Call 2 Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S13 Build API Call 2 Payload": {
+      "main": [
+        [
+          {
+            "node": "S13 API Call 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S13 API Call 2": {
+      "main": [
+        [
+          {
+            "node": "S13 Extract output_13_2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S13 Extract output_13_2": {
+      "main": [
+        [
+          {
+            "node": "S13 Append Conclusion & FAQ to Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S13 Append Conclusion & FAQ to Doc": {
+      "main": [
+        [
+          {
+            "node": "S13 Loop Complete - Increment Row & Restart",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S13 Loop Complete - Increment Row & Restart": {
+      "main": [
+        [
+          {
+            "node": "S1 Init Row From Storage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S1 Read Keyword Excel File From Disk": {
+      "main": [
+        [
+          {
+            "node": "S1 Convert Keyword Excel To JSON Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S1 Convert Keyword Excel To JSON Rows": {
+      "main": [
+        [
+          {
+            "node": "S1 Pick Current Keyword Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S1 Pick Current Keyword Row": {
+      "main": [
+        [
+          {
+            "node": "S1 Blank Check - Stop if Empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S2 Read Prompt Excel File From Disk": {
+      "main": [
+        [
+          {
+            "node": "S2 Convert Prompt Excel To JSON Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S2 Convert Prompt Excel To JSON Rows": {
+      "main": [
+        [
+          {
+            "node": "S2 Map 26 Prompt IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S3 Append Intro to Google Doc": {
+      "main": [
+        [
+          {
+            "node": "S4 Load Inputs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "af406893-4c56-47b8-bd78-8611ca78eaae",
+  "activeVersionId": null,
+  "versionCounter": 34,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-10T20:54:09.415Z",
+      "createdAt": "2026-08-10T20:54:09.415Z",
+      "role": "workflow:owner",
+      "workflowId": "qVO3YPHQFydIhxTk",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}
