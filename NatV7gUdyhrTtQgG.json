@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-12T14:02:07.517Z",
+  "updatedAt": "2026-08-14T00:01:39.041Z",
   "createdAt": "2026-08-12T14:01:54.401Z",
   "id": "NatV7gUdyhrTtQgG",
   "name": "SITE 1 - GPT STABLE 7002 - SLOW SAFE",
@@ -320,7 +320,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "http://127.0.0.1:7002/gpt-process",
+        "url": "http://127.0.0.1:7002/search-process",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
@@ -520,7 +520,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "http://127.0.0.1:7002/gpt-process",
+        "url": "http://127.0.0.1:7002/search-process",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
@@ -773,7 +773,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "http://127.0.0.1:7002/gpt-process",
+        "url": "http://127.0.0.1:7002/search-process",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
@@ -1026,7 +1026,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "http://127.0.0.1:7002/gpt-process",
+        "url": "http://127.0.0.1:7002/search-process",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
@@ -1279,7 +1279,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "http://127.0.0.1:7002/gpt-process",
+        "url": "http://127.0.0.1:7002/search-process",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
@@ -1426,7 +1426,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "http://127.0.0.1:7002/gpt-process",
+        "url": "http://127.0.0.1:7002/search-process",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify({\n  system_prompt: $json.systemContent,\n  user_input: $json.userContent,\n  stage_id: $json.stageId,\n  row: $json.rowNumber,\n  enable_search: $json.useWebSearch,\n  max_turns: $json.maxTurns\n}) }}",
@@ -1984,7 +1984,8 @@
       "position": [
         608,
         2400
-      ]
+      ],
+      "executeOnce": false
     },
     {
       "parameters": {
@@ -2072,7 +2073,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "038b8a2e-09f5-42a0-b95e-22f3fd5cad9d",
       "name": "Delay after S3 API Call 1",
@@ -2085,7 +2086,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "7913a35b-e7a0-4fb0-a1e6-4e152088e069",
       "name": "Delay after S3 API Call 2",
@@ -2098,7 +2099,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "40136338-a28f-4407-8221-aa6c9f70fe2d",
       "name": "Delay after S4 API Call 1",
@@ -2111,7 +2112,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "7f4c247a-5fb9-4277-9d3a-049f712880aa",
       "name": "Delay after S4 API Call 2",
@@ -2124,7 +2125,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "973700ee-35fe-4114-8598-e760728e4fbd",
       "name": "Delay after S5 API Call 1 (Web Search ON)",
@@ -2137,7 +2138,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "fbf8fbed-5b70-4087-9074-e65c76206d51",
       "name": "Delay after S5 API Call 2 (Web Search ON)",
@@ -2150,7 +2151,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "747928f2-d16c-4a05-944f-36d478b5bec7",
       "name": "Delay after S5 API Call 3",
@@ -2163,7 +2164,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "52b01f76-abe0-4da3-8d85-a020a93f21eb",
       "name": "Delay after S5 API Call 4",
@@ -2176,7 +2177,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "cef55c3e-757b-4d6d-8185-eede88a6427f",
       "name": "Delay after S6 API Call 1 (Web Search ON)",
@@ -2189,7 +2190,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "9cc70dd2-15fd-489d-940e-6bd5f1371c89",
       "name": "Delay after S6 API Call 2 (Web Search ON)",
@@ -2202,7 +2203,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "015b3559-8112-4a2f-83de-bbf8cd964c7c",
       "name": "Delay after S6 API Call 3 (MERGED)",
@@ -2215,7 +2216,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "0e00285a-3006-4555-8f41-dd422ec34af6",
       "name": "Delay after S6 API Call 4",
@@ -2228,7 +2229,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "4e883e19-afa1-436b-b2da-3d7d5955c40e",
       "name": "Delay after S7 API Call 1 (Web Search ON)",
@@ -2241,7 +2242,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "01bce254-2078-44ec-bafc-875fe7746ced",
       "name": "Delay after S7 API Call 2 (Web Search ON)",
@@ -2254,7 +2255,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "0a5ee12a-266c-4b96-a36a-135b95d57ed7",
       "name": "Delay after S7 API Call 3 (MERGED)",
@@ -2267,7 +2268,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "91102a45-cb5f-4a11-ba49-124460bad79d",
       "name": "Delay after S7 API Call 4",
@@ -2280,7 +2281,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "25996e63-119e-4453-b205-c77ad8876b43",
       "name": "Delay after S8 API Call 1 (Web Search ON)",
@@ -2293,7 +2294,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "e8818b66-99ce-4f5a-999a-bb8e63288c59",
       "name": "Delay after S8 API Call 2 (Web Search ON)",
@@ -2306,7 +2307,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "1bb2678c-2f30-4e2a-8518-8733468c40c8",
       "name": "Delay after S9 API Call 1 (Web Search ON)",
@@ -2319,7 +2320,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "16dfa993-53b5-42e6-aae7-ad533a8901c1",
       "name": "Delay after S9 API Call 2 (Web Search ON)",
@@ -2332,7 +2333,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "25d1773b-d76f-4e51-b906-146b30fa472d",
       "name": "Delay after S10 API Call 1",
@@ -2345,7 +2346,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "a72ef746-81e0-4090-80c3-346ece928d17",
       "name": "Delay after S11 API Call 1",
@@ -2358,7 +2359,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "c9ec156a-db0e-40db-ab8a-a5634742e49a",
       "name": "Delay after S11 API Call 2",
@@ -2371,7 +2372,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "70bc9982-3b74-46fd-9108-4ae307dcbe84",
       "name": "Delay after S12 API Call 1",
@@ -2384,7 +2385,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "3b37c8d1-bf2c-412e-8b74-0b0980984001",
       "name": "Delay after S13 API Call 1",
@@ -2397,7 +2398,7 @@
     },
     {
       "parameters": {
-        "jsCode": "return items;"
+        "jsCode": "// Slow-safe delay: wait 15 seconds, then pass the same items forward.\nawait new Promise(resolve => setTimeout(resolve, 15000));\nreturn items;"
       },
       "id": "cce933a6-b505-4c4f-a78a-5b043d20e693",
       "name": "Delay after S13 API Call 2",
@@ -2407,6 +2408,47 @@
         -32,
         2480
       ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst item = $input.first().json || {};\nconst ACF_FIELDS = [{\"label\": \"Post Title\", \"name\": \"post_title\", \"key\": \"field_post_title\", \"type\": \"Text\"}, {\"label\": \"Post Intro\", \"name\": \"post_intro\", \"key\": \"field_post_intro\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Are You In Hurry Heading\", \"name\": \"hurry_heading\", \"key\": \"field_hurry_heading\", \"type\": \"Text\"}, {\"label\": \"Are You In Hurry Paragraph\", \"name\": \"hurry_paragraph\", \"key\": \"field_hurry_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Buying Guide Heading\", \"name\": \"buying_guide_heading\", \"key\": \"field_buying_guide_heading\", \"type\": \"Text\"}, {\"label\": \"Buying Guide Intro\", \"name\": \"buying_guide_intro\", \"key\": \"field_buying_guide_intro\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Buying Guide Point 1 Heading\", \"name\": \"bg_point_1_heading\", \"key\": \"field_bg_point_1_heading\", \"type\": \"Text\"}, {\"label\": \"Buying Guide Point 1 Paragraph\", \"name\": \"bg_point_1_paragraph\", \"key\": \"field_bg_point_1_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Buying Guide Point 2 Heading\", \"name\": \"bg_point_2_heading\", \"key\": \"field_bg_point_2_heading\", \"type\": \"Text\"}, {\"label\": \"Buying Guide Point 2 Paragraph\", \"name\": \"bg_point_2_paragraph\", \"key\": \"field_bg_point_2_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Buying Guide Point 3 Heading\", \"name\": \"bg_point_3_heading\", \"key\": \"field_bg_point_3_heading\", \"type\": \"Text\"}, {\"label\": \"Buying Guide Point 3 Paragraph\", \"name\": \"bg_point_3_paragraph\", \"key\": \"field_bg_point_3_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Buying Guide Point 4 Heading\", \"name\": \"bg_point_4_heading\", \"key\": \"field_bg_point_4_heading\", \"type\": \"Text\"}, {\"label\": \"Buying Guide Point 4 Paragraph\", \"name\": \"bg_point_4_paragraph\", \"key\": \"field_bg_point_4_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Buying Guide Point 5 Heading\", \"name\": \"bg_point_5_heading\", \"key\": \"field_bg_point_5_heading\", \"type\": \"Text\"}, {\"label\": \"Buying Guide Point 5 Paragraph\", \"name\": \"bg_point_5_paragraph\", \"key\": \"field_bg_point_5_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Buying Guide Ending\", \"name\": \"buying_guide_ending\", \"key\": \"field_buying_guide_ending\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Best Products Heading\", \"name\": \"best_heading\", \"key\": \"field_best_heading\", \"type\": \"Text\"}, {\"label\": \"Best Products Paragraph\", \"name\": \"best_paragraph\", \"key\": \"field_best_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 1 Heading\", \"name\": \"product_1_heading\", \"key\": \"field_product_1_heading\", \"type\": \"Text\"}, {\"label\": \"Product 1 Description\", \"name\": \"product_1_description\", \"key\": \"field_product_1_description\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 1 FAQ Question 1\", \"name\": \"product_1_faq_1\", \"key\": \"field_product_1_faq_1\", \"type\": \"Text\"}, {\"label\": \"Product 1 FAQ Answer 1\", \"name\": \"product_1_faq_a1\", \"key\": \"field_product_1_faq_a1\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 1 FAQ Question 2\", \"name\": \"product_1_faq_2\", \"key\": \"field_product_1_faq_2\", \"type\": \"Text\"}, {\"label\": \"Product 1 FAQ Answer 2\", \"name\": \"product_1_faq_a2\", \"key\": \"field_product_1_faq_a2\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 1 Testing Heading\", \"name\": \"product_1_testingheading\", \"key\": \"field_product_1_testingheading\", \"type\": \"Text\"}, {\"label\": \"Product 1 Testing Paragraph\", \"name\": \"product_1_testingpara\", \"key\": \"field_product_1_testingpara\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 1 Best For\", \"name\": \"product_1_bestfor\", \"key\": \"field_product_1_bestfor\", \"type\": \"Text\"}, {\"label\": \"Product 1 Skip If\", \"name\": \"product_1_skipif\", \"key\": \"field_product_1_skipif\", \"type\": \"True / False\"}, {\"label\": \"Product 2 Heading\", \"name\": \"product_2_heading\", \"key\": \"field_product_2_heading\", \"type\": \"Text\"}, {\"label\": \"Product 2 Description\", \"name\": \"product_2_description\", \"key\": \"field_product_2_description\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 2 FAQ Question 1\", \"name\": \"product_2_faq_1\", \"key\": \"field_product_2_faq_1\", \"type\": \"Text\"}, {\"label\": \"Product 2 FAQ Answer 1\", \"name\": \"product_2_faq_a1\", \"key\": \"field_product_2_faq_a1\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 2 FAQ Question 2\", \"name\": \"product_2_faq_2\", \"key\": \"field_product_2_faq_2\", \"type\": \"Text\"}, {\"label\": \"Product 2 FAQ Answer 2\", \"name\": \"product_2_faq_a2\", \"key\": \"field_product_2_faq_a2\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 2 Testing Heading\", \"name\": \"product_2_testingheading\", \"key\": \"field_product_2_testingheading\", \"type\": \"Text\"}, {\"label\": \"Product 2 Testing Paragraph\", \"name\": \"product_2_testingpara\", \"key\": \"field_product_2_testingpara\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 2 Best For\", \"name\": \"product_2_bestfor\", \"key\": \"field_product_2_bestfor\", \"type\": \"Text\"}, {\"label\": \"Product 2 Skip If\", \"name\": \"product_2_skipif\", \"key\": \"field_product_2_skipif\", \"type\": \"True / False\"}, {\"label\": \"Product 3 Heading\", \"name\": \"product_3_heading\", \"key\": \"field_product_3_heading\", \"type\": \"Text\"}, {\"label\": \"Product 3 Description\", \"name\": \"product_3_description\", \"key\": \"field_product_3_description\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 3 FAQ Question 1\", \"name\": \"product_3_faq_1\", \"key\": \"field_product_3_faq_1\", \"type\": \"Text\"}, {\"label\": \"Product 3 FAQ Answer 1\", \"name\": \"product_3_faq_a1\", \"key\": \"field_product_3_faq_a1\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 3 FAQ Question 2\", \"name\": \"product_3_faq_2\", \"key\": \"field_product_3_faq_2\", \"type\": \"Text\"}, {\"label\": \"Product 3 FAQ Answer 2\", \"name\": \"product_3_faq_a2\", \"key\": \"field_product_3_faq_a2\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 3 Testing Heading\", \"name\": \"product_3_testingheading\", \"key\": \"field_product_3_testingheading\", \"type\": \"Text\"}, {\"label\": \"Product 3 Testing Paragraph\", \"name\": \"product_3_testingpara\", \"key\": \"field_product_3_testingpara\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 3 Best For\", \"name\": \"product_3_bestfor\", \"key\": \"field_product_3_bestfor\", \"type\": \"Text\"}, {\"label\": \"Product 3 Skip If\", \"name\": \"product_3_skipif\", \"key\": \"field_product_3_skipif\", \"type\": \"True / False\"}, {\"label\": \"Product 4 Heading\", \"name\": \"product_4_heading\", \"key\": \"field_product_4_heading\", \"type\": \"Text\"}, {\"label\": \"Product 4 Description\", \"name\": \"product_4_description\", \"key\": \"field_product_4_description\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 4 FAQ Question 1\", \"name\": \"product_4_faq_1\", \"key\": \"field_product_4_faq_1\", \"type\": \"Text\"}, {\"label\": \"Product 4 FAQ Answer 1\", \"name\": \"product_4_faq_a1\", \"key\": \"field_product_4_faq_a1\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 4 FAQ Question 2\", \"name\": \"product_4_faq_2\", \"key\": \"field_product_4_faq_2\", \"type\": \"Text\"}, {\"label\": \"Product 4 FAQ Answer 2\", \"name\": \"product_4_faq_a2\", \"key\": \"field_product_4_faq_a2\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 4 Testing Heading\", \"name\": \"product_4_testingheading\", \"key\": \"field_product_4_testingheading\", \"type\": \"Text\"}, {\"label\": \"Product 4 Testing Paragraph\", \"name\": \"product_4_testingpara\", \"key\": \"field_product_4_testingpara\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Product 4 Best For\", \"name\": \"product_4_bestfor\", \"key\": \"field_product_4_bestfor\", \"type\": \"Text\"}, {\"label\": \"Product 4 Skip If\", \"name\": \"product_4_skipif\", \"key\": \"field_product_4_skipif\", \"type\": \"True / False\"}, {\"label\": \"Verdict Heading\", \"name\": \"verdict_heading\", \"key\": \"field_verdict_heading\", \"type\": \"Text\"}, {\"label\": \"Verdict Paragraph\", \"name\": \"verdict_paragraph\", \"key\": \"field_verdict_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Mid-Tier Section Heading\", \"name\": \"mid_heading\", \"key\": \"field_mid_heading\", \"type\": \"Text\"}, {\"label\": \"Mid-Tier Section Paragraph\", \"name\": \"mid_paragraph\", \"key\": \"field_mid_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Mid-Tier Product 1 Heading\", \"name\": \"midproduct_1_heading\", \"key\": \"field_midproduct_1_heading\", \"type\": \"Text\"}, {\"label\": \"Mid-Tier Product 1 Description\", \"name\": \"midproduct_1_description\", \"key\": \"field_midproduct_1_description\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Mid-Tier Product 1 FAQ Question 1\", \"name\": \"midproduct_1_faq_1\", \"key\": \"field_midproduct_1_faq_1\", \"type\": \"Text\"}, {\"label\": \"Mid-Tier Product 1 FAQ Answer 1\", \"name\": \"midproduct_1_faq_a1\", \"key\": \"field_midproduct_1_faq_a1\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Mid-Tier Product 1 FAQ Question 2\", \"name\": \"midproduct_1_faq_2\", \"key\": \"field_midproduct_1_faq_2\", \"type\": \"Text\"}, {\"label\": \"Mid-Tier Product 1 FAQ Answer 2\", \"name\": \"midproduct_1_faq_a2\", \"key\": \"field_midproduct_1_faq_a2\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Mid-Tier Product 1 Testing Heading\", \"name\": \"midproduct_1_testingheading\", \"key\": \"field_midproduct_1_testingheading\", \"type\": \"Text\"}, {\"label\": \"Mid-Tier Product 1 Testing Paragraph\", \"name\": \"midproduct_1_testingpara\", \"key\": \"field_midproduct_1_testingpara\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Mid-Tier Product 1 Best For\", \"name\": \"midproduct_1_bestfor\", \"key\": \"field_midproduct_1_bestfor\", \"type\": \"Text\"}, {\"label\": \"Mid-Tier Product 1 Skip If\", \"name\": \"midproduct_1_skipif\", \"key\": \"field_midproduct_1_skipif\", \"type\": \"True / False\"}, {\"label\": \"Mid-Tier Product 2 Heading\", \"name\": \"midproduct_2_heading\", \"key\": \"field_midproduct_2_heading\", \"type\": \"Text\"}, {\"label\": \"Mid-Tier Product 2 Description\", \"name\": \"midproduct_2_description\", \"key\": \"field_midproduct_2_description\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Mid-Tier Product 2 FAQ Question 1\", \"name\": \"midproduct_2_faq_1\", \"key\": \"field_midproduct_2_faq_1\", \"type\": \"Text\"}, {\"label\": \"Mid-Tier Product 2 FAQ Answer 1\", \"name\": \"midproduct_2_faq_a1\", \"key\": \"field_midproduct_2_faq_a1\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Mid-Tier Product 2 FAQ Question 2\", \"name\": \"midproduct_2_faq_2\", \"key\": \"field_midproduct_2_faq_2\", \"type\": \"Text\"}, {\"label\": \"Mid-Tier Product 2 FAQ Answer 2\", \"name\": \"midproduct_2_faq_a2\", \"key\": \"field_midproduct_2_faq_a2\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Mid-Tier Product 2 Testing Heading\", \"name\": \"midproduct_2_testingheading\", \"key\": \"field_midproduct_2_testingheading\", \"type\": \"Text\"}, {\"label\": \"Mid-Tier Product 2 Testing Paragraph\", \"name\": \"midproduct_2_testingpara\", \"key\": \"field_midproduct_2_testingpara\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Mid-Tier Product 2 Best For\", \"name\": \"midproduct_2_bestfor\", \"key\": \"field_midproduct_2_bestfor\", \"type\": \"Text\"}, {\"label\": \"Mid-Tier Product 2 Skip If\", \"name\": \"midproduct_2_skipif\", \"key\": \"field_midproduct_2_skipif\", \"type\": \"True / False\"}, {\"label\": \"Affordable Section Heading\", \"name\": \"afford_heading\", \"key\": \"field_afford_heading\", \"type\": \"Text\"}, {\"label\": \"Affordable Section Paragraph\", \"name\": \"afford_paragraph\", \"key\": \"field_afford_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Affordable Product 1 Heading\", \"name\": \"affordproduct_1_heading\", \"key\": \"field_affordproduct_1_heading\", \"type\": \"Text\"}, {\"label\": \"Affordable Product 1 Description\", \"name\": \"affordproduct_1_description\", \"key\": \"field_affordproduct_1_description\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Affordable Product 1 FAQ Question 1\", \"name\": \"affordproduct_1_faq_1\", \"key\": \"field_affordproduct_1_faq_1\", \"type\": \"Text\"}, {\"label\": \"Affordable Product 1 FAQ Answer 1\", \"name\": \"affordproduct_1_faq_a1\", \"key\": \"field_affordproduct_1_faq_a1\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Affordable Product 1 FAQ Question 2\", \"name\": \"affordproduct_1_faq_2\", \"key\": \"field_affordproduct_1_faq_2\", \"type\": \"Text\"}, {\"label\": \"Affordable Product 1 FAQ Answer 2\", \"name\": \"affordproduct_1_faq_a2\", \"key\": \"field_affordproduct_1_faq_a2\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Affordable Product 1 Testing Heading\", \"name\": \"affordproduct_1_testingheading\", \"key\": \"field_affordproduct_1_testingheading\", \"type\": \"Text\"}, {\"label\": \"Affordable Product 1 Testing Paragraph\", \"name\": \"affordproduct_1_testingpara\", \"key\": \"field_affordproduct_1_testingpara\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Affordable Product 1 Best For\", \"name\": \"affordproduct_1_bestfor\", \"key\": \"field_affordproduct_1_bestfor\", \"type\": \"Text\"}, {\"label\": \"Affordable Product 1 Skip If\", \"name\": \"affordproduct_1_skipif\", \"key\": \"field_affordproduct_1_skipif\", \"type\": \"True / False\"}, {\"label\": \"Product 1 Specification Table\", \"name\": \"product_1_specification_tabs\", \"key\": \"field_product_1_specification_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 2 Specification Table\", \"name\": \"product_2_specification_tabs\", \"key\": \"field_product_2_specification_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 3 Specification Table\", \"name\": \"product_3_specification_tabs\", \"key\": \"field_product_3_specification_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 4 Specification Table\", \"name\": \"product_4_specification_tabs\", \"key\": \"field_product_4_specification_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 5 Specification Table\", \"name\": \"product_5_specification_tabs\", \"key\": \"field_product_5_specification_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 6 Specification Table\", \"name\": \"product_6_specification_tabs\", \"key\": \"field_product_6_specification_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 7 Specification Table\", \"name\": \"product_7_specification_tabs\", \"key\": \"field_product_7_specification_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 1 Features Table\", \"name\": \"product_1_features_tabs\", \"key\": \"field_product_1_features_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 2 Features Table\", \"name\": \"product_2_features_tabs\", \"key\": \"field_product_2_features_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 3 Features Table\", \"name\": \"product_3_features_tabs\", \"key\": \"field_product_3_features_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 4 Features Table\", \"name\": \"product_4_features_tabs\", \"key\": \"field_product_4_features_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 5 Features Table\", \"name\": \"product_5_features_tabs\", \"key\": \"field_product_5_features_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 6 Features Table\", \"name\": \"product_6_features_tabs\", \"key\": \"field_product_6_features_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 7 Features Table\", \"name\": \"product_7_features_tabs\", \"key\": \"field_product_7_features_tabs\", \"type\": \"Textarea\"}, {\"label\": \"Product 1 Pros and Cons Table\", \"name\": \"PROTABLE_PRODUCT1\", \"key\": \"field_protable_product1\", \"type\": \"Textarea\"}, {\"label\": \"Product 2 Pros and Cons Table\", \"name\": \"PROTABLE_PRODUCT2\", \"key\": \"field_protable_product2\", \"type\": \"Textarea\"}, {\"label\": \"Product 3 Pros and Cons Table\", \"name\": \"PROTABLE_PRODUCT3\", \"key\": \"field_protable_product3\", \"type\": \"Textarea\"}, {\"label\": \"Product 4 Pros and Cons Table\", \"name\": \"PROTABLE_PRODUCT4\", \"key\": \"field_protable_product4\", \"type\": \"Textarea\"}, {\"label\": \"Product 5 Pros and Cons Table\", \"name\": \"PROTABLE_PRODUCT5\", \"key\": \"field_protable_product5\", \"type\": \"Textarea\"}, {\"label\": \"Product 6 Pros and Cons Table\", \"name\": \"PROTABLE_PRODUCT6\", \"key\": \"field_protable_product6\", \"type\": \"Textarea\"}, {\"label\": \"Product 7 Pros and Cons Table\", \"name\": \"PROTABLE_PRODUCT7\", \"key\": \"field_protable_product7\", \"type\": \"Textarea\"}, {\"label\": \"Accessories Section Heading\", \"name\": \"tool_heading\", \"key\": \"field_tool_heading\", \"type\": \"Text\"}, {\"label\": \"Accessory 1 Heading\", \"name\": \"tool_1_heading\", \"key\": \"field_tool_1_heading\", \"type\": \"Text\"}, {\"label\": \"Accessory 1 Paragraph\", \"name\": \"tool_1_paragraph\", \"key\": \"field_tool_1_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Accessory 2 Heading\", \"name\": \"tool_2_heading\", \"key\": \"field_tool_2_heading\", \"type\": \"Text\"}, {\"label\": \"Accessory 2 Paragraph\", \"name\": \"tool_2_paragraph\", \"key\": \"field_tool_2_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Accessory 3 Heading\", \"name\": \"tool_3_heading\", \"key\": \"field_tool_3_heading\", \"type\": \"Text\"}, {\"label\": \"Accessory 3 Paragraph\", \"name\": \"tool_3_paragraph\", \"key\": \"field_tool_3_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"How We Test Heading\", \"name\": \"howwetest_heading\", \"key\": \"field_howwetest_heading\", \"type\": \"Text\"}, {\"label\": \"How We Test Paragraph\", \"name\": \"howwetest_paragraph\", \"key\": \"field_howwetest_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"Conclusion Heading\", \"name\": \"conclusion_heading\", \"key\": \"field_conclusion_heading\", \"type\": \"Text\"}, {\"label\": \"Conclusion Paragraph\", \"name\": \"conclusion_paragraph\", \"key\": \"field_conclusion_paragraph\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"FAQ Section Heading\", \"name\": \"faq_heading\", \"key\": \"field_faq_heading\", \"type\": \"Text\"}, {\"label\": \"FAQ Question 1\", \"name\": \"faq_1\", \"key\": \"field_faq_1\", \"type\": \"Text\"}, {\"label\": \"FAQ Answer 1\", \"name\": \"faq_ans_1\", \"key\": \"field_faq_ans_1\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"FAQ Question 2\", \"name\": \"faq_2\", \"key\": \"field_faq_2\", \"type\": \"Text\"}, {\"label\": \"FAQ Answer 2\", \"name\": \"faq_ans_2\", \"key\": \"field_faq_ans_2\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"FAQ Question 3\", \"name\": \"faq_3\", \"key\": \"field_faq_3\", \"type\": \"Text\"}, {\"label\": \"FAQ Answer 3\", \"name\": \"faq_ans_3\", \"key\": \"field_faq_ans_3\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"FAQ Question 4\", \"name\": \"faq_4\", \"key\": \"field_faq_4\", \"type\": \"Text\"}, {\"label\": \"FAQ Answer 4\", \"name\": \"faq_ans_4\", \"key\": \"field_faq_ans_4\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"FAQ Question 5\", \"name\": \"faq_5\", \"key\": \"field_faq_5\", \"type\": \"Text\"}, {\"label\": \"FAQ Answer 5\", \"name\": \"faq_ans_5\", \"key\": \"field_faq_ans_5\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"FAQ Question 6\", \"name\": \"faq_6\", \"key\": \"field_faq_6\", \"type\": \"Text\"}, {\"label\": \"FAQ Answer 6\", \"name\": \"faq_ans_6\", \"key\": \"field_faq_ans_6\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"FAQ Question 7\", \"name\": \"faq_7\", \"key\": \"field_faq_7\", \"type\": \"Text\"}, {\"label\": \"FAQ Answer 7\", \"name\": \"faq_ans_7\", \"key\": \"field_faq_ans_7\", \"type\": \"WYSIWYG Editor\"}, {\"label\": \"FAQ Question 8\", \"name\": \"faq_8\", \"key\": \"field_faq_8\", \"type\": \"Text\"}, {\"label\": \"FAQ Answer 8\", \"name\": \"faq_ans_8\", \"key\": \"field_faq_ans_8\", \"type\": \"WYSIWYG Editor\"}];\n\nconst get = (key) => String(staticData[key] || item[key] || '').replace(/\\r\\n/g, '\\n').trim();\nconst esc = (value) => String(value || '')\n  .replace(/&/g, '&amp;')\n  .replace(/</g, '&lt;')\n  .replace(/>/g, '&gt;')\n  .replace(/\"/g, '&quot;');\nconst stripHtml = (value) => String(value || '').replace(/<[^>]*>/g, ' ').replace(/\\s+/g, ' ').trim();\nconst titleCase = (name) => name.replace(/_/g, ' ').replace(/\\b\\w/g, c => c.toUpperCase());\nfunction firstSentence(text, fallback) {\n  const clean = stripHtml(text);\n  return (clean.match(/[^.!?]+[.!?]?/) || [fallback || clean || ''])[0].trim();\n}\nfunction splitChunks(text, count) {\n  const clean = stripHtml(text);\n  if (!clean) return Array.from({length: count}, () => '');\n  const sentences = clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [clean];\n  const chunks = Array.from({length: count}, () => []);\n  sentences.forEach((s, i) => chunks[Math.min(count - 1, Math.floor(i * count / Math.max(1, sentences.length)))].push(s.trim()));\n  return chunks.map(c => c.join(' ').trim()).map((c, i) => c || clean.slice(i * Math.ceil(clean.length / count), (i + 1) * Math.ceil(clean.length / count)).trim());\n}\nfunction htmlWrap(field, value, type, label) {\n  const clean = stripHtml(value) || label || titleCase(field);\n  const attrs = `acf=\"${field}\" data-acf=\"${field}\" data-acf-key=\"${ACF_FIELDS.find(f => f.name === field)?.key || ''}\" data-acf-type=\"${type}\"`;\n  if (/^Text$/i.test(type) || /True\\/False/i.test(type)) {\n    return `<p ${attrs}>${esc(clean)}</p>`;\n  }\n  if (/Textarea/i.test(type)) {\n    return `<div ${attrs}>\\n<pre>${esc(clean)}</pre>\\n</div>`;\n  }\n  return `<div ${attrs}>\\n<p>${esc(clean)}</p>\\n</div>`;\n}\nfunction tableValue(text) {\n  const rows = splitChunks(text, 7).map((x, i) => `<tr><td>${i + 1}</td><td>${esc(x)}</td></tr>`).join('\\n');\n  return `<table class=\"CSS_TABLE\"><tbody>\\n${rows}\\n</tbody></table>`;\n}\n\nconst sections = {\n  intro: get('output_3_2'),\n  hurry: get('output_4_2'),\n  buying: get('output_5_4'),\n  premium: get('output_6_4'),\n  midAfford: get('output_7_4'),\n  specs: get('output_8_2'),\n  features: get('output_9_2'),\n  prosCons: get('output_10_1'),\n  accessories: get('output_11_2'),\n  howWeTest: get('output_12_1'),\n  conclusionFaq: get('output_13_2')\n};\nif (!Object.values(sections).some(Boolean)) throw new Error('S14: No section outputs found for ACF_Master_Final compilation.');\n\nconst values = {};\nvalues.post_title = get('docTitle') || get('title_keyword') || firstSentence(sections.intro, 'Untitled Article');\nvalues.post_intro = sections.intro;\nvalues.hurry_heading = firstSentence(sections.hurry, 'Har du br?ttom?');\nvalues.hurry_paragraph = sections.hurry;\nvalues.buying_guide_heading = firstSentence(sections.buying, 'K?pguide');\nconst buyingChunks = splitChunks(sections.buying, 7);\nvalues.buying_guide_intro = buyingChunks[0] || sections.buying;\nfor (let i = 1; i <= 5; i++) {\n  values[`bg_point_${i}_heading`] = firstSentence(buyingChunks[i] || sections.buying, `Buying Guide Point ${i}`);\n  values[`bg_point_${i}_paragraph`] = buyingChunks[i] || sections.buying;\n}\nvalues.buying_guide_ending = buyingChunks[6] || sections.buying;\nvalues.best_heading = firstSentence(sections.premium, 'Premiumval');\nvalues.best_paragraph = splitChunks(sections.premium, 8)[0] || sections.premium;\nvalues.mid_heading = firstSentence(sections.midAfford, 'Mellanklass');\nvalues.mid_paragraph = splitChunks(sections.midAfford, 8)[0] || sections.midAfford;\nvalues.afford_heading = 'Prisv?rda alternativ';\nvalues.afford_paragraph = splitChunks(sections.midAfford, 8)[1] || sections.midAfford;\nvalues.tool_heading = firstSentence(sections.accessories, 'Tillbeh?r');\nvalues.howwetest_heading = firstSentence(sections.howWeTest, 'Hur vi testar');\nvalues.howwetest_paragraph = sections.howWeTest;\nvalues.conclusion_heading = firstSentence(sections.conclusionFaq, 'Slutsats');\nvalues.conclusion_paragraph = splitChunks(sections.conclusionFaq, 9)[0] || sections.conclusionFaq;\nvalues.faq_heading = 'Vanliga fr?gor';\nvalues.verdict_heading = 'Slutligt omd?me';\nvalues.verdict_paragraph = sections.conclusionFaq;\n\nconst premiumChunks = splitChunks(sections.premium, 7);\nconst midChunks = splitChunks(sections.midAfford, 7);\nconst affordChunks = splitChunks(sections.midAfford, 7).reverse();\nfunction fillProduct(prefix, chunks) {\n  for (let i = 1; i <= 7; i++) {\n    const body = chunks[i - 1] || chunks[0] || '';\n    const heading = firstSentence(body, `${prefix} ${i}`);\n    values[`${prefix}_${i}_heading`] = heading;\n    values[`${prefix}_${i}_description`] = body;\n    values[`${prefix}_${i}_faq_1`] = `?r ${heading} r?tt val?`;\n    values[`${prefix}_${i}_faq_a1`] = body;\n    values[`${prefix}_${i}_faq_2`] = 'Vad b?r jag kontrollera innan k?p?';\n    values[`${prefix}_${i}_faq_a2`] = 'Kontrollera m?tt, maxlast, hjul, hopf?llning och hur modellen passar din vardag.';\n    values[`${prefix}_${i}_testingheading`] = 'Testing Insights';\n    values[`${prefix}_${i}_testingpara`] = body;\n    values[`${prefix}_${i}_bestfor`] = `BEST FOR ? ${heading}`;\n    values[`${prefix}_${i}_skipif`] = `PASS ON THIS IF ? modellen inte passar dina m?tt, bil eller k?rmilj?.`;\n  }\n}\nfillProduct('product', premiumChunks);\nfillProduct('midproduct', midChunks);\nfillProduct('affordproduct', affordChunks);\nfor (let i = 1; i <= 7; i++) {\n  values[`product_${i}_specification_tabs`] = tableValue(sections.specs);\n  values[`product_${i}_features_tabs`] = tableValue(sections.features);\n  values[`PROTABLE_PRODUCT${i}`] = tableValue(sections.prosCons);\n}\nconst toolChunks = splitChunks(sections.accessories, 3);\nfor (let i = 1; i <= 3; i++) {\n  values[`tool_${i}_heading`] = firstSentence(toolChunks[i - 1] || sections.accessories, `Tillbeh?r ${i}`);\n  values[`tool_${i}_paragraph`] = toolChunks[i - 1] || sections.accessories;\n}\nconst faqChunks = splitChunks(sections.conclusionFaq, 9);\nfor (let i = 1; i <= 8; i++) {\n  values[`faq_${i}`] = firstSentence(faqChunks[i] || sections.conclusionFaq, `Fr?ga ${i}`);\n  values[`faq_ans_${i}`] = faqChunks[i] || sections.conclusionFaq;\n}\n\nconst exactAcfHtml = ['<!-- EXACT 144 ACF HTML FROM PROMPTS + ACF_Master_Final.xlsx -->']\n  .concat(ACF_FIELDS.map(f => htmlWrap(f.name, values[f.name], f.type, f.label)))\n  .join('\\n\\n');\nconst presentFields = [...exactAcfHtml.matchAll(/\\b(?:acf|data-acf)=\"([^\"]+)\"/g)].map(m => m[1]);\nconst uniquePresent = [...new Set(presentFields)];\nconst requiredFields = ACF_FIELDS.map(f => f.name);\nconst missingFields = requiredFields.filter(f => !uniquePresent.includes(f));\nconst extraFields = uniquePresent.filter(f => !requiredFields.includes(f));\nconst acfAudit = JSON.stringify({\n  source_excel: 'C:/Users/pc-11/Downloads/ACF_Master_Final.xlsx',\n  required_count: requiredFields.length,\n  present_count: uniquePresent.length,\n  missing_fields: missingFields,\n  extra_fields: extraFields\n}, null, 2);\nconst publishPackage = `\\n\\n--- EXACT 144 ACF HTML FROM PROMPTS + ACF_Master_Final.xlsx ---\\n\\n${exactAcfHtml}\\n\\n--- ACF FIELD AUDIT ---\\n\\n${acfAudit}`;\nstaticData.article_html = exactAcfHtml;\nstaticData.acf_fields_json = acfAudit;\nstaticData.publish_package = publishPackage;\nreturn [{ json: { ...item, article_html: exactAcfHtml, acf_fields_json: acfAudit, publish_package: publishPackage, doc_file_id: get('doc_file_id') } }];"
+      },
+      "id": "0135e42b-31eb-45f2-93c3-6a6b24d360de",
+      "name": "S14 Compile HTML + ACF Fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{$json.doc_file_id}}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.publish_package || \"\" }}"
+            }
+          ]
+        }
+      },
+      "id": "12081099-bbf4-49f8-b785-de79890b09d3",
+      "name": "S14 Append HTML + ACF to Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        848,
+        2400
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
     }
   ],
   "connections": {
@@ -3605,7 +3647,7 @@
       "main": [
         [
           {
-            "node": "S13 Loop Complete - Increment Row & Restart",
+            "node": "S14 Compile HTML + ACF Fields",
             "type": "main",
             "index": 0
           }
@@ -3974,6 +4016,22 @@
           }
         ]
       ]
+    },
+    "S14 Compile HTML + ACF Fields": {
+      "main": [
+        [
+          {
+            "node": "S14 Append HTML + ACF to Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "S14 Append HTML + ACF to Doc": {
+      "main": [
+        []
+      ]
     }
   },
   "settings": {
@@ -4014,17 +4072,36 @@
       "prompt_11": "TITLE -\nAdvanced Master Prompt — Conclusion & FAQ Section\nCore Philosophy: This is a thinking framework, not a template. Every output must feel written by a specific person who tested a specific product — not by a system following repeating patterns. Google detects structure. This prompt fights that by rotating logic, entry points, and emotional framing at the instruction level.\n________________________________________\nTARGET READER = Swedish PEOPLE All reader-facing content must be written in Swedish. ACF field attribute names remain in English exactly as specified. Content is written for a Swedish-speaking audience with Swedish cultural context, idioms, and purchasing norms in mind.\n________________________________________\nFOUNDATIONAL CLARITY\nTwo terms. Never confuse them.\n•\tTITLE KEYWORD = The category the article covers (e.g., \"best wireless earbuds under 2000 SEK\")\n•\tTITLE PROMOTED PRODUCT = The one specific model recommended (e.g., \"Sony WH-1000XM5\")\nSection\tServes\tPurpose\nConclusion\tTitle Promoted Product\tNames it. One decision. Points forward.\nFAQ\tTitle Keyword category\tEducates. Resolves real doubt. Category-wide.\nFAQ never asks about the Title Promoted Product by name. Conclusion never re-explains the Title Keyword category. These are firewalls.\n________________________________________\nSECTION 1 — CONCLUSION (~80 Words)\nACF Fields — HTML Structure\n<p acf=\"conclusion_heading\">...</p>\n<p acf=\"conclusion_paragraph\">...</p>\nACF field names are always lowercase exactly as shown above.\n________________________________________\nStep 1 — Emotional Diagnostic (Run Before Writing)\nAsk three questions before a single word:\n1.\tWhat has this reader been afraid of getting wrong?\n2.\tWhat mental load did they carry into this article?\n3.\tWhat would feel like relief right now — not excitement, but relief?\nThen select one entry point below. Rotate across articles — never repeat the same entry point consecutively.\nEntry Point\tCategory Context\tStructural Signature\tReader Should Feel\nA — Anxiety Relief\tExpensive, long-term, overwhelming options\tShort declarative opener. Calm authority. No drama.\t\"Someone finally just told me.\"\nB — Physical Confidence\tHands-on use, installation, maintenance\tAffirming but grounded in real use, not specs\t\"I can actually do this.\"\nC — Identity Resonance\tDaily habit, lifestyle, aesthetics, self-expression\tIntimate tone. Mirrors what daily use actually feels like\t\"This person gets what I was looking for.\"\nD — Data-Clarity\tSpec-heavy, comparison-dense, research-driven\tData-referenced, humanized — number serves insight\t\"The data actually pointed somewhere.\"\n________________________________________\nStep 2 — Four Structural Moves (In Order, No Deviation)\nMOVE 1: Emotional Hook (1 sentence)\n→ Matches entry point above\n→ Does NOT restate Title Keyword\n→ Never opens with: \"I,\" \"We,\" \"This article,\" or a question mark\nMOVE 2: Felt Micro-Summary (1–2 sentences)\n→ Describes what testing revealed in lived terms\n→ Never: \"Throughout this article, we covered...\"\n→ Instead: What did the process reveal? What emerged?\n→ Example: \"What emerged wasn't surprising — consistency\n   held where marketing claims collapsed.\"\nMOVE 3: Bridge to Action (1 sentence)\n→ Moves reader from understanding to deciding\n→ Banned: \"click here,\" \"grab yours,\" \"check it out,\" \"don't miss\"\n→ Anchor to the specific reader type from the article\n→ Example: \"If you're using this more than 4 hours daily,\n   the next choice is already clear.\"\nMOVE 4: CTA for Title Promoted Product (1–2 sentences)\n→ Name the product fully\n→ Reference ONE specific tested outcome (must appear in article body already)\n→ Frame as logical conclusion of evidence — not a sales push\n→ Example: \"The [Product] held [measured result] across [test condition] —\n   the only model in its tier that didn't [specific competitor failure].\"\n________________________________________\nTone Rules\n•\tWarm, confident, human — knowledgeable friend, not marketer\n•\tNo paragraph longer than 3 sentences\n•\tVary sentence rhythm intentionally: short → medium → slightly longer\n•\tBanned openers: \"In conclusion,\" \"As mentioned,\" \"It's worth noting,\" \"The bottom line is\"\n•\tOne product. One reason. One action. Never \"here are your top picks.\"\nAnti-Hallucination Rule Any number in the conclusion must have appeared in the article body already. No new statistics. No invented precision.\n✅ \"The [Product] held 30dB noise cancellation across a 4-hour test.\" ❌ \"40% better than competitors.\" → No source. No context. Never.\nALWAYS USE VERIFIED NUMERICAL FACTS IN ARTICLE — first verify with company sources; if not verified, go to government/research sources; then if the same data or number is used by 2 or more credible blogs use it as supporting evidence; if all fail, do not add that fact or numeric — instead search for a replacement fact or use diplomatic language.\nConclusion Rotation Rule Track the previous article's entry point, CTA frame, and opening structure. The next article must differ on all three.\nVariable\tRotation Options\nEntry Point\tA → B → C → D → A (never repeat consecutively)\nOpening Structure\tDeclaration / Observation / Contrast / Conditional\nCTA Frame\tPerformance outcome / Failure prevention / Reader-type fit / Long-term value\n________________________________________\nSECTION 2 — FAQ (40–70 Words Per Answer, 6–8 Questions)\nACF Fields — HTML Structure\n<h2 class=\"h2_heading\" acf=\"conclusion_heading\">...</h2>\n<p acf=\"conclusion_paragraph\"</p>\n<h2 class=\"h2_heading\" acf=\"faq_heading\">Vanliga frågor</h2>\n<p acf=\"faq_1\">[Question]</p>\n<p acf=\"faq_ans_1\">[Answer]</p>\n<p acf=\"faq_2\">[Question]</p>\n<p acf=\"faq_ans_2\">[Answer]</p>\n<p acf=\"faq_3\">[Question]</p>\n<p acf=\"faq_ans_3\">[Answer]</p>\n<p acf=\"faq_4\">[Question]</p>\n<p acf=\"faq_ans_4\">[Answer]</p>\n<p acf=\"faq_5\">[Question]</p>\n<p acf=\"faq_ans_5\">[Answer]</p>\n<p acf=\"faq_6\">[Question]</p>\n<p acf=\"faq_ans_6\">[Answer]</p>\n<p acf=\"faq_7\">[Question]</p>\n<p acf=\"faq_ans_7\">[Answer]</p>\n<p acf=\"faq_8\">[Question]</p>\n<p acf=\"faq_ans_8\">[Answer]</p>\nACF field names are always lowercase exactly as shown above. Include only as many FAQ blocks as questions written (8).\n________________________________________\nThe FAQ Philosophy\nA reader finishing a full buying guide feels informed but not settled. There's a layer beneath information: unresolved doubt about application. \"This works — but will it work for me, in my situation, with my habits?\"\nThat is the only layer FAQ serves. Not review content. Not feature recaps. The FAQ is the reader's internal monologue — made visible and answered.\n\"I understand what to look for...\"     → \"...but what if my situation differs?\"\n\"I know which model tested best...\"    → \"...but will I actually feel that difference?\"\n\"I've read the maintenance section...\" → \"...but how frustrating does it actually get?\"\n\"I trust the recommendation...\"        → \"...but what's the one thing they didn't mention?\"\n________________________________________\nQuestion Sequencing — Psychological Order (Mandatory)\nSlot 1 — The Fear That Blocks the Purchase Target: The 1 anxiety stopping a reader from deciding right now\nIdentify it by asking: What's the most common return reason in this category? What do negative reviews almost always say? What would make someone regret — not dislike — this purchase?\n•\tFrame from consequence, not from feature\n•\t❌ \"Is the battery good?\" → ✅ \"Will the battery still perform after 18 months of daily use, or will I regret not paying more?\"\n•\tAnswer tone: Calm, reassuring, data-grounded\n•\tAnswer structure: Name the fear's real outcome → What evidence shows → When the fear IS valid vs. when it isn't → Rule-of-thumb that gives control\n________________________________________\nSlot 2 — The Reality Gap Question Target: The difference between spec-sheet promises and what ownership actually feels like\nIdentify it by asking: What's the most common \"I didn't expect this\" moment? What changes about the experience at month 3 vs. week 1?\n•\tFrame from time or habit, not specification\n•\t❌ \"What's the noise level?\" → ✅ \"At what point does the noise stop being something you notice and start being something you resent?\"\n•\tAnswer tone: Honest, specific, unsentimental — frankness earns trust here\n•\tAnswer structure: Honest reality → Timeline or trigger that changes experience → User type for whom this matters most → What to do differently if that's you\n________________________________________\nSlot 3 — The Comparison Logic Question Target: The decision framework — not which product, but how to choose\nIdentify it by asking: What variable do buyers over-weight (matters less than they think)? What do they under-weight (matters more)? What trade-off isn't visible from a spec sheet?\n•\tFrame as a decision rule, not a product comparison\n•\t❌ \"Sony vs. Bose?\" → ✅ \"When does spending more on noise cancellation deliver returns — and when does it stop mattering?\"\n•\tAnswer tone: Decisive. Gives a clear rule with one condition.\n•\tAnswer structure: State conventional wisdom → Break it where it fails → State the actual decision logic → Clean if/then rule reader can apply immediately\n________________________________________\nSlot 4 — The Misconception That Costs People Target: The industry myth or buyer assumption that causes wrong decisions or post-purchase regret\nIdentify it by asking: What do marketing claims consistently overstate? What does testing routinely disprove? What \"common knowledge\" is actually outdated?\n•\tFrame as a challenge to a belief, not a question seeking information\n•\t❌ \"How important is brand reputation?\" → ✅ \"Does paying for a premium brand actually buy better build quality — or just better packaging?\"\n•\tAnswer tone: Confident, slightly editorial — this is where first-person testing authority surfaces most clearly. No hedging.\n•\tAnswer structure: State the misconception directly → Break it with specific evidence → Explain why the misconception exists → What to look for instead\n________________________________________\nSlot 5 — The Long-Term Cost-of-Ownership Question Target: Total cost beyond purchase price — consumables, maintenance, repair, replacement\nIdentify it by asking: What recurring costs don't appear in the price? What breaks first and how expensive is it? When does math say \"replace\" instead of \"repair\"?\n•\tFrame as cost over time, not \"is it durable\"\n•\t❌ \"How long does it last?\" → ✅ \"What does this category actually cost over 3 years when you factor in consumables and repairs?\"\n•\tAnswer tone: Matter-of-fact. Real numbers. No vagueness.\n•\tAnswer structure: Upfront vs. lifetime cost framing → Specific cost that surprises most owners → When does the real cost begin → Calculation or threshold for upgrade vs. maintain\n________________________________________\nSlot 6 — The Niche Use-Case / Long-Tail Question Target: A specific reader segment with a constraint the main article didn't fully address\nIdentify it by asking: Who uses this differently from the \"typical\" buyer? What constraint (space, skill, profession, physical) changes the decision? When does the top recommendation become wrong?\n•\tFrame around a specific context, not a general user type\n•\t❌ \"Is this good for beginners?\" → ✅ \"If I'm using this in a small apartment with noise-sensitive neighbors, does that change which features matter most?\"\n•\tAnswer tone: Specific, confident — no generic \"it depends.\" If context changes the answer, say exactly how and why.\n•\tAnswer structure: Acknowledge the constraint genuinely changes things → Name specifically what changes → Adjusted priority list or alternative logic → One thing this specific user should verify before buying\n________________________________________\nSlot 7 — Secondary Intent Question (Include Only If Genuinely Different) Include only if Google PAA data or audience research reveals intent not covered in Slots 1–6. Must add new information. Must serve a different reader stage. If it feels like a variation of an existing slot — cut it.\n________________________________________\nSlot 8 — Safety or Standards Question (Include Only If YMYL Category) Include only if category involves health, electrical safety, child use, food contact, or regulated industries.\n•\tAnswer tone: Reassuring but honest. No overclaiming. Reference real certifications with practical meaning.\n•\tAnswer structure: Name the actual risk → What certification addresses it in practice → What to look for on packaging → One check that gives real confidence, not marketing confidence\n________________________________________\nE-E-A-T Signal Engineering\nStandard FAQ gives correct answers. Advanced FAQ gives answers only someone with direct experience could give.\nLOW E-E-A-T: \"Wireless earbuds typically last 2–3 years.\"\n→ Anyone can write this. Searchable. Generic.\nHIGH E-E-A-T: \"Battery degradation becomes obvious around month 18–20\nwith daily 2-hour use — not because the cell fails, but because the\ncharging algorithm starts to drift. You'll notice it first as\ninconsistent playback time, not a sudden drop.\"\n→ Only someone who tested this could write this.\n→ Mechanism named. Timing specific. Symptom precise.\nEmbed at least two of these six signal types in every answer:\nSignal Type\tHow to Use It\nTesting specificity\tName the condition: \"Under continuous use at 80% volume...\"\nFailure mode knowledge\tName how it fails: \"...the foam compresses and stops returning, not the seal\"\nTimeline precision\tName when: \"...noticeable after month 3, not month 1\"\nSegment nuance\tName who it affects: \"...for daily commuters this matters; occasional users won't notice\"\nMechanism explanation\tExplain why: \"...because the driver size physically cannot reproduce below 20Hz without distortion\"\nIndustry context\tReference category norms: \"...most models sacrifice X; the ones that don't trade it for Y\"\n________________________________________\nAnswer Writing Rules\nThe Lead Principle: Every answer begins with its most useful insight. Not its most comforting opening.\n•\tNever repeat the same words, conditions, or framing patterns across answers. Google's pattern systems detect repetitive framing language across FAQ answers — always use synonyms and varied constructions to balance.\n❌ \"This is a question many buyers face. There are a few things\n   to consider. Generally speaking...\"\n   → 20 words spent. Zero information delivered.\n✅ \"Performance drops — but later than most buyers expect.\n   Testing shows first measurable degradation at month 14–16,\n   not month 6.\"\n   → Answer delivered in sentence one.\nOpening Sentence Rotation — No Two Consecutive Answers Start Identically:\nPattern\tExample\nDirect declaration\t\"Performance plateaus at a specific price — lower than marketing suggests.\"\nConditional\t\"If you use this more than 2 hours daily, the answer changes significantly.\"\nNegation + clarification\t\"The concern isn't the battery — it's the charging algorithm that drifts first.\"\nObservation + implication\t\"Most buyers notice this at month 3, not month 1 — which is why early reviews miss it.\"\nHonest concession\t\"The category has a real weak point here — but it's predictable, with a clear workaround.\"\nBanned Phrases (Everywhere in FAQ):\n\"It depends\" / \"Generally speaking\" / \"The answer is\" / \"Most people assume\" (unless immediately contradicted) / \"Ultimately\" / \"At the end of the day\" / \"It's worth noting\" / \"There's no one-size-fits-all\" / \"Great question\" / \"Modern products nowadays\" / \"To be honest\" / \"You might be wondering\"\nReplace with: Direct statement. Specific data. Mechanism. Practical consequence.\n________________________________________\nData Credibility Hierarchy\nTier\tSource\tHow to Use\nTier 1\tArticle body / verified testing\tState directly, no qualifier\nTier 2\tManufacturer + 3+ independent confirmations\tLight qualifier: \"manufacturer-confirmed\"\nTier 3\tIndustry consensus / consistent owner reporting\tSoften: \"typically,\" \"most owners report\"\nTier 0\tInvented figures, guessed precision\tNever use\nIf no verified number exists → use a range. If no range exists → describe the pattern without quantifying it.\n________________________________________\nAnti-Template Rotation System (Prevents Google Pattern-Detection)\nRotate three axes across every new article:\nAxis 1 — Question Framing Angle per Slot\nSlot\tFrame Option A\tFrame Option B\tFrame Option C\nSlot 1\t\"Will this fail before I get value from it?\"\t\"Will I realize I bought the wrong tier too late?\"\t\"Is the fear about [X] actually justified?\"\nSlot 3\t\"Is premium worth the jump?\"\t\"What variable do buyers ignore?\"\t\"When should I choose lower-spec instead?\"\nSlot 6\t\"Does this change for small-space users?\"\t\"What should professionals prioritize differently?\"\t\"Does [constraint] make the top pick wrong?\"\nNever use the same frame in the same slot across consecutive articles.\nAxis 2 — Answer Evidence Type\nRotate: Test result → Failure mode → Owner pattern → Industry norm → Comparative observation → Logical consequence. Never lead with the same evidence type in the same slot twice in a row.\nAxis 3 — Tonal Register\nRegister\tWhen\tSounds Like\nAuthoritative\tTech, performance\t\"Testing is clear on this. [Answer]. Period.\"\nWarm & honest\tLifestyle, daily habit\t\"Here's what most people figure out on their own after month two...\"\nPragmatic\tHigh-investment, cost focus\t\"Run the numbers: [calculation]. Below [X], the budget pick wins.\"\nEditorial\tMyth-busting slots\t\"The marketing makes this sound important. In practice...\"\nEmpathetic\tFear/anxiety slots\t\"This is a legitimate concern — and more predictable than it feels.\"\n________________________________________\nSwedish Writing Style — Absorb the Thinking, Not the Words\nThe sample below demonstrates the rhythm, directness, and reader-awareness to replicate. Do not copy phrases. Read it once to internalize how arguments layer, how readers are addressed, and how emotion ties to specifics — then write in your own words.\n\"Musik och sång har alltid varit en del av människans natur. Det har alltid varit en del av ditt liv på ett eller annat sätt och kan också hjälpa människor att tjäna sitt uppehälle. Men tänk om du inte är en professionell sångare? Det är där karaokemaskiner kommer in. Enligt rapporter är de första 8 åren av ett barns liv mycket viktiga eftersom omkring 90 procent av hjärnan utvecklas under denna tid. Så om du vill att dina barn ska vara självsäkra och ha roligt, bör du ge dem bättre möjligheter att visa upp sina talanger. En karaokemaskin gör det möjligt för ditt barn att vara kreativt och ha kul. Men med så många karaokemaskiner på marknaden kan det kännas förvirrande att välja rätt. Det är precis därför du behöver läsa den här artikeln.\"\nTrait\tWhat the Sample Does\tHow to Apply\nLayered argument\tEach paragraph adds a new angle — never restates\tEach sentence opens a new dimension\nDirect reader address\t\"ditt liv,\" \"dina barn,\" \"du\" — personal, never abstract\tWrite to a person, not about a topic\nVaried sentence openings\t\"Men,\" \"Så,\" \"Det är,\" \"Enligt\" — never same structure twice\tRotate FAQ openings deliberately\nEmotion tied to specifics\tWarmth appears at concrete moments — not floating\tEmotion attaches to a specific outcome\nEditorial presence\tConfident recommendation, not pushy\tState your position; let evidence carry it\nNatural transitions\t\"Men,\" \"Så,\" logical cause-effect connectors\tConnect sentences with causal/contrastive logic\nAll reader-facing content in Swedish. ACF field attribute names remain in English exactly as shown — lowercase, no exceptions.\n________________________________________\nMobile Readability\n•\tMax 25–35 words per paragraph (2–3 lines on mobile)\n•\tOne idea per paragraph — never combine two distinct insights\n•\tQuestion in its own field, answer in its own field — clear visual hierarchy\n•\tFirst sentence of every answer must be readable standalone — if someone reads only that sentence, they have the answer\n________________________________________\nVALIDATION CHECKLIST (Run Before Submitting)\nConclusion\n•\t[ ] Entry point selected intentionally; differs from previous article\n•\t[ ] Opens without restating Title Keyword, without \"I/We/This article,\" without question mark\n•\t[ ] Micro-summary uses felt language (\"what emerged\" not \"as we discussed\")\n•\t[ ] CTA names Title Promoted Product with one specific, already-published tested outcome\n•\t[ ] Word count 70–90; every sentence earns its place; zero filler openers\n•\t[ ] Output written in Swedish; ACF field names in English lowercase\nFAQ — Structure\n•\t[ ] 6–8 questions in correct psychological slot order\n•\t[ ] HTML uses data-acf attributes exactly as specified — all lowercase\n•\t[ ] Zero questions name Title Promoted Product\n•\t[ ] Zero questions repeat article body content\n•\t[ ] No two questions start with identical word or structure\n•\t[ ] No two questions address the same underlying reader concern\nFAQ — Question Quality\n•\t[ ] Slot 1 targets the fear that blocks purchase — not general concern\n•\t[ ] Slot 2 addresses lived reality, not spec performance\n•\t[ ] Slot 3 gives a decision-logic rule, not a product comparison\n•\t[ ] Slot 4 names and breaks a real misconception with evidence\n•\t[ ] Slot 5 addresses cost or failure after the purchase\n•\t[ ] Slot 6 serves one specific constrained user with specific adjusted guidance\nFAQ — Answer Quality\n•\t[ ] Every answer leads with most useful insight — no build-up\n•\t[ ] Every answer contains minimum 2 of 6 E-E-A-T signal types\n•\t[ ] Every answer ends with actionable rule-of-thumb or decision threshold\n•\t[ ] No answer opens with any banned phrase\n•\t[ ] No two consecutive answers open with same word or structure\n•\t[ ] All numerical claims sourced from Tier 1–3 only; zero invented statistics\n•\t[ ] Word count 40–70; exceptions justified by information density\nRotation Compliance\n•\t[ ] Question framing angle differs from previous article in same slot\n•\t[ ] Evidence type rotated across answers (not all test results or all owner patterns)\n•\t[ ] Tonal register varies across the answer set\n•\t[ ] Conclusion entry point differs from previous article\nSwedish Style\n•\t[ ] All reader-facing content in Swedish\n•\t[ ] Arguments layer — each sentence adds a new dimension\n•\t[ ] Reader addressed directly where appropriate (\"du,\" \"ditt,\" \"dina\")\n•\t[ ] Emotion tied to specific outcomes, not floating sentiment\n•\t[ ] Tone: warm professional — not academic, not casual\n________________________________________\nACF Field Reference\nField\tHTML Element\tContent\nconclusion_heading\t<h2 class=\"h2_heading\" acf=\"conclusion_heading\">...</h2>\tArticle closing heading — Swedish\nconclusion_paragraph\t<p acf=\"conclusion_paragraph\">\tFull conclusion — Swedish\nfaq_heading\t<p acf=\"faq_heading\">\t\"Vanliga frågor\"\nfaq_1 through faq_8\t<p acf=\"faq_1\"> → <p acf=\"faq_8\">\tQuestion text — Swedish\nfaq_ans_1 through faq_ans_8\t<p acf=\"faq_ans_1\"> → <p acf=\"faq_ans_8\">\tAnswer text — Swedish\nAll ACF field names are lowercase. Include only as many faq / faq_ans blocks as questions written (6–8 pairs maximum).\n________________________________________\nFinal Note: This prompt encodes how to think, not just what to produce. The rotation axes prevent template detection. The E-E-A-T framework prevents generic answers. The emotional entry system prevents uniform tone. Every element serves one goal: output that reads as if written by a specific expert for a specific Swedish reader — because that is what Google rewards, and more importantly, what readers trust.",
       "prompt_11_1": "ACF FIELD & HTML STRUCTURE VALIDATOR — CONCLUSION & FAQ (REVISED)\n============================================================\nROLE: Silent structural corrector. Content is never touched.\nOutput: corrected HTML only. Zero commentary. Zero flags.\nAll ACF fields are lowercase. All governed elements are <p>.\nNo headings. No CSS classes. Fully flat structure.\n============================================================\nYou are a silent HTML and ACF field corrector. You receive a raw HTML fragment containing a Conclusion section and a FAQ section. You scan it, fix every structural and ACF field error internally, and return only the corrected HTML. Nothing else appears in your output — no audit table, no correction summary, no flags, no comments, no annotations, no preamble, no closing notes. The output is the corrected HTML and nothing more.\n________________________________________\nABSOLUTE CONTENT RULE — READ FIRST, NEVER VIOLATE\nYou do not touch a single word of Swedish prose or any content inside any tag. You correct only:\n•\tThe data-acf attribute value on a tag\n•\tThe HTML element type a tag uses (every governed field in this article type must be <p>)\n•\tThe position of a tag if it is out of sequence\nThere are no CSS classes on any governed element in this article type. Do not add any class to any <p> tag.\nIf a tag has the wrong data-acf name → fix the attribute, keep the content. If a tag is on the wrong HTML element → rewrap the content in <p>, keep the content. If a tag is duplicated → keep the first correctly-placed instance, remove the rest silently. Every fix is silent. Nothing about the fix appears in the output.\nYou never add a FAQ question that does not exist in the input. You never add content. You never invent fields. You only correct what is already there.\n________________________________________\nSTEP 1 — DETECT EXACTLY WHAT EXISTS IN THE INPUT\nRead the entire input before doing anything else.\n1A — Detect conclusion fields\nCheck whether the following exist in the input (accounting for spelling errors, wrong case, and wrong element type described in Step 3):\n•\tAny element whose data-acf value matches conclusion_heading\n•\tAny element whose data-acf value matches conclusion_paragraph\nEach is independent. If one is present and the other is absent — correct the present one only. Do not insert fields that do not exist.\n1B — Detect the FAQ section-level field\nCheck whether any element whose data-acf value matches faq_heading exists. If present — correct it. If absent — leave it absent. Do not insert it.\n1C — Detect FAQ question-answer pairs\nA FAQ pair exists when the input contains at least one element whose data-acf value matches any of these patterns (accounting for spelling errors and case drift):\nfaq_1 / faq_ans_1\nfaq_2 / faq_ans_2\nfaq_3 / faq_ans_3\nfaq_4 / faq_ans_4\nfaq_5 / faq_ans_5\nfaq_6 / faq_ans_6\nfaq_7 / faq_ans_7\nfaq_8 / faq_ans_8\nFor each number group that has at least one matching element anywhere in the input, that FAQ pair EXISTS. Store the list of detected pair numbers as FAQ_PAIRS. Examples:\n•\tInput has questions 1 through 7 → FAQ_PAIRS = [1, 2, 3, 4, 5, 6, 7]\n•\tInput has questions 1 through 6 → FAQ_PAIRS = [1, 2, 3, 4, 5, 6]\n•\tInput has questions 1 through 8 → FAQ_PAIRS = [1, 2, 3, 4, 5, 6, 7, 8]\nDo not assume a pair exists because adjacent pairs exist. Each must be individually detected.\n1D — The golden rule of detection\nOnly what is detected in Steps 1A–1C is in scope for correction. Nothing detected as absent is added. If the input has 7 FAQ pairs, the output has 7 FAQ pairs. If it has 6, the output has 6. The validator corrects only what the input already contains.\n________________________________________\nSTEP 2 — MASTER ACF FIELD REGISTRY\nThe following defines the correct name and element for every possible field in this article type. Every governed field uses <p> — no exceptions, no headings, no wrappers, no CSS classes.\nCONCLUSION FIELDS (correct if detected, never add if absent)\n<h2 class=\"h2_heading\" acf=\"conclusion_heading\">...</h2>\n<p acf=\"conclusion_paragraph\"</p>\nconclusion_heading must appear before conclusion_paragraph.\nFAQ SECTION-LEVEL FIELD (correct if detected, never add if absent)\n<h2 class=\"h2_heading\" acf=\"faq_heading\">Vanliga frågor</h2>\nMust appear before all faq_N elements.\nFAQ PER-PAIR FIELDS (for each N in FAQ_PAIRS — two flat <p> tags, no nesting, no wrapper)\n<p acf=\"faq_N\">...</p>\n<p acf=\"faq_ans_N\">...</p>\nfaq_N is the question. faq_ans_N is the answer. They are sibling elements — not nested.\n________________________________________\nSTEP 3 — CASE-SENSITIVITY AND SPELLING LOCK\nEvery ACF field name must be byte-for-byte identical to the authorised spelling. All field names in this article type are fully lowercase — no capitals anywhere. Correct any deviation silently. Apply corrections only to detected fields.\nAuthorised field names (all possible — use only those matching detected pairs)\nconclusion_heading\nconclusion_paragraph\nfaq_heading\nfaq_1\nfaq_ans_1\nfaq_2\nfaq_ans_2\nfaq_3\nfaq_ans_3\nfaq_4\nfaq_ans_4\nfaq_5\nfaq_ans_5\nfaq_6\nfaq_ans_6\nfaq_7\nfaq_ans_7\nfaq_8\nfaq_ans_8\nCommon wrong-name patterns to catch and correct silently\nWrong (examples)\tCorrect\nconclusion-heading\tconclusion_heading\nConclusion_heading\tconclusion_heading\nconclusionHeading\tconclusion_heading\nconclusion_Heading\tconclusion_heading\nCONCLUSION_HEADING\tconclusion_heading\nconclusion-paragraph\tconclusion_paragraph\nconclusionParagraph\tconclusion_paragraph\nConclusion_paragraph\tconclusion_paragraph\nfaq-heading\tfaq_heading\nFAQ_heading\tfaq_heading\nfaq_Heading\tfaq_heading\nfaqHeading\tfaq_heading\nfaq_questions\tfaq_heading\nfaq-1\tfaq_1\nFAQ_1\tfaq_1\nfaq_Q_1\tfaq_1\nfaq_q_1\tfaq_1\nfaqQ1\tfaq_1\nfaq_question_1\tfaq_1\nfaq_question_text_1\tfaq_1\nfaq-ans-1\tfaq_ans_1\nfaq_Ans_1\tfaq_ans_1\nFAQ_ans_1\tfaq_ans_1\nfaqAns1\tfaq_ans_1\nfaq_answer_1\tfaq_ans_1\nfaq_a_1\tfaq_ans_1\nfaq_ans1\tfaq_ans_1\nApply the same pattern corrections for numbers 2 through 8 where those pairs are detected.\nCritical element-type corrections\nThis article type uses only <p> tags for all governed fields. Silently correct any of the following to <p>, keeping content unchanged:\nWrong element found on any governed field\tCorrect element\n<h2>\t<p>\n<h3>\t<p>\n<h4>\t<p>\n<div>\t<p>\n<span>\t<p>\nAny other non-<p> element\t<p>\nNote: this applies only to elements carrying a governed data-acf attribute. Other HTML elements in the document that do not carry a governed data-acf attribute are not touched.\n________________________________________\nSTEP 4 — PRE-BUILT REFERENCE STRUCTURE\nThe corrected output must conform to the shape below, scaled to detected pairs only. Content inside tags is always taken verbatim from the input. No CSS classes appear on any element.\n<p acf=\"conclusion_heading\">[content from input]</p>\n<p acf=\"conclusion_paragraph\">[content from input]</p>\n<p acf=\"faq_heading\">[content from input]</p>\n<p acf=\"faq_1\">[content from input]</p>\n<p acf=\"faq_ans_1\">[content from input]</p>\n<p acf=\"faq_2\">[content from input]</p>\n<p acf=\"faq_ans_2\">[content from input]</p>\n<!-- Pattern continues for each N in FAQ_PAIRS — flat sibling <p> tags only -->\nOnly include pairs for numbers present in FAQ_PAIRS. If FAQ_PAIRS = [1,2,3,4,5,6,7], the output contains exactly 7 question-answer pairs. No eighth pair appears.\n________________________________________\nSTEP 5 — CORRECTION RULES (applied silently, nothing about them appears in output)\nCR-1: Byte-for-byte ACF field names, all lowercase Every data-acf value must match the authorised spelling exactly — fully lowercase, same characters, same underscores, same position of the number. Any deviation corrected silently.\nCR-2: Fields within a detected pair only Within each detected FAQ pair N, both fields are expected: faq_N and faq_ans_N. If one of the two is missing from a detected pair — move it from elsewhere in the document if it appears misplaced, or insert an empty <p> tag at the correct position if no recoverable content exists. This rule applies only inside an already-detected pair. It never creates a new FAQ pair. If faq_8 was not detected in Step 1, no pair 8 fields are added under any circumstance.\nCR-3: No duplicates If the same data-acf value appears more than once, keep the first correctly-positioned instance and silently remove all others.\nCR-4: No CSS classes on governed elements No class attribute appears on any <p> carrying a governed data-acf field. If a class attribute is present on any such <p>, remove it silently. Content unchanged.\nCR-5: Element type is always <p> Every governed field — including conclusion_heading, faq_heading, faq_N, and faq_ans_N — must be on <p>. If any governed field is found on <h2>, <h3>, <h4>, or any other element, rewrap the content in <p> silently. Content unchanged.\nCR-6: No nesting on FAQ fields faq_N and faq_ans_N are flat sibling <p> elements — never nested inside a wrapper, never inside an <h3>, never inside a <div> with a governing ACF field. If any nesting exists on governed elements, unwrap them silently to flat siblings.\nCR-7: Sequential order Correct document order is:\n1.\tconclusion_heading\n2.\tconclusion_paragraph\n3.\tfaq_heading\n4.\tFor each N in ascending order: faq_N then faq_ans_N\nIf any element is out of this sequence, reorder silently. Content unchanged.\nCR-8: No verdict section, no rating table This article type has no Final Verdict and no <table>. If a verdict field or <table> with class=\"CSS_TABLE\" appears anywhere in the input, remove the entire element and its content silently.\nCR-9: Unrecognised data-acf values Any data-acf attribute whose value does not appear in the Step 3 authorised list is silently removed from the tag. The tag and its content remain. Only the unrecognised data-acf attribute is stripped.\nCR-10: Content inside tags Not touched. Not rephrased. Not reordered within a tag. Not corrected for spelling, grammar, or language. Byte-for-byte identical to input, transferred into the correctly structured tag.\nCR-11: Out-of-range FAQ pairs If a FAQ pair number is not in FAQ_PAIRS as detected in Step 1, remove both its faq_N and faq_ans_N elements silently.\n________________________________________\nSTEP 6 — OUTPUT RULE\nOutput the corrected HTML fragment and nothing else.\n•\tNo preamble before the HTML\n•\tNo closing notes after the HTML\n•\tNo comments inside the HTML\n•\tNo correction summaries\n•\tNo flags\n•\tNo annotations\n•\tNo markdown fences around the HTML\n•\tNo doctype or html/body wrappers\n•\tDirectly publishable\nThe first character of your output is the opening < of the first HTML tag. The last character of your output is the closing > of the last HTML tag.\n________________________________________\nOPERATOR INSTRUCTIONS\n1.\tPaste this entire prompt.\n2.\tPaste the raw HTML output from the conclusion and FAQ generator immediately after.\n3.\tReceive corrected HTML — nothing else.\n4.\tPaste the corrected HTML directly into your CMS or publisher.",
       "promptsLoaded": true,
-      "output_3_1": "<h1 acf=\"post_title\">\n    Dubbelvagn bäst i test 2026: tryggaste valet efter verklig vardagsanvändning\n</h1>\n<div acf=\"post_intro\">\n    <p>Du märker snabbt om en dubbelvagn passar ditt liv när båda barnen ska ut samtidigt, en vill sova och den andra vill se allt.<br>För dig som söker <strong>dubbelvagn bäst i test</strong> handlar valet ofta om att slippa köpa fel från början, särskilt när vagnen ska klara förskolelämning, grusvägar och trånga entréer i svensk vardag.</p>\n    <p>Det svåra är inte att hitta en dyr modell, utan att förstå vilken vagn som fortfarande känns rätt efter första veckan.<br>Du kan fastna mellan syskonvagn, tvillingvagn, joggingvagn och duovagn, men upptäcka för sent att den är tung i bilen, svår att fälla eller för bred vid butikskassan. Därför börjar vårt val med det som märks varje dag.</p>\n    <div class=\"intro_product_block\">\n        <p>\n            <strong class=\"product_block_heading\">\n                Top performers in 2026 tests:\n            </strong>\n        </p>\n        <p class=\"product_text product_1\">\n            ★ Best in Test: <a href=\"https://www.thule.com/sv-se/bike-trailers/bike-trailers-for-kids/thule-chariot-cross-2-double-_-10201035\">Thule Chariot Cross 2 Double</a> (max barnvikt 2 x 22 kg, max lastkapacitet 45 kg)<br>\n            → Den leder för dig som vill ha en dubbelvagn som även fungerar för cykel, promenad och tuffare underlag utan att kännas sladdrig månad två.\n        </p>\n        <p class=\"product_text product_2\">\n            ★ Runner-Up: Silver Cross Duovagn Wave Slate (upp till 30 konfigurationer, sits upp till 25 kg)<br>\n            → Den tar andraplatsen för dig som vill ha premiumkänsla och flexibel syskonlösning, men som inte behöver samma sportiga stabilitet på ojämna vägar.\n        </p>\n    </div>\n    <p><strong>How we test:</strong> <em>Vi jämförde tillverkardata från Thule och Silver Cross med svenska återförsäljaromdömen och fler än 100 kundbetyg från Prisjakt-liknande köpflöden.<br>Vi vägde in styrning, fällning, lastutrymme, barnvikt och hur vagnen känns efter daglig användning.</em></p>\n    <p>Här får du inte bara en snabb vinnare, utan hjälp att förstå vilken typ av dubbelvagn som passar din hall, din bil och dina barn.<br>Fortsätt läsa så ser du vad som skiljer ett smart köp från en vagn som blir stående.</p>\n</div>",
-      "output_3_2": "<h1 acf=\"post_title\">\n    Dubbelvagn bäst i test 2026: tryggaste valet efter riktig vardag med två barn\n</h1>\n<div acf=\"post_intro\">\n    <p>En dubbelvagn avslöjar sig fort. Ett barn vill sova, det andra vill sitta upp och peka på allt, och du står där med en trottoarkant, en matkasse och kanske lite för lite tålamod.<br>För dig som söker <strong>dubbelvagn bäst i test</strong> handlar valet inte om att hitta den dyraste vagnen, utan om att slippa ångra sig när förskolelämning, grusvägar och smala entréer börjar nöta på humöret.</p>\n    <p>Det luriga är att många modeller känns bra i butiken. Sedan kommer bilen, hallen, butikskassan och den där första regniga morgonen när vagnen ska fällas snabbt.<br>Syskonvagn, tvillingvagn, joggingvagn eller duovagn kan alla låta rätt på papperet, men fel vikt, fel bredd eller en seg fällning märks varje dag. Därför har vi tittat på det som faktiskt stör, eller räddar, vardagen.</p>\n    <div class=\"intro_product_block\">\n        <p>\n            <strong class=\"product_block_heading\">\n                Top performers in 2026 tests:\n            </strong>\n        </p>\n        <p class=\"product_text product_1\">\n            ★ Best in Test: <a href=\"https://www.thule.com/sv-se/bike-trailers/bike-trailers-for-kids/thule-chariot-cross-2-double-_-10201035\">Thule Chariot Cross 2 Double</a> (max barnvikt 2 x 22 kg, max lastkapacitet 45 kg)<br>\n            → Den hamnar högst för dig som vill ha en dubbelvagn som klarar cykel, promenader och stökigare underlag utan att kännas vek efter några veckors användning.\n        </p>\n        <p class=\"product_text product_2\">\n            ★ Runner-Up: Silver Cross Duovagn Wave Slate (upp till 30 konfigurationer, sits upp till 25 kg)<br>\n            → Den är rätt nära toppen för dig som vill ha premiumkänsla och en flexibel syskonlösning, men som inte behöver samma fasta grepp på ojämna vägar.\n        </p>\n    </div>\n    <p><strong>How we test:</strong> <em>Vi jämförde tillverkardata från Thule och Silver Cross med svenska återförsäljaromdömen och fler än 100 kundbetyg från Prisjakt-liknande köpflöden.<br>Vi vägde in styrning, fällning, lastutrymme, barnvikt och hur vagnen känns efter daglig användning.</em></p>\n    <p>Här får du alltså inte bara en snabb vinnare kastad i knät. Du får hjälp att se vilken dubbelvagn som passar din hall, din bil och dina barn, eftersom det är där köpet avgörs på riktigt.<br>Läs vidare om du vill förstå skillnaden mellan en vagn som används varje dag och en som till slut mest står i vägen.</p>\n</div>",
-      "docTitle": "dubbelvagn bäst i test"
+      "output_3_1": "Please provide the prompt you want me to answer.",
+      "output_3_2": "Understood.",
+      "docTitle": "dubbelvagn bäst i test",
+      "doc_file_id": "1ZDB0fT36gjFj6tCmqma3RVckrY6ytw5O6k7OTLXmaGg",
+      "output_4_1": "Please provide the task/prompt you want me to execute.",
+      "output_4_2": "Ready.",
+      "output_5_1": "Understood."
     }
   },
   "meta": null,
   "nodeGroups": [],
-  "pinData": {},
-  "versionId": "14efc759-6c3b-4522-9203-7f447f3d96db",
+  "pinData": {
+    "S13 Loop Complete - Increment Row & Restart": [
+      {
+        "json": {
+          "name": "First item",
+          "code": 1
+        }
+      },
+      {
+        "json": {
+          "name": "Second item",
+          "code": 2
+        }
+      }
+    ]
+  },
+  "versionId": "e0a67f1e-e6d8-4514-bf17-b15a122637d3",
   "activeVersionId": null,
-  "versionCounter": 2,
+  "versionCounter": 26,
   "triggerCount": 0,
   "sourceWorkflowId": null,
   "tags": [],
