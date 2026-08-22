@@ -1,0 +1,124 @@
+{
+  "updatedAt": "2026-08-20T19:35:21.798Z",
+  "createdAt": "2026-08-20T19:35:21.798Z",
+  "id": "TEMP_APPEND_FINAL_DOC",
+  "name": "TEMP - Append final conclusion to Google Doc",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: {\"doc_file_id\":\"1cOBWypuZQs3cVT05poPwX47wNWE1_2xQrkc_lUQiJ_s\",\"output_13_2\":\"<p acf=\\\"conclusion_heading\\\">Vårt val för två barn utan onödiga kompromisser</p> <p acf=\\\"conclusion_paragraph\\\">Det svåraste valet blir enklare när vagnen fungerar i fler delar av familjelivet, inte bara på en perfekt trottoar. Det som skiljer ut sig är kombinationen av flexibilitet, barnkomfort och en konstruktion som är gjord för både promenader och cykling. För aktiva familjer som vill slippa köpa separata lösningar är riktningen därför tydlig. Thule Chariot Cross 2 Double är vårt främsta val, med justerbar fjädring, individuellt fällbara vadderade säten och plats för två barn – en genomtänkt helhet snarare än en enskild imponerande funktion. :contentReference[oaicite:0]{index=0}</p> <p acf=\\\"faq_heading\\\">Vanliga frågor</p> <p acf=\\\"faq_1\\\">Hur vet jag att en dubbelvagn inte blir ett köp jag ångrar efter några månader?</p> <p acf=\\\"faq_ans_1\\\">Den vanligaste risken är inte att vagnen saknar funktioner, utan att den är för stor eller tung för din vardag. Dubbelvagnar kräver mer plats och kan bli besvärliga i hissar, dörrar och bagageutrymmen. Konsumentverket rekommenderar därför att du mäter dessa utrymmen före köp. Välj efter din trängsta återkommande passage, inte efter den största promenadvägen. :contentReference[oaicite:1]{index=1}</p> <p acf=\\\"faq_2\\\">När börjar storleken på en dubbelvagn faktiskt kännas jobbig i vardagen?</p> <p acf=\\\"faq_ans_2\\\">Problemet märks främst när vagnen måste lyftas, fällas ofta eller manövreras genom begränsade utrymmen. Två barn och packning ökar dessutom belastningen jämfört med en enkelvagn. För familjer med trappor, liten hiss eller mycket bilåkning blir detta viktigare än på långa promenader. Prova därför både hopfällning och lyft med en hand innan du bestämmer dig. :contentReference[oaicite:2]{index=2}</p> <p acf=\\\"faq_3\\\">När är en smalare konstruktion viktigare än stora hjul och extra komfort?</p> <p acf=\\\"faq_ans_3\\\">Om dina vardagsproblem finns inomhus bör bredd och format väga tyngre än terrängegenskaper. Konsumentverket lyfter särskilt dörrar, hissar, kollektivtrafik och bilens bagageutrymme som mått som bör kontrolleras. Kör du däremot ofta på ojämnt underlag ökar betydelsen av hjul och hållfasthet. Prioritera alltså den begränsning du möter varje dag, inte den funktion som ser bäst ut på specifikationsbladet. :contentReference[oaicite:3]{index=3}</p> <p acf=\\\"faq_4\\\">Är en dyrare dubbelvagn automatiskt stabilare och säkrare?</p> <p acf=\\\"faq_ans_4\\\">Prislappen är ingen säkerhetsmärkning. Stabilitet påverkas av konstruktionen, belastningen, monterade tillbehör och hur barnen placeras eller lyfts ur vagnen. Konsumentverket varnar särskilt för att vissa syskonvagnar kan ändra stabilitet beroende på vilket barn som tas ur först. Kontrollera därför bromsar, låsningar, maxbelastning och avsedd konfiguration i stället för att använda priset som kvalitetsbevis. :contentReference[oaicite:4]{index=4}</p> <p acf=\\\"faq_5\\\">Vad kostar mest över tid: att köpa billigare eller att välja en mer påkostad dubbelvagn?</p> <p acf=\\\"faq_ans_5\\\">Den verkliga kostnaden avgörs ofta av hur länge samma vagn passar familjens behov. Ett billigt köp blir dyrt om formatet, sittlösningen eller användningsområdet tvingar fram ett tidigt byte. Kontrollera därför reservdelar, tvättbara textilier och kompatibla tillbehör innan köp. Om vagnen täcker både dagens och nästa användningsfas blir inköpspriset ett bättre mått på värde än prislappen ensam.</p> <p acf=\\\"faq_6\\\">Förändras valet om jag bor i lägenhet med liten hiss och begränsad förvaring?</p> <p acf=\\\"faq_ans_6\\\">Ja – då bör yttermått, vikt och hopfällt format komma före terrängkapacitet och stora förvaringslösningar. En dubbelvagn kan fungera utmärkt utomhus men ändå bli fel om den inte passerar hissdörren eller får plats hemma. Mät hiss, dörröppningar och förvaringsplats, och prova att fälla vagnen själv. Den minsta återkommande ytan bör sätta gränsen för ditt val. :contentReference[oaicite:5]{index=5}</p> <p acf=\\\"faq_7\\\">Är sittplatser bredvid varandra bättre än att barnen sitter framför och bakom varandra?</p> <p acf=\\\"faq_ans_7\\\">Ingen layout är bäst överallt. Sidoplacerade säten ger barnen liknande position och kan göra åtkomsten enklare, medan tandemlösningar ofta prioriterar ett smalare format. Skillnaden blir mest märkbar vid dörrar, svängar och när barnen ska tas i och ur. Välj därför konstruktion efter dina trängsta passager och kontrollera samtidigt att båda barnens sitt- eller liggbehov kan hanteras oberoende. :contentReference[oaicite:6]{index=6}</p> <p acf=\\\"faq_8\\\">Vilken säkerhetsmärkning bör jag kontrollera innan jag köper en dubbelvagn?</p> <p acf=\\\"faq_ans_8\\\">Kontrollera att en vanlig barnvagn är märkt enligt EN 1888; Konsumentverket beskriver märkningen som en central kontroll av att vagnen omfattas av den europeiska säkerhetsstandarden. För en vagn som även används som cykelkärra ska relevant cykelkärrestandard, EN 15918, kontrolleras. Titta dessutom på fungerande bromsar, säkra låsningar, stabilitet och angiven maxbelastning – inte bara på en säkerhetslogotyp. :contentReference[oaicite:7]{index=7}</p>\"} }];"
+      },
+      "id": "load-saved-final-output",
+      "name": "Load Saved Final Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{$json.doc_file_id}}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $json.output_13_2 || \"\" }}"
+            }
+          ]
+        }
+      },
+      "id": "append-final-to-google-doc",
+      "name": "Append Final To Google Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        0
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "PGYsh9VZqNy2wpdq",
+          "name": "Google Docs account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Load Saved Final Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Saved Final Output": {
+      "main": [
+        [
+          {
+            "node": "Append Final To Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": null,
+  "versionId": "4b4465c2-62ed-4f63-bf0c-fdebf6b785b4",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-08-20T19:35:21.798Z",
+      "createdAt": "2026-08-20T19:35:21.798Z",
+      "role": "workflow:owner",
+      "workflowId": "TEMP_APPEND_FINAL_DOC",
+      "projectId": "nEppKN40tx82RALq",
+      "project": {
+        "updatedAt": "2026-07-25T21:34:38.859Z",
+        "createdAt": "2026-07-25T21:33:11.273Z",
+        "id": "nEppKN40tx82RALq",
+        "name": "Vijay Patel <vijpatel121@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "5637d541-1ae9-41f5-95bb-e7838762f008"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}
